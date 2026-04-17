@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - 배너/팝업 상세</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; overflow-y: auto; max-width: 960px; }
+
+  /* ===== BUTTONS ===== */
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-lg { padding: 12px 28px; font-size: 15px; border-radius: 10px; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== DETAIL GRID ===== */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .detail-item { padding: 14px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); }
+  .detail-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-value { font-size: 15px; font-weight: 700; color: var(--dark); }
+
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-live { background: var(--mint-light); color: var(--mint-dark); }
+  .status-hidden { background: var(--gray-100); color: var(--gray-500); }
+  .status-scheduled { background: var(--blue-light); color: var(--blue); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .lang-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+  .lang-kr { background: var(--blue-light); color: var(--blue); }
+  .lang-en { background: var(--purple-light); color: var(--purple); }
+
+  .pos-badge { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .pos-home { background: var(--orange-light); color: var(--orange); }
+  .pos-discovery { background: var(--purple-light); color: var(--purple); }
+  .pos-popup { background: var(--red-light); color: var(--red); }
+  .pos-boost { background: var(--mint-light); color: var(--mint-dark); }
+  .pos-wallet { background: var(--blue-light); color: var(--blue); }
+
+  .type-badge { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .type-banner { background: var(--blue-light); color: var(--blue); }
+  .type-popup { background: var(--red-light); color: var(--red); }
+
+  /* ===== FORM ===== */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+  .form-label .required { color: var(--red); margin-left: 2px; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 14px; color: var(--gray-700); outline: none; font-family: 'Inter', sans-serif;
+    background: #fff; transition: border-color 0.15s;
+  }
+  .form-input:focus { border-color: var(--mint); }
+  .form-textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 14px; color: var(--gray-700); outline: none; font-family: 'Inter', sans-serif;
+    resize: vertical; transition: border-color 0.15s; line-height: 1.8;
+  }
+  .form-textarea:focus { border-color: var(--mint); }
+  .form-select {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 14px; color: var(--gray-700); outline: none; background: #fff; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: border-color 0.15s;
+  }
+  .form-select:focus { border-color: var(--mint); }
+  .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ===== LIVE BANNER ===== */
+  .live-banner {
+    padding: 14px 20px; background: var(--mint-light); border: 1px solid rgba(0,201,167,0.3);
+    border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; color: var(--mint-dark);
+  }
+
+  /* ===== IMAGE PREVIEW ===== */
+  .image-preview {
+    width: 100%; height: 200px; border-radius: 12px; border: 2px dashed var(--gray-200);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 40%, var(--mint-dark) 100%);
+    color: #fff; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .image-preview:hover { border-color: var(--mint); }
+  .image-preview .preview-content {
+    text-align: center; z-index: 1;
+  }
+  .image-preview .preview-title {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px;
+  }
+  .image-preview .preview-sub {
+    font-size: 13px; font-weight: 500; opacity: 0.8;
+  }
+  .image-preview .preview-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 12px; padding: 8px 20px; background: var(--mint); color: #fff;
+    border-radius: 8px; font-size: 13px; font-weight: 700;
+  }
+  .image-upload-hint {
+    margin-top: 10px; padding: 10px 16px; background: var(--gray-50); border: 1px solid var(--gray-100);
+    border-radius: 8px; display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--gray-500);
+  }
+
+  /* ===== BOTTOM BAR ===== */
+  .bottom-bar {
+    position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--gray-200);
+    padding: 16px 32px; display: flex; justify-content: space-between; align-items: center;
+    z-index: 40;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sm {
+    background: #fff; border-radius: 16px; width: 480px; max-height: 90vh;
+    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 32px; text-align: center;
+  }
+  .modal-sm .modal-icon { font-size: 48px; margin-bottom: 16px; }
+  .modal-sm h3 { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .modal-sm p { font-size: 14px; color: var(--gray-500); line-height: 1.6; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery <span class="badge">8</span></a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT Policy & Utility</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item active" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <header class="header">
+    <div class="header-left">
+      <div>
+        <div class="header-title">배너 / 팝업 상세</div>
+        <div class="header-breadcrumb">운영 → 서비스 가이드 → 배너/팝업 → BN-1001</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="10_CMS.html" class="btn btn-outline" style="text-decoration: none;">← 목록으로</a>
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- LIVE BANNER -->
+    <div class="live-banner">
+      <span>🟢</span> 현재 노출 중인 배너입니다. 수정 시 즉시 반영됩니다. (노출 기간: 2026.04.17 ~ 2026.04.30)
+    </div>
+
+    <!-- ===== 1. 기본 정보 ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 기본 정보</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="type-badge type-banner">배너</span>
+          <span class="pos-badge pos-home">홈 메인</span>
+          <span class="status status-live"><span class="status-dot"></span> 노출중</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">배너 ID</div>
+            <div class="detail-value" style="font-family: monospace;">BN-1001</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">유형</div>
+            <div class="detail-value"><span class="type-badge type-banner">배너</span></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">노출 위치</div>
+            <div class="detail-value"><span class="pos-badge pos-home">홈 메인</span></div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">언어</div>
+            <div class="detail-value"><span class="lang-badge lang-kr">KR</span></div>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">시작일</div>
+              <div class="detail-value" style="color: var(--mint-dark);">2026.04.17</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">종료일</div>
+              <div class="detail-value" style="color: var(--red);">2026.04.30</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">마지막 수정자</div>
+              <div class="detail-value">Kai</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">최종 수정일</div>
+              <div class="detail-value">2026.04.17 16:40</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px; margin-bottom: 0;">
+          <label class="form-label">제목 <span class="required">*</span></label>
+          <input class="form-input" type="text" value="VAYLA Boost 시즌 오픈">
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2. 콘텐츠 본문 ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🖼️ 콘텐츠 본문</div>
+        <div style="font-size: 12px; color: var(--gray-400);">유저에게 실제 노출되는 배너/팝업 내용입니다</div>
+      </div>
+      <div class="card-body">
+        <!-- Image Preview -->
+        <div style="margin-bottom: 20px;">
+          <label class="form-label">이미지 미리보기</label>
+          <div class="image-preview">
+            <div class="preview-content">
+              <div class="preview-title">VAYLA Boost 시즌이 시작되었습니다</div>
+              <div class="preview-sub">새로운 프로젝트에 참여하고, 팬 활동과 리워드 경험을 더 확장해보세요</div>
+              <div class="preview-btn">지금 참여하기 →</div>
+            </div>
+          </div>
+          <div class="image-upload-hint">
+            <span>📎</span> 클릭하여 이미지를 업로드하세요 · 권장 사이즈: 1200 x 400px · PNG, JPG, WebP
+          </div>
+        </div>
+
+        <!-- Text Fields -->
+        <div class="form-row" style="margin-bottom: 20px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">메인 문구 <span class="required">*</span></label>
+            <input class="form-input" type="text" value="VAYLA Boost 시즌이 시작되었습니다" style="font-weight: 700;">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">서브 문구</label>
+            <input class="form-input" type="text" value="새로운 프로젝트에 참여하고, 팬 활동과 리워드 경험을 더 확장해보세요">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">버튼 문구</label>
+            <input class="form-input" type="text" value="지금 참여하기">
+            <div class="form-hint">버튼에 표시될 텍스트 (비워두면 버튼 미노출)</div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">연결 링크 <span class="required">*</span></label>
+            <input class="form-input" type="text" value="/boost" style="font-family: monospace; color: var(--mint-dark);">
+            <div class="form-hint">배너/팝업 클릭 시 이동할 경로</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3. 노출 설정 ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🔔 노출 설정</div>
+      </div>
+      <div class="card-body">
+        <div class="form-row-3" style="margin-bottom: 20px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">노출 상태 <span class="required">*</span></label>
+            <select class="form-select">
+              <option selected>노출중</option>
+              <option>비공개</option>
+              <option>예약중</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">노출 위치 <span class="required">*</span></label>
+            <select class="form-select">
+              <option selected>홈 메인</option>
+              <option>Discovery 상단</option>
+              <option>Boost 상단</option>
+              <option>Wallet 안내 영역</option>
+              <option>팝업</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">언어 <span class="required">*</span></label>
+            <select class="form-select">
+              <option selected>KR</option>
+              <option>EN</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-3">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">시작일 <span class="required">*</span></label>
+            <input class="form-input" type="date" value="2026-04-17">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">종료일 <span class="required">*</span></label>
+            <input class="form-input" type="date" value="2026-04-30">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">예약 노출 여부</label>
+            <select class="form-select">
+              <option selected>아니오</option>
+              <option>예</option>
+            </select>
+            <div class="form-hint">예약 노출 선택 시 시작일에 자동 노출</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4. 링크 및 액션 설정 ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🔗 링크 및 액션 설정</div>
+        <div style="font-size: 12px; color: var(--gray-400);">배너/팝업 클릭 시 동작을 설정합니다</div>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">링크 연결 여부 <span class="required">*</span></label>
+            <select class="form-select">
+              <option selected>예</option>
+              <option>아니오</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">이동 경로 <span class="required">*</span></label>
+            <input class="form-input" type="text" value="/boost" style="font-family: monospace; color: var(--mint-dark);">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">버튼 노출 여부</label>
+            <select class="form-select">
+              <option selected>예</option>
+              <option>아니오</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">버튼 문구</label>
+            <input class="form-input" type="text" value="지금 참여하기">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 5. 내부 메모 ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💬 내부 메모</div>
+        <div style="font-size: 12px; color: var(--gray-400);">운영팀 전용 · 유저에게 노출되지 않습니다</div>
+      </div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom: 0;">
+          <textarea class="form-textarea" rows="4" style="background: var(--yellow-light); border-color: rgba(245,158,11,0.3);">KR 버전 먼저 노출, EN 버전은 추후 추가 예정
+홈 메인 배너와 공지사항 링크 연결 완료
+종료 후 팝업 버전으로 전환 가능성 있음</textarea>
+          <div class="form-hint">노출 종료 후 재사용 여부, 이미지 교체 필요, 관련 문서 연결 상태 등을 기록하세요</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- ===== BOTTOM BAR ===== -->
+  <div class="bottom-bar">
+    <div style="display: flex; gap: 8px;">
+      <a href="10_CMS.html" class="btn btn-outline" style="text-decoration: none;">← 목록으로</a>
+      <button class="btn btn-yellow" onclick="showToggleModal()">🔒 비공개 전환</button>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn-outline" onclick="showSaveModal()">💾 저장</button>
+      <button class="btn btn-lg btn-mint" onclick="showSaveModal()">✅ 수정 완료</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ===== 저장 확인 MODAL ===== -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal-sm">
+    <div class="modal-icon">✅</div>
+    <h3>수정 완료</h3>
+    <p>배너/팝업이 성공적으로 수정되었습니다.<br>변경사항이 즉시 반영됩니다.</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <button class="btn btn-outline" onclick="closeSaveModal()">계속 수정</button>
+      <a href="10_CMS.html" class="btn btn-mint" style="text-decoration: none;">목록으로</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 비공개 전환 MODAL ===== -->
+<div class="modal-overlay" id="toggleModal">
+  <div class="modal-sm">
+    <div class="modal-icon">⚠️</div>
+    <h3>비공개로 전환</h3>
+    <p>이 배너/팝업을 비공개로 전환하시겠습니까?<br>비공개 전환 시 유저에게 더 이상 노출되지 않습니다.</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <button class="btn btn-outline" onclick="closeToggleModal()">취소</button>
+      <button class="btn btn-yellow" onclick="confirmToggle()">비공개 전환</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 비공개 완료 MODAL ===== -->
+<div class="modal-overlay" id="toggleDoneModal">
+  <div class="modal-sm">
+    <div class="modal-icon">🔒</div>
+    <h3>비공개 처리 완료</h3>
+    <p>배너/팝업이 비공개로 전환되었습니다.<br>유저에게 더 이상 노출되지 않습니다.</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <a href="10_CMS.html" class="btn btn-mint" style="text-decoration: none;">목록으로</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function showSaveModal() { document.getElementById('saveModal').classList.add('show'); }
+function closeSaveModal() { document.getElementById('saveModal').classList.remove('show'); }
+function showToggleModal() { document.getElementById('toggleModal').classList.add('show'); }
+function closeToggleModal() { document.getElementById('toggleModal').classList.remove('show'); }
+function confirmToggle() {
+  document.getElementById('toggleModal').classList.remove('show');
+  document.getElementById('toggleDoneModal').classList.add('show');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
+});
+</script>
+
+</body>
+</html>
