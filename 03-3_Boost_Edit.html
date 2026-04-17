@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Boost 프로젝트 편집</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ===== BUTTONS ===== */
+  .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red-light); color: var(--red); border: none; }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-lg { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
+  .btn-disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-desc { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+  .card-body { padding: 24px; }
+
+  /* ===== FORM ===== */
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+  .form-label .required { color: var(--red); margin-left: 2px; }
+  .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+  .form-input { width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--gray-700); outline: none; transition: border 0.15s; font-family: 'Inter', sans-serif; }
+  .form-input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+  .form-input::placeholder { color: var(--gray-300); }
+  .form-input:disabled { background: var(--gray-50); color: var(--gray-400); cursor: not-allowed; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  textarea.form-input { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .form-input-group { position: relative; }
+  .form-input-group input { padding-right: 60px; }
+  .form-input-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: var(--gray-400); }
+
+  .form-radio-group { display: flex; gap: 12px; margin-top: 4px; }
+  .form-radio {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border: 2px solid var(--gray-200); border-radius: 10px;
+    cursor: pointer; transition: all 0.15s; flex: 1;
+  }
+  .form-radio:hover { border-color: var(--gray-300); }
+  .form-radio.selected { border-color: var(--mint); background: var(--mint-light); }
+  .form-radio input[type="radio"] { display: none; }
+  .form-radio .radio-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--gray-300); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .form-radio.selected .radio-dot { border-color: var(--mint); }
+  .form-radio.selected .radio-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--mint); }
+  .form-radio .radio-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .form-radio .radio-desc { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* ===== IMAGE UPLOAD ===== */
+  .upload-area {
+    border: 2px dashed var(--gray-200); border-radius: 14px;
+    padding: 40px 20px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--gray-50);
+  }
+  .upload-area:hover { border-color: var(--mint); background: var(--mint-light); }
+  .upload-icon { font-size: 48px; margin-bottom: 12px; }
+  .upload-title { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .upload-desc { font-size: 12px; color: var(--gray-400); }
+
+  .upload-thumb-row { display: flex; gap: 12px; margin-top: 16px; }
+  .upload-thumb {
+    width: 80px; height: 80px; border-radius: 10px;
+    background: var(--gray-100); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; border: 1px solid var(--gray-200); position: relative;
+  }
+  .upload-thumb .remove-btn {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--red); color: #fff; border: 2px solid #fff;
+    font-size: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ===== STEPPER ===== */
+  .stepper {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 32px; padding: 0 40px;
+  }
+  .step { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .step-number {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; border: 2px solid var(--gray-200);
+    color: var(--gray-400); background: #fff; transition: all 0.2s;
+  }
+  .step.active .step-number { border-color: var(--mint); background: var(--mint); color: #fff; }
+  .step.done .step-number { border-color: var(--mint); background: var(--mint-light); color: var(--mint-dark); }
+  .step-label { font-size: 13px; font-weight: 600; color: var(--gray-400); }
+  .step.active .step-label { color: var(--dark); }
+  .step.done .step-label { color: var(--mint-dark); }
+  .step-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 12px; }
+  .step-line.done { background: var(--mint); }
+
+  /* ===== MILESTONE ===== */
+  .milestone-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px; background: var(--gray-50); border-radius: 10px;
+    margin-bottom: 12px; border: 1px solid var(--gray-100);
+  }
+  .milestone-number {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--mint-light); color: var(--mint-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .milestone-content { flex: 1; }
+  .milestone-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
+
+  /* ===== ROI STRUCTURE ===== */
+  .roi-visual {
+    display: flex; height: 40px; border-radius: 10px; overflow: hidden; margin: 16px 0;
+  }
+  .roi-segment { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+
+  /* ===== CONTRACT INFO ===== */
+  .contract-card {
+    padding: 20px; background: linear-gradient(135deg, var(--dark), var(--dark-2));
+    border-radius: 12px; color: #fff;
+  }
+  .contract-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .contract-value { font-size: 14px; font-weight: 600; font-family: monospace; }
+
+  /* ===== PREVIEW ===== */
+  .preview-card {
+    border: 2px solid var(--mint); border-radius: 16px;
+    overflow: hidden; background: #fff;
+  }
+  .preview-cover {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 60px; position: relative;
+  }
+  .preview-body { padding: 20px; }
+  .preview-title { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .preview-creator { font-size: 13px; color: var(--gray-400); margin-bottom: 16px; }
+  .preview-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .preview-stat-label { font-size: 11px; color: var(--gray-400); }
+  .preview-stat-value { font-size: 18px; font-weight: 700; color: var(--dark); }
+  .progress-bar { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--mint), var(--mint-dark)); }
+
+  /* ===== GRID ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-73 { display: grid; grid-template-columns: 7fr 3fr; gap: 24px; }
+
+  /* ===== BOTTOM BAR ===== */
+  .bottom-bar {
+    position: sticky; bottom: 0;
+    background: #fff; border-top: 1px solid var(--gray-200);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 40;
+  }
+  .bottom-bar-left { display: flex; align-items: center; gap: 12px; }
+  .bottom-bar-right { display: flex; align-items: center; gap: 12px; }
+  .draft-indicator { font-size: 12px; color: var(--gray-400); display: flex; align-items: center; gap: 6px; }
+  .draft-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+
+  /* ===== TAG INPUT ===== */
+  .tag-input-area { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; min-height: 44px; cursor: text; }
+  .tag-input-area:focus-within { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--mint-light); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .tag .tag-remove { cursor: pointer; font-size: 14px; opacity: 0.6; }
+  .tag .tag-remove:hover { opacity: 1; }
+  .tag-input-area input { border: none; outline: none; font-size: 13px; flex: 1; min-width: 100px; background: transparent; }
+
+  /* ===== STATUS BANNER ===== */
+  .status-banner {
+    padding: 16px 20px; background: var(--yellow-light); border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 10px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px;
+    font-size: 13px; color: var(--yellow);
+  }
+  .status-banner .icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .status-banner .text { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item active" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <a href="03_Boost.html" style="text-decoration: none; color: var(--gray-400); font-size: 20px; margin-right: 8px;">←</a>
+      <div>
+        <div class="header-title">Boost 프로젝트 편집</div>
+        <div class="header-breadcrumb">서비스 관리 → Boost → 프로젝트 편집</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- STATUS BANNER -->
+    <div class="status-banner">
+      <div class="icon">⚠️</div>
+      <div class="text">이 프로젝트는 현재 '진행 중' 상태입니다. 일부 필드는 수정이 제한됩니다.</div>
+    </div>
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step active">
+        <div class="step-number">1</div>
+        <div class="step-label">기본 정보</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step done">
+        <div class="step-number">2</div>
+        <div class="step-label">수익 구조</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step done">
+        <div class="step-number">3</div>
+        <div class="step-label">마일스톤</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step done">
+        <div class="step-number">4</div>
+        <div class="step-label">컨트랙트 배포</div>
+      </div>
+      <div class="step-line done"></div>
+      <div class="step done">
+        <div class="step-number">5</div>
+        <div class="step-label">미리보기 & 발행</div>
+      </div>
+    </div>
+
+    <div class="grid-73">
+      <!-- LEFT: FORM AREA -->
+      <div>
+
+        <!-- ===== SECTION 1: 기본 정보 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📋 기본 정보</div>
+              <div class="card-desc">프로젝트의 핵심 정보</div>
+            </div>
+            <span style="font-size: 12px; color: var(--gray-400);">편집 중</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">프로젝트명 <span class="required">*</span></label>
+              <input type="text" class="form-input" value="Waterbomb Festival 2026">
+              <div class="form-hint">유저에게 노출되는 공식 프로젝트 이름입니다</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">프로젝트 설명 <span class="required">*</span></label>
+              <textarea class="form-input">Waterbomb Festival 2026은 대한민국의 대표 워터 뮤직 페스티벌입니다. CJ ENM의 주최로 여름 시즌에 개최되며, 국내외 유명 아티스트들이 참여합니다. 펀딩을 통해 모인 자금은 무대 제작, 안전 관리, 국제 아티스트 초청 등에 활용됩니다. 참여자들은 이벤트 완료 후 15% 규모의 ROI를 기대할 수 있습니다.</textarea>
+              <div class="form-hint">최소 100자 이상 권장 · Markdown 지원</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">카테고리 <span class="required">*</span></label>
+                <select class="form-input">
+                  <option selected>🎪 Music Festival</option>
+                  <option>🎤 Concert Tour</option>
+                  <option>🏆 Awards Event</option>
+                  <option>🤝 Fan Meeting</option>
+                  <option>🎬 Media Production</option>
+                  <option>🎨 Exhibition</option>
+                  <option>📀 Album Production</option>
+                  <option>🏟️ Stadium Event</option>
+                  <option>📱 Digital Content</option>
+                  <option>🔧 Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">태그</label>
+                <div class="tag-input-area">
+                  <span class="tag">Festival <span class="tag-remove">✕</span></span>
+                  <span class="tag">Water <span class="tag-remove">✕</span></span>
+                  <span class="tag">Music <span class="tag-remove">✕</span></span>
+                  <input type="text" placeholder="태그 입력 후 Enter...">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 2: 주최자 / 아티스트 정보 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎤 주최자 & 아티스트 정보</div>
+              <div class="card-desc">프로젝트의 주체와 관련 아티스트 정보</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">주최자 / 파트너사 <span class="required">*</span></label>
+                <input type="text" class="form-input" value="CJ ENM">
+              </div>
+              <div class="form-group">
+                <label class="form-label">주최자 연락처</label>
+                <input type="text" class="form-input" value="contact@cjenm.com">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">관련 아티스트</label>
+              <div class="tag-input-area">
+                <span class="tag">Various Artists <span class="tag-remove">✕</span></span>
+                <input type="text" placeholder="아티스트 이름 입력 후 Enter...">
+              </div>
+              <div class="form-hint">관련 아티스트를 등록하면 팬 타겟팅에 활용됩니다</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">주최자 지갑 주소 (USDT 수령)</label>
+                <input type="text" class="form-input" value="0x1234567890123456789012345678901234567890" style="font-family: monospace; font-size: 13px;">
+                <div class="form-hint">정산 시 USDT가 전송될 BEP-20 지갑 주소</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">파트너 계약 유형</label>
+                <select class="form-input">
+                  <option selected>직접 제휴</option>
+                  <option>에이전시 계약</option>
+                  <option>크리에이터 직접</option>
+                  <option>플랫폼 자체 기획</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 3: 펀딩 설정 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">💰 펀딩 설정</div>
+              <div class="card-desc">목표 금액, 기간, 참여 조건을 설정하세요</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">목표 금액 <span class="required">*</span></label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="500000" style="padding-right: 70px;">
+                  <span class="form-input-suffix">USDT</span>
+                </div>
+                <div class="form-hint">최소 $10,000 ~ 최대 $5,000,000</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">최소 참여 금액 <span class="required">*</span></label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="100" style="padding-right: 70px;">
+                  <span class="form-input-suffix">USDT</span>
+                </div>
+                <div class="form-hint">VAYLA 기본 정책: 100 USDT</div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">최대 참여 금액 (1인당)</label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="50000" style="padding-right: 70px;">
+                  <span class="form-input-suffix">USDT</span>
+                </div>
+                <div class="form-hint">비워두면 제한 없음</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">최대 참여자 수</label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="5000" style="padding-right: 50px;">
+                  <span class="form-input-suffix">명</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">모금 시작일 <span class="required">*</span></label>
+                <input type="datetime-local" class="form-input" value="2026-03-01T00:00" disabled>
+                <div class="form-hint">이미 시작된 프로젝트는 수정 불가</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">모금 종료일 <span class="required">*</span></label>
+                <input type="datetime-local" class="form-input" value="2026-06-30T23:59">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">펀딩 실패 시 정책 <span class="required">*</span></label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="fail-policy" checked>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">전액 환불 (All-or-Nothing)</div>
+                    <div class="radio-desc">목표 미달 시 참여자에게 100% 환불</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="fail-policy">
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">부분 진행 (Keep-What-You-Raise)</div>
+                    <div class="radio-desc">모금액 그대로 프로젝트 진행</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">사전 등록 허용</label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="pre-reg" checked>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">허용</div>
+                    <div class="radio-desc">시작 전 관심 등록 가능</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="pre-reg">
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">비활성</div>
+                    <div class="radio-desc">시작일부터 참여 가능</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 4: 수익 구조 (ROI) ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📈 수익 구조 (ROI)</div>
+              <div class="card-desc">참여자에게 돌아갈 예상 수익과 배분 구조를 설정합니다</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label">예상 ROI <span class="required">*</span></label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="15" step="0.1" style="padding-right: 40px;">
+                  <span class="form-input-suffix">%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">플랫폼 수수료</label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="0.4" step="0.1" style="padding-right: 40px;" disabled>
+                  <span class="form-input-suffix">%</span>
+                </div>
+                <div class="form-hint">고정 수수료</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">정산 예정일</label>
+                <input type="date" class="form-input" value="2026-07-15">
+              </div>
+            </div>
+
+            <!-- ROI Visual -->
+            <div class="form-group">
+              <label class="form-label">수익 배분 구조 (시뮬레이션)</label>
+              <div style="background: var(--gray-50); border-radius: 12px; padding: 20px;">
+                <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 8px;">목표 $500,000 · ROI 15% 기준</div>
+                <div class="roi-visual">
+                  <div class="roi-segment" style="flex: 84.6; background: var(--mint);">참여자 배분 84.6%</div>
+                  <div class="roi-segment" style="flex: 15; background: var(--blue);">ROI 15%</div>
+                  <div class="roi-segment" style="flex: 0.4; background: var(--purple);">0.4%</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;">
+                  <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--gray-400);">총 모금액</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--dark);">$500,000</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--gray-400);">총 수익 발생</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--mint);">$75,000</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--gray-400);">참여자 총 배분</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--blue);">$575,000</div>
+                  </div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 11px; color: var(--gray-400);">플랫폼 수수료</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--purple);">$2,000</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ROI 지급 방식</label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="roi-type" checked>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">원금 + ROI 일괄 정산</div>
+                    <div class="radio-desc">이벤트 완료 후 한 번에 지급</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="roi-type">
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">ROI 분할 지급</div>
+                    <div class="radio-desc">마일스톤별로 분할하여 지급</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 5: 마일스톤 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🏁 마일스톤</div>
+              <div class="card-desc">프로젝트 진행 단계를 설정하세요</div>
+            </div>
+            <button class="btn btn-sm btn-outline">+ 마일스톤 추가</button>
+          </div>
+          <div class="card-body">
+            <div class="milestone-item">
+              <div class="milestone-number">1</div>
+              <div class="milestone-content">
+                <div class="milestone-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-input" value="초기 준비 및 공식 발표" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="date" class="form-input" value="2026-03-15" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-input-group">
+                      <input type="number" class="form-input" value="20" style="padding: 8px 12px 8px 12px; font-size: 13px; padding-right: 40px;">
+                      <span class="form-input-suffix" style="font-size: 12px;">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger" style="margin-top: 2px;">✕</button>
+            </div>
+
+            <div class="milestone-item">
+              <div class="milestone-number">2</div>
+              <div class="milestone-content">
+                <div class="milestone-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-input" value="티켓 판매 오픈" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="date" class="form-input" value="2026-05-01" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-input-group">
+                      <input type="number" class="form-input" value="40" style="padding: 8px 12px 8px 12px; font-size: 13px; padding-right: 40px;">
+                      <span class="form-input-suffix" style="font-size: 12px;">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger" style="margin-top: 2px;">✕</button>
+            </div>
+
+            <div class="milestone-item">
+              <div class="milestone-number">3</div>
+              <div class="milestone-content">
+                <div class="milestone-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-input" value="페스티벌 개최" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="date" class="form-input" value="2026-06-20" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-input-group">
+                      <input type="number" class="form-input" value="25" style="padding: 8px 12px 8px 12px; font-size: 13px; padding-right: 40px;">
+                      <span class="form-input-suffix" style="font-size: 12px;">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger" style="margin-top: 2px;">✕</button>
+            </div>
+
+            <div class="milestone-item">
+              <div class="milestone-number">4</div>
+              <div class="milestone-content">
+                <div class="milestone-row">
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="text" class="form-input" value="최종 정산 및 ROI 지급" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <input type="date" class="form-input" value="2026-07-15" style="padding: 8px 12px; font-size: 13px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <div class="form-input-group">
+                      <input type="number" class="form-input" value="15" style="padding: 8px 12px 8px 12px; font-size: 13px; padding-right: 40px;">
+                      <span class="form-input-suffix" style="font-size: 12px;">%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-danger" style="margin-top: 2px;">✕</button>
+            </div>
+
+            <div style="margin-top: 12px; padding: 12px 16px; background: var(--blue-light); border-radius: 8px; font-size: 12px; color: var(--blue);">
+              💡 마일스톤별 자금 배분 합계: <strong>100%</strong> · 각 마일스톤 달성 시 해당 비율만큼 주최자에게 자금이 릴리즈됩니다
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 6: 미디어 & 커버 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🖼️ 미디어 & 커버</div>
+              <div class="card-desc">프로젝트 페이지에 표시될 이미지와 미디어를 업로드하세요</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">커버 이미지 <span class="required">*</span></label>
+              <div class="upload-area">
+                <div class="upload-icon">🖼️</div>
+                <div class="upload-title">클릭하여 이미지 업로드</div>
+                <div class="upload-desc">1200 x 400px 권장 · JPG, PNG, WebP · 최대 5MB</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">갤러리 이미지 (최대 8장)</label>
+              <div class="upload-thumb-row">
+                <div class="upload-thumb" style="background: linear-gradient(135deg, #667EEA, #764BA2);">
+                  🎪
+                  <div class="remove-btn">✕</div>
+                </div>
+                <div class="upload-thumb" style="background: linear-gradient(135deg, #FF6B8A, #FF8E53);">
+                  💧
+                  <div class="remove-btn">✕</div>
+                </div>
+                <div class="upload-thumb" style="background: linear-gradient(135deg, #4FC3F7, #00BCD4);">
+                  🎤
+                  <div class="remove-btn">✕</div>
+                </div>
+                <div class="upload-thumb">
+                  <span style="font-size: 20px; color: var(--gray-300);">+</span>
+                </div>
+              </div>
+              <div class="form-hint">각 이미지 최대 5MB · 정사각형 권장</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">프로모션 영상 URL</label>
+              <input type="url" class="form-input" value="https://youtube.com/watch?v=dQw4w9WgXcQ">
+              <div class="form-hint">YouTube 또는 Vimeo 링크 지원</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 7: 스마트 컨트랙트 설정 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🔗 스마트 컨트랙트 설정</div>
+              <div class="card-desc">Escrow 컨트랙트 배포 옵션을 설정합니다</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">컨트랙트 유형</label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="contract" disabled>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">🔒 Escrow (권장)</div>
+                    <div class="radio-desc">마일스톤 달성 시에만 자금 릴리즈. 안전한 방식</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="contract" disabled>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">📋 Simple Pool</div>
+                    <div class="radio-desc">단순 풀링 후 일괄 정산. 소규모 프로젝트 적합</div>
+                  </div>
+                </label>
+              </div>
+              <div class="form-hint" style="margin-top: 12px; color: var(--gray-500);">배포된 컨트랙트는 수정할 수 없습니다</div>
+            </div>
+
+            <div class="contract-card">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div>
+                  <div class="contract-label">네트워크</div>
+                  <div class="contract-value" style="color: var(--mint);">🟡 BSC Mainnet</div>
+                </div>
+                <div>
+                  <div class="contract-label">결제 토큰</div>
+                  <div class="contract-value">USDT (BEP-20)</div>
+                </div>
+                <div>
+                  <div class="contract-label">컨트랙트 주소</div>
+                  <div class="contract-value" style="word-break: break-all;">0xAbCdEf123456789012345678901234567890AbCd</div>
+                </div>
+                <div>
+                  <div class="contract-label">배포 상태</div>
+                  <div class="contract-value" style="color: var(--mint);">✓ 배포 완료</div>
+                </div>
+                <div>
+                  <div class="contract-label">컨트랙트 템플릿</div>
+                  <div class="contract-value">VAYLABoostEscrow_v2.sol</div>
+                </div>
+                <div>
+                  <div class="contract-label">배포 Gas 비용</div>
+                  <div class="contract-value">0.015 BNB ($4.50)</div>
+                </div>
+              </div>
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--dark-3);">
+                <div class="contract-label">참고</div>
+                <div style="font-size: 12px; color: var(--gray-400); line-height: 1.5;">
+                  이 Escrow 컨트랙트는 BSC Mainnet에 배포되어 있으며, BscScan에서 검증 가능합니다.<br>
+                  배포된 컨트랙트의 주요 파라미터는 수정할 수 없습니다.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 8: 알림 & 마케팅 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📣 알림 & 마케팅</div>
+              <div class="card-desc">프로젝트 진행 중 알림과 프로모션 설정</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">진행 중 알림</label>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; cursor: pointer;">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);" checked>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--dark);">🔔 참여자 알림</div>
+                    <div style="font-size: 12px; color: var(--gray-400);">마일스톤 달성 시 참여자에게 알림 발송</div>
+                  </div>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; cursor: pointer;">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);" checked>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--dark);">📧 정산 완료 메일</div>
+                    <div style="font-size: 12px; color: var(--gray-400);">ROI 지급 시 참여자에게 이메일 발송</div>
+                  </div>
+                </label>
+                <label style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; cursor: pointer;">
+                  <input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--dark);">📢 커뮤니티 공지</div>
+                    <div style="font-size: 12px; color: var(--gray-400);">진행 상황을 홈피드에 업데이트</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: LIVE PREVIEW -->
+      <div>
+        <div style="position: sticky; top: 88px;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            👁️ 현재 프로젝트 카드
+          </div>
+
+          <!-- Preview Card -->
+          <div class="preview-card">
+            <div class="preview-cover" style="background: linear-gradient(135deg, #4FC3F7, #00BCD4);">
+              💧
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span style="padding: 4px 12px; background: rgba(0,201,167, 0.9); backdrop-filter: blur(4px); border-radius: 6px; font-size: 11px; font-weight: 600; color: #fff;">ONGOING</span>
+              </div>
+            </div>
+            <div class="preview-body">
+              <div class="preview-title">Waterbomb Festival 2026</div>
+              <div class="preview-creator">by CJ ENM · Music Festival</div>
+
+              <div class="preview-stats">
+                <div>
+                  <div class="preview-stat-label">목표 금액</div>
+                  <div class="preview-stat-value">$500K</div>
+                </div>
+                <div>
+                  <div class="preview-stat-label">예상 ROI</div>
+                  <div class="preview-stat-value" style="color: var(--mint);">+15%</div>
+                </div>
+                <div>
+                  <div class="preview-stat-label">진행도</div>
+                  <div class="preview-stat-value" style="font-size: 14px;">122일</div>
+                </div>
+              </div>
+
+              <div class="progress-bar" style="margin-bottom: 8px;">
+                <div class="progress-fill" style="width: 65%;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 16px;">
+                <span>$325K</span>
+                <span>65%</span>
+              </div>
+
+              <div style="display: flex; gap: 8px;">
+                <div style="flex: 1; padding: 10px; background: var(--mint); border-radius: 8px; text-align: center; font-size: 13px; font-weight: 700; color: #fff;">참여하기</div>
+                <div style="padding: 10px 14px; background: var(--gray-50); border-radius: 8px; font-size: 16px; cursor: pointer;">♡</div>
+              </div>
+
+              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-100);">
+                <div style="display: flex; gap: 12px; font-size: 12px; color: var(--gray-400);">
+                  <span>🏷️ Min 100 USDT</span>
+                  <span>🔒 Escrow</span>
+                  <span>📅 03.01 ~ 06.30</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div style="margin-top: 16px; padding: 16px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">📊 프로젝트 상태</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <span style="color: var(--gray-600);">상태</span>
+                <span style="color: var(--mint); font-weight: 600;">진행 중</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <span style="color: var(--gray-600);">총 참여자</span>
+                <span style="color: var(--dark); font-weight: 600;">3,250명</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <span style="color: var(--gray-600);">모금액</span>
+                <span style="color: var(--dark); font-weight: 600;">$325,000</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <span style="color: var(--gray-600);">달성률</span>
+                <span style="color: var(--mint); font-weight: 600;">65%</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+                <span style="color: var(--gray-600);">마일스톤</span>
+                <span style="color: var(--dark); font-weight: 600;">2/4 완료</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ACTION BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-bar-left">
+      <div class="draft-indicator">
+        <div class="draft-dot"></div>
+        변경사항 자동 저장됨 · 14:32
+      </div>
+    </div>
+    <div class="bottom-bar-right">
+      <button class="btn btn-outline" onclick="window.location.href='03_Boost.html'">취소</button>
+      <button class="btn btn-outline">📄 임시 저장</button>
+      <button class="btn btn-mint btn-lg">💾 변경사항 저장</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

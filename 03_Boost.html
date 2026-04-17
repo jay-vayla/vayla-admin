@@ -220,6 +220,35 @@
   .form-input:focus { border-color: var(--mint); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .modal-footer { padding: 20px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 12px; }
+
+  /* ===== MODAL ADDITIONAL STYLES ===== */
+  .modal-box { background: #fff; border-radius: 16px; width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow-y: auto; max-height: 90vh; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-header { padding: 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 18px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--gray-100); font-size: 18px; color: var(--gray-500); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .modal-close:hover { background: var(--gray-200); color: var(--gray-700); }
+  .modal-body { padding: 24px; }
+  .modal-footer { padding: 20px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 12px; }
+
+  .info-box { padding: 16px; background: var(--gray-50); border-radius: 10px; border-left: 4px solid var(--gray-300); margin: 16px 0; font-size: 13px; color: var(--gray-600); }
+  .info-box strong { color: var(--dark); display: block; margin-bottom: 4px; }
+
+  .form-textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--gray-700); font-family: inherit; outline: none; resize: vertical; min-height: 100px; }
+  .form-textarea:focus { border-color: var(--mint); }
+
+  .radio-group { display: flex; flex-direction: column; gap: 10px; }
+  .radio-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .radio-item input[type="radio"] { cursor: pointer; width: 16px; height: 16px; }
+  .radio-item label { cursor: pointer; font-size: 14px; color: var(--gray-700); }
+
+  .checkbox-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .checkbox-item input[type="checkbox"] { cursor: pointer; width: 16px; height: 16px; }
+  .checkbox-item label { cursor: pointer; font-size: 14px; color: var(--gray-700); }
+
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
 </style>
 </head>
 <body>
@@ -371,8 +400,8 @@
             <div class="roi-badge roi-pending">📊 ROI 예상: +12.0%</div>
             <div style="display: flex; gap: 8px;">
               <a href="03-2_Boost_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a>
-              <button class="btn btn-sm btn-outline">편집</button>
-              <button class="btn btn-sm btn-danger">중지</button>
+              <a href="03-3_Boost_Edit.html" class="btn btn-sm btn-outline" style="text-decoration:none;">편집</a>
+              <button class="btn btn-sm btn-danger" onclick="document.getElementById('stopModal').classList.add('show')">중지</button>
             </div>
           </div>
         </div>
@@ -429,8 +458,8 @@
             <div class="roi-badge roi-pending">📊 ROI 예상: +15.0%</div>
             <div style="display: flex; gap: 8px;">
               <a href="03-2_Boost_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a>
-              <button class="btn btn-sm btn-outline">편집</button>
-              <button class="btn btn-sm btn-danger">삭제</button>
+              <a href="03-3_Boost_Edit.html" class="btn btn-sm btn-outline" style="text-decoration:none;">편집</a>
+              <button class="btn btn-sm btn-danger" onclick="document.getElementById('deleteModal').classList.add('show')">삭제</button>
             </div>
           </div>
         </div>
@@ -487,8 +516,8 @@
             <div class="roi-badge roi-pending">📊 ROI 예상: +9.0%</div>
             <div style="display: flex; gap: 8px;">
               <a href="03-2_Boost_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a>
-              <button class="btn btn-sm btn-outline">편집</button>
-              <button class="btn btn-sm btn-danger">중지</button>
+              <a href="03-3_Boost_Edit.html" class="btn btn-sm btn-outline" style="text-decoration:none;">편집</a>
+              <button class="btn btn-sm btn-danger" onclick="document.getElementById('stopModal').classList.add('show')">중지</button>
             </div>
           </div>
         </div>
@@ -794,6 +823,98 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ===== STOP PROJECT MODAL ===== -->
+<div class="modal-overlay" id="stopModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">⚠️ 프로젝트 중지</div>
+      <button class="modal-close" onclick="document.getElementById('stopModal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="padding: 14px; background: var(--red-light); border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--red); border-left: 4px solid var(--red);">
+        <strong>주의:</strong> 프로젝트를 중지하면 모금이 즉시 중단되며, 참여자에게 환불 프로세스가 시작됩니다.
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">중지할 프로젝트</div>
+        <div style="padding: 12px 14px; background: var(--gray-50); border-radius: 8px; font-size: 14px; color: var(--gray-700); border: 1px solid var(--gray-200);">Waterbomb Festival 2026</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">중지 사유</label>
+        <select class="form-input">
+          <option>사유 선택</option>
+          <option>주최자 요청</option>
+          <option>규정 위반</option>
+          <option>목표 미달</option>
+          <option>사기 의심</option>
+          <option>기타</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">환불 방식</label>
+        <div class="radio-group">
+          <div class="radio-item">
+            <input type="radio" id="refund1" name="refund" value="full" checked>
+            <label for="refund1">즉시 전액 환불</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="refund2" name="refund" value="milestone">
+            <label for="refund2">마일스톤 기반 부분 환불</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="notify" checked>
+          <label for="notify">참여자에게 중지 알림 발송</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">상세 사유</label>
+        <textarea class="form-textarea" placeholder="중지 사유를 상세히 입력하세요..."></textarea>
+      </div>
+
+      <div class="info-box">
+        <strong>영향 요약</strong>
+        참여자 382명에게 환불 처리됩니다.<br>
+        에스크로 잔액: $168,400
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('stopModal').classList.remove('show')">취소</button>
+      <button class="btn" style="background: var(--red); color: #fff; padding: 8px 16px;">프로젝트 중지 확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DELETE PROJECT MODAL ===== -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">⚠️ 프로젝트 삭제</div>
+      <button class="modal-close" onclick="document.getElementById('deleteModal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="padding: 14px; background: var(--red-light); border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--red); border-left: 4px solid var(--red);">
+        <strong>주의:</strong> 이 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+      </div>
+
+      <div class="form-group">
+        <div class="form-label">삭제할 프로젝트</div>
+        <div style="padding: 12px 14px; background: var(--gray-50); border-radius: 8px; font-size: 14px; color: var(--gray-700); border: 1px solid var(--gray-200);">G-Dragon World Tour 2026</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('deleteModal').classList.remove('show')">취소</button>
+      <button class="btn" style="background: var(--red); color: #fff; padding: 8px 16px;">삭제</button>
+    </div>
   </div>
 </div>
 
