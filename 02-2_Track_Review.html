@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Track Review (트랙 심사)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mint: #00C9A7;
+    --mint-light: #E6FAF5;
+    --mint-dark: #00A88A;
+    --dark: #1A2332;
+    --dark-2: #243044;
+    --dark-3: #2D3B50;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --red: #EF4444;
+    --red-light: #FEF2F2;
+    --yellow: #F59E0B;
+    --yellow-light: #FFFBEB;
+    --blue: #3B82F6;
+    --blue-light: #EFF6FF;
+    --purple: #8B5CF6;
+    --purple-light: #F5F3FF;
+    --orange: #F97316;
+    --orange-light: #FFF7ED;
+    --sidebar-w: 260px;
+    --header-h: 64px;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--dark);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--dark-3);
+  }
+
+  .sidebar-logo .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--mint), var(--mint-dark));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; color: #fff;
+  }
+
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+
+  .nav-section {
+    padding: 8px 24px 4px;
+    font-size: 10px; font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 1.2px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 24px;
+    color: var(--gray-300); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: all 0.15s; cursor: pointer;
+    position: relative;
+  }
+
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+
+  .nav-item.active {
+    color: var(--mint);
+    background: rgba(0, 201, 167, 0.08);
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 4px; bottom: 4px;
+    width: 3px;
+    background: var(--mint);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--dark-3);
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .sidebar-footer .avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--mint), var(--blue));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+  /* ===== HEADER ===== */
+  .header {
+    height: var(--header-h);
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+    position: sticky; top: 0; z-index: 50;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .header-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+    font-size: 18px; transition: all 0.15s;
+  }
+
+  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
+
+  .header-btn .dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px;
+    background: var(--red); border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  .back-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px; transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .back-btn:hover { border-color: var(--mint); color: var(--mint); }
+
+  .network-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: var(--mint-light);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    color: var(--mint-dark);
+  }
+
+  .network-badge .pulse {
+    width: 8px; height: 8px;
+    background: var(--mint); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ===== CONTENT ===== */
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ===== KPI CARDS ===== */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+
+  /* ===== CARD ===== */
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #d23c3c; }
+  .btn-yellow { background: var(--yellow); color: #fff; }
+  .btn-yellow:hover { background: #d97706; }
+  .btn-purple { background: var(--purple); color: #fff; }
+  .btn-purple:hover { background: #7c3aed; }
+  .btn-gray { background: var(--gray-100); color: var(--gray-600); }
+  .btn-gray:hover { background: var(--gray-200); }
+
+  /* ===== STATUS BADGES ===== */
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .status-waiting { background: var(--mint-light); color: var(--mint-dark); }
+  .status-approved { background: var(--blue-light); color: var(--blue); }
+  .status-hold { background: var(--yellow-light); color: var(--yellow); }
+  .status-rejected { background: var(--red-light); color: var(--red); }
+  .status-resubmit { background: var(--purple-light); color: var(--purple); }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ===== TAB NAV ===== */
+  .tab-nav {
+    display: flex; gap: 4px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+
+  .tab-btn.active {
+    background: var(--mint);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 201, 167, 0.3);
+  }
+
+  .tab-btn .count {
+    background: rgba(255,255,255,0.25);
+    padding: 1px 7px; border-radius: 6px;
+    font-size: 11px;
+  }
+
+  .tab-btn:not(.active) .count {
+    background: var(--gray-100);
+    color: var(--gray-500);
+  }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px; font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--gray-50);
+    vertical-align: middle;
+  }
+
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--gray-50); cursor: pointer; }
+
+  .track-info { display: flex; align-items: center; gap: 12px; }
+
+  .track-thumb {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .track-name { font-weight: 600; color: var(--dark); font-size: 13px; }
+  .track-artist { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+  .genre-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--gray-100);
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    color: var(--gray-600);
+  }
+
+  /* ===== PAGINATION ===== */
+  .pagination {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .page-info { font-size: 13px; color: var(--gray-400); }
+
+  .page-btns { display: flex; gap: 4px; }
+
+  .page-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    position: relative;
+  }
+
+  .search-box input {
+    padding: 9px 14px 9px 38px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray-700);
+    background: #fff;
+    outline: none;
+    transition: border 0.15s;
+    min-width: 280px;
+  }
+
+  .search-box input:focus { border-color: var(--mint); }
+
+  .search-box .search-icon {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    font-size: 14px;
+  }
+
+  .filter-select {
+    padding: 9px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray-600);
+    background: #fff;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .filter-select:focus { border-color: var(--mint); }
+
+  /* ===== MODAL OVERLAY ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+  }
+
+  .modal-title { font-size: 18px; font-weight: 700; color: var(--dark); }
+
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 8px; border: none;
+    background: var(--gray-100);
+    font-size: 18px; color: var(--gray-500);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .modal-close:hover { background: var(--gray-200); }
+
+  .modal-body { padding: 24px; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px; color: var(--gray-700);
+    outline: none;
+    transition: border 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--mint); }
+
+  textarea.form-input { resize: vertical; font-family: inherit; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--gray-100);
+    display: flex; justify-content: flex-end; gap: 12px;
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    z-index: 10;
+  }
+
+  /* ===== MODAL CONTENT SECTIONS ===== */
+  .modal-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .modal-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .modal-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  .info-label { color: var(--gray-500); font-weight: 500; }
+  .info-value { color: var(--dark); font-weight: 600; }
+
+  .waveform-placeholder {
+    height: 60px;
+    background: linear-gradient(90deg, var(--gray-100) 0%, var(--gray-200) 50%, var(--gray-100) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  .tag-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .tag-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .tag-btn:hover {
+    border-color: var(--mint);
+    color: var(--mint);
+  }
+
+  .tag-btn.selected {
+    background: var(--mint);
+    border-color: var(--mint);
+    color: #fff;
+  }
+
+  .timeline {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+
+  .timeline-item {
+    padding: 8px 0;
+    color: var(--gray-600);
+  }
+
+  .timeline-item strong {
+    color: var(--dark);
+  }
+
+  .timeline-item .time {
+    color: var(--gray-400);
+  }
+
+  /* ===== UTILITIES ===== */
+  .mt-16 { margin-top: 16px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div>
+      <div class="logo-text">VAYLA Arena</div>
+      <div class="logo-sub">Admin Console</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html">
+      <span class="icon">📊</span> Dashboard
+    </a>
+
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item active" href="02_Discovery.html">
+      <span class="icon">🎵</span> Discovery
+      <span class="badge">8</span>
+    </a>
+    <a class="nav-item" href="03_Boost.html">
+      <span class="icon">🚀</span> Boost
+    </a>
+    <a class="nav-item" href="04_Wallet.html">
+      <span class="icon">💰</span> 지갑 & 트랜잭션
+    </a>
+
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html">
+      <span class="icon">🎨</span> User NFT
+    </a>
+    <a class="nav-item" href="06_NFT_Creator.html">
+      <span class="icon">⭐</span> Creator NFT
+    </a>
+    <a class="nav-item" href="07_NFT_Policy.html">
+      <span class="icon">📋</span> NFT 정책 & 마켓
+    </a>
+
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html">
+      <span class="icon">👥</span> 회원 관리
+    </a>
+    <a class="nav-item" href="09_Rewards.html">
+      <span class="icon">💎</span> 리워드 & 정산
+    </a>
+    <a class="nav-item" href="10_CMS.html">
+      <span class="icon">📝</span> 서비스 가이드
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info">
+      <div class="user-name">Jay Kim</div>
+      <div class="user-role">Super Admin</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <a class="back-btn" href="02_Discovery.html" title="Discovery로 돌아가기">←</a>
+      <div>
+        <div class="header-title">트랙 심사</div>
+        <div class="header-breadcrumb">서비스 관리 → Discovery → 트랙 심사</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge">
+        <div class="pulse"></div>
+        BSC Mainnet
+      </div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ===== KPI CARDS ===== -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">심사 대기</div>
+        <div class="kpi-value">24</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">승인 완료</div>
+        <div class="kpi-value">128</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">보류</div>
+        <div class="kpi-value">9</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">거절</div>
+        <div class="kpi-value">14</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">재제출 요청</div>
+        <div class="kpi-value">6</div>
+        <div class="kpi-sub">건</div>
+      </div>
+    </div>
+
+    <!-- ===== TOOLBAR ===== -->
+    <div class="card mb-24">
+      <div class="card-body" style="padding: 16px 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="트랙명, 크리에이터 검색...">
+          </div>
+          <select class="filter-select">
+            <option>챌린지 선택</option>
+            <option>전체</option>
+            <option>Spring Discovery Vol.1</option>
+            <option>Ballad Creator Challenge</option>
+          </select>
+          <select class="filter-select">
+            <option>상태 선택</option>
+            <option>전체</option>
+            <option>심사대기</option>
+            <option>승인</option>
+            <option>보류</option>
+            <option>거절</option>
+            <option>재제출 요청</option>
+          </select>
+          <select class="filter-select">
+            <option>장르 선택</option>
+            <option>전체</option>
+            <option>Pop</option>
+            <option>EDM</option>
+            <option>Ballad</option>
+            <option>Synth Pop</option>
+            <option>Hip-hop</option>
+            <option>R&B</option>
+          </select>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn btn-mint btn-sm">일괄 승인</button>
+          <button class="btn btn-danger btn-sm">일괄 거절</button>
+          <button class="btn btn-outline btn-sm" style="margin-left: auto;">📥 내보내기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATUS FILTER TABS ===== -->
+    <div class="tab-nav" style="margin-bottom: 16px;">
+      <button class="tab-btn active">전체</button>
+      <button class="tab-btn">심사대기</button>
+      <button class="tab-btn">승인</button>
+      <button class="tab-btn">보류</button>
+      <button class="tab-btn">거절</button>
+      <button class="tab-btn">재제출</button>
+    </div>
+
+    <!-- ===== TRACK LIST TABLE ===== -->
+    <div class="card mb-24">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input type="checkbox" style="accent-color: var(--mint);"></th>
+              <th>트랙명</th>
+              <th>크리에이터</th>
+              <th>챌린지명</th>
+              <th>제출일시</th>
+              <th>장르</th>
+              <th>재생시간</th>
+              <th>상태</th>
+              <th style="width: 80px;">액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: 심사대기 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #667EEA, #764BA2);">🎵</div>
+                  <div>
+                    <div class="track-name">Midnight Echo</div>
+                    <div class="track-artist">KaiMusic</div>
+                  </div>
+                </div>
+              </td>
+              <td>KaiMusic</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-17 13:20</td>
+              <td><span class="genre-tag">Pop</span></td>
+              <td>2:48</td>
+              <td><span class="status status-waiting"><span class="status-dot"></span> 심사대기</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 2: 보류 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🎵</div>
+                  <div>
+                    <div class="track-name">Neon Flame</div>
+                    <div class="track-artist">LunaBeat</div>
+                  </div>
+                </div>
+              </td>
+              <td>LunaBeat</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-17 11:05</td>
+              <td><span class="genre-tag">EDM</span></td>
+              <td>3:12</td>
+              <td><span class="status status-hold"><span class="status-dot"></span> 보류</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 3: 재제출 요청 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">🎵</div>
+                  <div>
+                    <div class="track-name">Falling Again</div>
+                    <div class="track-artist">JY Studio</div>
+                  </div>
+                </div>
+              </td>
+              <td>JY Studio</td>
+              <td>Ballad Creator Challenge</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-16 18:40</td>
+              <td><span class="genre-tag">Ballad</span></td>
+              <td>3:45</td>
+              <td><span class="status status-resubmit"><span class="status-dot"></span> 재제출 요청</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 4: 승인 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #11998e, #38ef7d);">🎵</div>
+                  <div>
+                    <div class="track-name">Runaway Light</div>
+                    <div class="track-artist">HN Records</div>
+                  </div>
+                </div>
+              </td>
+              <td>HN Records</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-16 15:10</td>
+              <td><span class="genre-tag">Synth Pop</span></td>
+              <td>2:56</td>
+              <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 5: 심사대기 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">🎵</div>
+                  <div>
+                    <div class="track-name">City Pulse</div>
+                    <div class="track-artist">DJ Hana</div>
+                  </div>
+                </div>
+              </td>
+              <td>DJ Hana</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-16 09:30</td>
+              <td><span class="genre-tag">EDM</span></td>
+              <td>3:20</td>
+              <td><span class="status status-waiting"><span class="status-dot"></span> 심사대기</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 6: 거절 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #dfe6e9, #b2bec3);">🎵</div>
+                  <div>
+                    <div class="track-name">Blue Hour</div>
+                    <div class="track-artist">MiRae</div>
+                  </div>
+                </div>
+              </td>
+              <td>MiRae</td>
+              <td>Ballad Creator Challenge</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-15 22:15</td>
+              <td><span class="genre-tag">Ballad</span></td>
+              <td>4:02</td>
+              <td><span class="status status-rejected"><span class="status-dot"></span> 거절</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 7: 승인 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">🎵</div>
+                  <div>
+                    <div class="track-name">Electric Dreams</div>
+                    <div class="track-artist">SoundWave</div>
+                  </div>
+                </div>
+              </td>
+              <td>SoundWave</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-15 17:45</td>
+              <td><span class="genre-tag">Synth Pop</span></td>
+              <td>2:35</td>
+              <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+
+            <!-- Row 8: 심사대기 -->
+            <tr onclick="openReviewModal(this)">
+              <td><input type="checkbox" style="accent-color: var(--mint);"></td>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #ffd89b, #19547b);">🎵</div>
+                  <div>
+                    <div class="track-name">Starfall</div>
+                    <div class="track-artist">Night_Crew</div>
+                  </div>
+                </div>
+              </td>
+              <td>Night_Crew</td>
+              <td>Spring Discovery Vol.1</td>
+              <td style="color: var(--gray-400); font-size: 12px;">2026-04-15 14:20</td>
+              <td><span class="genre-tag">Pop</span></td>
+              <td>3:08</td>
+              <td><span class="status status-waiting"><span class="status-dot"></span> 심사대기</span></td>
+              <td><button class="btn btn-sm btn-mint" onclick="event.stopPropagation();">심사</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 8 / 24건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== TRACK REVIEW MODAL ===== -->
+<div class="modal-overlay" id="reviewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">트랙 심사 상세</div>
+      <button class="modal-close" onclick="closeReviewModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Track Info Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">트랙 정보</div>
+        <div class="info-row">
+          <span class="info-label">트랙명</span>
+          <span class="info-value">Midnight Echo</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">크리에이터</span>
+          <span class="info-value">KaiMusic</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">챌린지명</span>
+          <span class="info-value">Spring Discovery Vol.1</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">제출일시</span>
+          <span class="info-value">2026-04-17 13:20</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">장르</span>
+          <span class="info-value">Pop</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">재생시간</span>
+          <span class="info-value">2분 48초</span>
+        </div>
+      </div>
+
+      <!-- Media Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">미디어</div>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <button class="btn btn-mint">▶ YouTube에서 재생</button>
+        </div>
+        <div class="waveform-placeholder">재생 프로그래스: 1:24 / 2:48</div>
+      </div>
+
+      <!-- Track Details Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">상세 정보</div>
+        <div style="margin-bottom: 12px;">
+          <div class="info-label" style="margin-bottom: 6px;">사용 툴</div>
+          <span class="genre-tag" style="background: var(--blue-light); color: var(--blue);">Suno</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <div class="info-label" style="margin-bottom: 6px;">곡 설명</div>
+          <div style="font-size: 13px; color: var(--gray-700);">새벽 감성과 청춘의 불안을 표현한 미디엄 템포 팝 트랙</div>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <div class="info-label" style="margin-bottom: 6px;">가사/설명문</div>
+          <div style="font-size: 13px; color: var(--gray-600); background: var(--gray-50); padding: 12px; border-radius: 6px; max-height: 80px; overflow: hidden;">
+            밤을 새워가며 기다린 새벽 시간<br/>
+            그때 우린 함께였는데<br/>
+            지금은 혼자 기다려...
+            <span style="color: var(--mint); cursor: pointer;"> 더 보기</span>
+          </div>
+        </div>
+        <div>
+          <div class="info-label" style="margin-bottom: 6px;">신고 여부</div>
+          <span class="status status-approved"><span class="status-dot"></span> 없음</span>
+        </div>
+      </div>
+
+      <!-- Review Tags Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">심사 태그</div>
+        <div class="tag-grid">
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">음질 확인 필요</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">카테고리 적합</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">저작권 문제 없음</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">길이 기준 초과</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">AI 생성 의심</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">표절 의심</button>
+          <button class="tag-btn" onclick="this.classList.toggle('selected')">부적절 내용</button>
+        </div>
+      </div>
+
+      <!-- Review History Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">이전 심사 이력</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="time">2026-04-16 14:30</span> - 보류 처리
+            <br/><strong style="color: var(--gray-600);">by Admin Lee</strong> - 후렴 음질 확인 필요
+          </div>
+        </div>
+      </div>
+
+      <!-- Operator Notes Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">운영자 메모</div>
+        <textarea class="form-input" rows="4" placeholder="심사 메모를 입력하세요...">전반적으로 완성도는 좋음. 후렴 음질 확인 필요.</textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeReviewModal()">취소</button>
+      <button class="btn btn-gray">메모 저장</button>
+      <button class="btn btn-danger">거절</button>
+      <button class="btn btn-yellow">보류</button>
+      <button class="btn btn-purple">재제출 요청</button>
+      <button class="btn btn-mint">승인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openReviewModal(rowElement) {
+    const modal = document.getElementById('reviewModal');
+
+    // Extract data from row
+    const cells = rowElement.querySelectorAll('td');
+    const trackNameEl = cells[1].querySelector('.track-name');
+    const trackArtistEl = cells[1].querySelector('.track-artist');
+    const creatorEl = cells[2];
+    const challengeEl = cells[3];
+    const dateEl = cells[4];
+    const genreEl = cells[5];
+    const durationEl = cells[6];
+    const statusEl = cells[7];
+
+    // Update modal content
+    const trackName = trackNameEl ? trackNameEl.textContent : 'Midnight Echo';
+    const creator = creatorEl ? creatorEl.textContent : 'KaiMusic';
+    const challenge = challengeEl ? challengeEl.textContent : 'Spring Discovery Vol.1';
+    const date = dateEl ? dateEl.textContent : '2026-04-17 13:20';
+    const genre = genreEl ? genreEl.textContent : 'Pop';
+    const duration = durationEl ? durationEl.textContent : '2:48';
+
+    // Update info rows
+    const infoRows = modal.querySelectorAll('.info-row');
+    if (infoRows[0]) infoRows[0].innerHTML = `<span class="info-label">트랙명</span><span class="info-value">${trackName}</span>`;
+    if (infoRows[1]) infoRows[1].innerHTML = `<span class="info-label">크리에이터</span><span class="info-value">${creator}</span>`;
+    if (infoRows[2]) infoRows[2].innerHTML = `<span class="info-label">챌린지명</span><span class="info-value">${challenge}</span>`;
+    if (infoRows[3]) infoRows[3].innerHTML = `<span class="info-label">제출일시</span><span class="info-value">${date}</span>`;
+    if (infoRows[4]) infoRows[4].innerHTML = `<span class="info-label">장르</span><span class="info-value">${genre}</span>`;
+    if (infoRows[5]) infoRows[5].innerHTML = `<span class="info-label">재생시간</span><span class="info-value">${duration}</span>`;
+
+    // Reset tags
+    const tagBtns = modal.querySelectorAll('.tag-btn');
+    tagBtns.forEach(btn => btn.classList.remove('selected'));
+
+    // Show modal
+    modal.classList.add('show');
+  }
+
+  function closeReviewModal() {
+    const modal = document.getElementById('reviewModal');
+    modal.classList.remove('show');
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('reviewModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeReviewModal();
+    }
+  });
+
+  // Keyboard shortcut: ESC to close
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeReviewModal();
+    }
+  });
+</script>
+
+</body>
+</html>

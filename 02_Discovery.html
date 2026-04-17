@@ -1133,7 +1133,8 @@
     <div class="card mb-24">
       <div class="card-header">
         <div class="card-title">📋 트랙 심사 큐 <span style="font-size: 13px; font-weight: 500; color: var(--red); margin-left: 8px;">8건 대기</span></div>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a href="02-2_Track_Review.html" class="btn btn-sm btn-mint" style="text-decoration:none;">전체 심사 페이지 →</a>
           <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
             <option>전체 챌린지</option>
             <option>Neon Night Beat</option>
@@ -1278,11 +1279,14 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">🗳️ 투표 현황 (24h)</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+          <a href="02-3_Vote_Monitor.html" class="btn btn-sm btn-mint" style="text-decoration:none;">모니터링 상세 →</a>
           <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
             <option>Neon Night Beat</option>
             <option>Urban Flow Session</option>
             <option>전체</option>
           </select>
+          </div>
         </div>
         <div class="card-body">
           <!-- Hourly Vote Chart (SVG) -->
@@ -1343,7 +1347,10 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">🎁 리워드 배분 현황</div>
-          <button class="btn btn-sm btn-mint">일괄 배분</button>
+          <div style="display:flex;gap:8px;">
+            <a href="02-4_Reward_Distribution.html" class="btn btn-sm btn-outline" style="text-decoration:none;">배분 상세 →</a>
+            <button class="btn btn-sm btn-mint">일괄 배분</button>
+          </div>
         </div>
         <div class="card-body">
           <!-- Pending NFT Rewards -->
