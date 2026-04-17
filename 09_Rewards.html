@@ -14,11 +14,13 @@
     --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
     --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
     --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
-    --orange: #F97316; --orange-light: #FFF7ED; --pink: #EC4899; --pink-light: #FDF2F8;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
     --sidebar-w: 260px; --header-h: 64px;
   }
   body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
 
+  /* ===== SIDEBAR ===== */
   .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
   .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
   .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
@@ -38,109 +40,146 @@
   .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
   .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
 
+  /* ===== MAIN ===== */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
   .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
   .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
-  .header-right { display: flex; align-items: center; gap: 16px; }
-  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; transition: all 0.15s; }
+  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
   .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
   .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
   .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  .content { padding: 28px 32px; flex: 1; }
+  .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
 
-  .tab-nav { display: flex; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; }
-  .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
-  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
-  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
-
-  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
-  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-  .kpi-card.mint::before { background: var(--mint); }
-  .kpi-card.blue::before { background: var(--blue); }
-  .kpi-card.purple::before { background: var(--purple); }
-  .kpi-card.yellow::before { background: var(--yellow); }
-  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
-  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
-
-  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
-  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-  .card-body { padding: 24px; }
-
-  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  /* ===== BUTTONS ===== */
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
   .btn-mint { background: var(--mint); color: #fff; }
   .btn-mint:hover { background: var(--mint-dark); }
   .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
   .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
   .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-purple { background: var(--purple-light); color: var(--purple); }
+  .btn-purple:hover { background: var(--purple); color: #fff; }
 
-  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
-  .status-completed { background: var(--mint-light); color: var(--mint-dark); }
+  /* ===== KPI ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-100); margin-bottom: 24px; }
+  .tab-btn {
+    padding: 12px 24px; font-size: 14px; font-weight: 600; color: var(--gray-400);
+    background: none; border: none; cursor: pointer; position: relative; transition: all 0.15s;
+  }
+  .tab-btn:hover { color: var(--gray-700); }
+  .tab-btn.active { color: var(--mint); }
+  .tab-btn.active::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 2px; background: var(--mint); border-radius: 2px 2px 0 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-done { background: var(--mint-light); color: var(--mint-dark); }
   .status-pending { background: var(--yellow-light); color: var(--yellow); }
+  .status-failed { background: var(--red-light); color: var(--red); }
+  .status-review { background: var(--blue-light); color: var(--blue); }
+  .status-hold { background: var(--gray-100); color: var(--gray-500); }
   .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  table { width: 100%; border-collapse: collapse; }
-  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
-  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  .type-badge { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .type-vote { background: var(--purple-light); color: var(--purple); }
+  .type-challenge { background: var(--orange-light); color: var(--orange); }
+  .type-boost { background: var(--mint-light); color: var(--mint-dark); }
+  .type-referral { background: var(--blue-light); color: var(--blue); }
+  .type-boostfee { background: var(--green-light); color: var(--green); }
+  .type-servicefee { background: var(--yellow-light); color: var(--yellow); }
+
+  .cat-badge { padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .cat-music { background: var(--purple-light); color: var(--purple); }
+  .cat-performance { background: var(--orange-light); color: var(--orange); }
+  .cat-global { background: var(--blue-light); color: var(--blue); }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  thead th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
   tbody tr:hover { background: var(--gray-50); }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+  /* ===== FILTER ===== */
+  .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search-box { position: relative; flex: 1; max-width: 260px; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+  .filter-select { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
 
-  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
-
-  .chart-container { height: 280px; background: linear-gradient(180deg, var(--gray-50) 0%, #fff 100%); border-radius: 10px; display: flex; align-items: flex-end; justify-content: space-around; padding: 20px; }
-  .chart-bar { width: 12%; background: var(--mint); border-radius: 6px 6px 0 0; min-height: 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-  .chart-bar:nth-child(1) { height: 45%; }
-  .chart-bar:nth-child(2) { height: 62%; }
-  .chart-bar:nth-child(3) { height: 38%; }
-  .chart-bar:nth-child(4) { height: 75%; }
-  .chart-bar:nth-child(5) { height: 52%; }
-  .chart-bar:nth-child(6) { height: 88%; }
-  .chart-bar:nth-child(7) { height: 41%; }
-  .chart-bar-label { font-size: 10px; color: var(--gray-400); margin-top: 8px; }
-
-  .fee-box { background: var(--gray-50); padding: 16px; border-radius: 10px; }
-  .fee-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gray-200); }
-  .fee-row:last-child { border-bottom: none; }
-  .fee-label { font-size: 13px; color: var(--gray-600); }
-  .fee-value { font-size: 14px; font-weight: 700; color: var(--dark); }
-
-  .reward-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
-  .reward-row:last-child { border-bottom: none; }
-  .reward-label { font-size: 13px; color: var(--gray-600); display: flex; align-items: center; gap: 8px; }
-  .reward-value { font-size: 14px; font-weight: 700; color: var(--dark); }
-
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
-  .page-info { font-size: 13px; color: var(--gray-400); }
-  .page-btns { display: flex; gap: 4px; }
-  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
-  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
-
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 200; align-items: center; justify-content: center; }
-  .modal-overlay.active { display: flex; }
-  .modal { background: #fff; border-radius: 14px; width: 90%; max-width: 500px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); }
-  .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-  .modal-header .modal-title { font-size: 16px; font-weight: 700; color: var(--dark); }
-  .modal-header .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); }
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; width: 760px; max-height: 90vh;
+    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    padding: 24px; border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: var(--gray-100); font-size: 18px; color: var(--gray-500);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .modal-close:hover { background: var(--gray-200); }
   .modal-body { padding: 24px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; gap: 8px; justify-content: flex-end; }
-  .form-group { margin-bottom: 16px; }
-  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; font-family: 'Inter', -apple-system, sans-serif; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--mint); }
-  .form-group textarea { min-height: 100px; resize: vertical; }
+  .modal-footer {
+    padding: 20px 24px; border-top: 1px solid var(--gray-100);
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
+  }
+  .detail-item { padding: 14px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); }
+  .detail-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-value { font-size: 15px; font-weight: 700; color: var(--dark); }
 </style>
 </head>
 <body>
 
+<!-- ===== SIDEBAR ===== -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">V</div>
@@ -150,13 +189,13 @@
     <div class="nav-section">Overview</div>
     <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
     <div class="nav-section">서비스 관리</div>
-    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery <span class="badge">8</span></a>
     <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
     <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
     <div class="nav-section">NFT</div>
     <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
     <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
-    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT Policy & Utility</a>
     <div class="nav-section">운영</div>
     <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
     <a class="nav-item active" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
@@ -168,10 +207,15 @@
   </div>
 </aside>
 
+<!-- ===== MAIN ===== -->
 <div class="main">
+
   <header class="header">
     <div class="header-left">
-      <div><div class="header-title">리워드 & 정산</div><div class="header-breadcrumb">운영 → 리워드 & 정산</div></div>
+      <div>
+        <div class="header-title">리워드 & 정산</div>
+        <div class="header-breadcrumb">운영 → 리워드 & 정산</div>
+      </div>
     </div>
     <div class="header-right">
       <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
@@ -182,475 +226,528 @@
 
   <div class="content">
 
-    <!-- KPI CARDS -->
+    <!-- ===== KPI CARDS ===== -->
     <div class="kpi-row">
       <div class="kpi-card mint">
         <div class="kpi-label">Total Rewards Distributed</div>
-        <div class="kpi-value">45,200 V</div>
-        <div class="kpi-sub">누적 배분액</div>
+        <div class="kpi-value">45,200</div>
+        <div class="kpi-sub">VAYLA · 누적 배분액</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Pending Distribution</div>
+        <div class="kpi-value">3,400</div>
+        <div class="kpi-sub">VAYLA · 배분 대기 중</div>
       </div>
       <div class="kpi-card blue">
-        <div class="kpi-label">Pending Distribution</div>
-        <div class="kpi-value">3,400 V</div>
-        <div class="kpi-sub">배분 대기 중</div>
-      </div>
-      <div class="kpi-card purple">
         <div class="kpi-label">Boost Settlements</div>
         <div class="kpi-value">$1.84M</div>
         <div class="kpi-sub">정산 완료액</div>
       </div>
-      <div class="kpi-card yellow">
+      <div class="kpi-card purple">
         <div class="kpi-label">Platform Revenue</div>
         <div class="kpi-value">$8,496</div>
-        <div class="kpi-sub">수수료 수익</div>
+        <div class="kpi-sub">플랫폼 총수익</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Platform Expenses</div>
+        <div class="kpi-value">$5,230</div>
+        <div class="kpi-sub">운영 및 리워드 지출</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Net Revenue</div>
+        <div class="kpi-value">$3,266</div>
+        <div class="kpi-sub">순수익</div>
       </div>
     </div>
 
-    <!-- TABS -->
-    <div class="tab-nav">
-      <button class="tab-btn active">💰 리워드 배분</button>
-      <button class="tab-btn">📋 정산 관리</button>
-      <button class="tab-btn">💳 수수료 내역</button>
-      <button class="tab-btn">📊 보고서</button>
+    <!-- ===== TABS ===== -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('reward')">💎 리워드 배분</button>
+      <button class="tab-btn" onclick="switchTab('settlement')">📊 정산 관리</button>
+      <button class="tab-btn" onclick="switchTab('fee')">💰 수수료 내역</button>
     </div>
 
-    <!-- TAB 1: REWARD DISTRIBUTION -->
-    <div id="reward-tab">
-
+    <!-- ===== TAB 1: 리워드 배분 ===== -->
+    <div class="tab-content active" id="tab-reward">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">🎁 Reward Distribution</div>
+          <div class="card-title">💎 리워드 배분 내역</div>
           <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm btn-outline">📥 Export</button>
+            <button class="btn btn-sm btn-mint" onclick="openRewardModal()">+ 수동 리워드 생성</button>
+          </div>
+        </div>
+        <div class="card-body" style="padding-bottom: 0;">
+          <div class="filter-bar" style="margin-bottom: 20px;">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="지급 대상 검색...">
+            </div>
             <select class="filter-select">
-              <option>모든 유형</option>
+              <option>유형: 전체</option>
               <option>Vote Reward</option>
               <option>Challenge Winner</option>
               <option>Boost ROI</option>
               <option>Referral</option>
             </select>
             <select class="filter-select">
-              <option>모든 기간</option>
-              <option>이번 주</option>
-              <option>이번 달</option>
-              <option>지난 3개월</option>
+              <option>상태: 전체</option>
+              <option>완료</option>
+              <option>대기</option>
+              <option>실패</option>
             </select>
-            <button class="btn btn-sm btn-outline">📥 Export</button>
-            <button class="btn btn-sm btn-mint" onclick="document.getElementById('manual-reward-modal').classList.add('active');">+ 수동 리워드 생성</button>
-          </div>
-        </div>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Recipient</th>
-                <th>Reward Type</th>
-                <th>Amount</th>
-                <th>Reason</th>
-                <th>Distributed At</th>
-                <th>Status</th>
-                <th>TX Hash</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong style="color: var(--dark);">DJ Hana</strong><br><span style="font-size: 11px; color: var(--gray-400);">@dj_hana</span></td>
-                <td><span style="background: var(--purple-light); color: var(--purple); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;">Vote Reward</span></td>
-                <td><strong style="color: var(--mint);">482 V</strong></td>
-                <td>482 votes 달성</td>
-                <td>2026.04.15 14:23</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 완료</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x7a3b...f21d</span></td>
-              </tr>
-              <tr>
-                <td><strong style="color: var(--dark);">NOVA</strong><br><span style="font-size: 11px; color: var(--gray-400);">@nova_beats</span></td>
-                <td><span style="background: var(--mint-light); color: var(--mint-dark); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;">Challenge Winner</span></td>
-                <td><strong style="color: var(--mint);">1,250 V</strong></td>
-                <td>Neon Night Beat 우승</td>
-                <td>2026.04.14 10:15</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 완료</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x2c8d...e47a</span></td>
-              </tr>
-              <tr>
-                <td><strong style="color: var(--dark);">MC Park</strong><br><span style="font-size: 11px; color: var(--gray-400);">@mc_park_official</span></td>
-                <td><span style="background: var(--yellow-light); color: var(--yellow); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;">Boost ROI</span></td>
-                <td><strong style="color: var(--mint);">450 V</strong></td>
-                <td>Boost campaign #142 ROI</td>
-                <td>2026.04.13 16:42</td>
-                <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: var(--gray-400);">-</span></td>
-              </tr>
-              <tr>
-                <td><strong style="color: var(--dark);">Chris Lee</strong><br><span style="font-size: 11px; color: var(--gray-400);">@chrislee_prod</span></td>
-                <td><span style="background: var(--blue-light); color: var(--blue); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;">Referral</span></td>
-                <td><strong style="color: var(--mint);">285 V</strong></td>
-                <td>Referral bonus (5명)</td>
-                <td>2026.04.12 09:31</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 완료</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0xa2b9...4e1f</span></td>
-              </tr>
-              <tr>
-                <td><strong style="color: var(--dark);">Luna Kim</strong><br><span style="font-size: 11px; color: var(--gray-400);">@lunakim_music</span></td>
-                <td><span style="background: var(--purple-light); color: var(--purple); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600;">Vote Reward</span></td>
-                <td><strong style="color: var(--mint);">327 V</strong></td>
-                <td>347 votes 달성</td>
-                <td>2026.04.11 11:08</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 완료</span></td>
-                <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x91ab...3c7f</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="pagination">
-          <div class="page-info">1 - 5 / 512건</div>
-          <div class="page-btns">
-            <button class="page-btn">‹</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">›</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Batch Distribution -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">⚡ Batch Distribution Control</div>
-        </div>
-        <div class="card-body">
-          <div style="display: flex; gap: 12px; align-items: center;">
-            <button class="btn btn-mint">▶️ 대기 중인 배분 실행</button>
-            <button class="btn btn-outline">⏸️ 배분 일시 정지</button>
-            <button class="btn btn-outline" onclick="document.getElementById('batch-schedule-modal').classList.add('active');">📊 배분 스케줄 설정</button>
-          </div>
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
-            <p style="font-size: 12px; color: var(--gray-500);">다음 자동 배분: 2026.04.17 00:00 UTC | 대기 중인 리워드: 3,400 V</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- TAB 2: SETTLEMENT MANAGEMENT -->
-    <div id="settlement-tab" style="display: none;">
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">📊 Settlement History</div>
-          <div style="display: flex; gap: 8px;">
             <select class="filter-select">
-              <option>모든 캠페인</option>
-              <option>Boost Campaign</option>
-              <option>Partnership</option>
+              <option>기간: 전체</option>
+              <option>최근 7일</option>
+              <option>최근 30일</option>
+              <option>최근 90일</option>
             </select>
+          </div>
+        </div>
+        <div style="padding: 0;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>지급 대상</th>
+                  <th>리워드 유형</th>
+                  <th>금액</th>
+                  <th>지급 사유</th>
+                  <th>지급 일시</th>
+                  <th>상태</th>
+                  <th>TX Hash</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 700; color: var(--dark);">DJ Hana</td>
+                  <td><span class="type-badge type-vote">Vote Reward</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">482 VAYLA</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">482 votes 달성</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.15 14:23</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x7a3b...f21d</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: var(--dark);">NOVA</td>
+                  <td><span class="type-badge type-challenge">Challenge Winner</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">1,250 VAYLA</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Neon Night Beat 우승</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.14 10:15</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x2c8d...e47a</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: var(--dark);">MC Park</td>
+                  <td><span class="type-badge type-boost">Boost ROI</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">450 VAYLA</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Boost campaign #142 ROI</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.13 16:42</td>
+                  <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">-</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 700; color: var(--dark);">Chris Lee</td>
+                  <td><span class="type-badge type-referral">Referral</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">285 VAYLA</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Referral bonus (5명)</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.12 09:31</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0xa2b9...4e1f</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; color: var(--gray-400);">총 128건 중 1-4 표시</div>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.4;">이전</button>
+            <button class="btn btn-sm btn-mint">1</button>
+            <button class="btn btn-sm btn-outline">2</button>
+            <button class="btn btn-sm btn-outline">3</button>
+            <button class="btn btn-sm btn-outline">다음</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: 정산 관리 ===== -->
+    <div class="tab-content" id="tab-settlement">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 정산 관리</div>
+          <div style="display: flex; gap: 8px;">
             <button class="btn btn-sm btn-outline">📥 Export</button>
           </div>
         </div>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Campaign</th>
-                <th>Creator</th>
-                <th>Funding Amount</th>
-                <th>Creator Share</th>
-                <th>Platform Fee</th>
-                <th>Settled At</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Neon Night Beat #142</strong></td>
-                <td>DJ Hana</td>
-                <td><strong>$500</strong></td>
-                <td style="color: var(--mint); font-weight: 600;">$474</td>
-                <td style="color: var(--gray-500);">$26</td>
-                <td>2026.04.10</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 정산 완료</span></td>
-              </tr>
-              <tr>
-                <td><strong>Urban Flow Rising #138</strong></td>
-                <td>MC Park</td>
-                <td><strong>$380</strong></td>
-                <td style="color: var(--mint); font-weight: 600;">$361</td>
-                <td style="color: var(--gray-500);">$19</td>
-                <td>2026.04.09</td>
-                <td><span class="status status-completed"><span class="status-dot"></span> 정산 완료</span></td>
-              </tr>
-              <tr>
-                <td><strong>Seoul Streets Legend #135</strong></td>
-                <td>NOVA</td>
-                <td><strong>$1,200</strong></td>
-                <td style="color: var(--mint); font-weight: 600;">$1,140</td>
-                <td style="color: var(--gray-500);">$60</td>
-                <td>2026.04.08</td>
-                <td><span class="status status-pending"><span class="status-dot"></span> 정산 대기</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="card-body" style="padding-bottom: 0;">
+          <div class="filter-bar" style="margin-bottom: 20px;">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="프로젝트명 검색...">
+            </div>
+            <select class="filter-select">
+              <option>카테고리: 전체</option>
+              <option>Music</option>
+              <option>Performance</option>
+              <option>Global</option>
+            </select>
+            <select class="filter-select">
+              <option>상태: 전체</option>
+              <option>대기</option>
+              <option>검토중</option>
+              <option>완료</option>
+              <option>보류</option>
+            </select>
+            <select class="filter-select">
+              <option>기간: 전체</option>
+              <option>최근 7일</option>
+              <option>최근 30일</option>
+              <option>최근 90일</option>
+            </select>
+          </div>
         </div>
-        <div class="pagination">
-          <div class="page-info">1 - 3 / 84건</div>
-          <div class="page-btns">
-            <button class="page-btn">‹</button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">›</button>
+        <div style="padding: 0;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>정산 ID</th>
+                  <th>프로젝트명</th>
+                  <th>카테고리</th>
+                  <th>총 금액</th>
+                  <th>수수료</th>
+                  <th>순정산 금액</th>
+                  <th>정산 상태</th>
+                  <th>최종 업데이트</th>
+                  <th>액션</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">ST-1001</td>
+                  <td style="font-weight: 700; color: var(--dark);">VAYLA Artist Support Vol.1</td>
+                  <td><span class="cat-badge cat-music">Music</span></td>
+                  <td style="font-weight: 600;">42,500 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">2,125 USDT</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">40,375 USDT</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.17 11:40</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="openSettlementModal()">상세</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">ST-1002</td>
+                  <td style="font-weight: 700; color: var(--dark);">Indie Stage Boost #2</td>
+                  <td><span class="cat-badge cat-performance">Performance</span></td>
+                  <td style="font-weight: 600;">25,000 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">1,250 USDT</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">23,750 USDT</td>
+                  <td><span class="status status-review"><span class="status-dot"></span> 검토중</span></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.17 10:10</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="openSettlementModal()">상세</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">ST-1003</td>
+                  <td style="font-weight: 700; color: var(--dark);">Global Fan Boost Alpha</td>
+                  <td><span class="cat-badge cat-global">Global</span></td>
+                  <td style="font-weight: 600;">88,200 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">5,292 USDT</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">82,908 USDT</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.16 18:00</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="openSettlementModal()">상세</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">ST-1004</td>
+                  <td style="font-weight: 700; color: var(--dark);">Music IP Boost Test</td>
+                  <td><span class="cat-badge cat-music">Music</span></td>
+                  <td style="font-weight: 600;">9,400 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">470 USDT</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">8,930 USDT</td>
+                  <td><span class="status status-hold"><span class="status-dot"></span> 보류</span></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.15 21:10</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="openSettlementModal()">상세</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; color: var(--gray-400);">총 4건</div>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.4;">이전</button>
+            <button class="btn btn-sm btn-mint">1</button>
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.4;">다음</button>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- TAB 3: FEE BREAKDOWN -->
-    <div id="fee-tab" style="display: none;">
-
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">💳 Fee Structure</div>
-          </div>
-          <div class="card-body">
-            <div class="fee-box">
-              <div class="fee-row">
-                <div class="fee-label">Boost Platform Fee</div>
-                <div class="fee-value">0.4%</div>
-              </div>
-              <div class="fee-row">
-                <div class="fee-label">Marketplace Creator Royalty</div>
-                <div class="fee-value">5%</div>
-              </div>
-              <div class="fee-row">
-                <div class="fee-label">Marketplace Platform Fee</div>
-                <div class="fee-value">1%</div>
-              </div>
-              <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
-                <button class="btn btn-sm btn-outline" onclick="document.getElementById('fee-edit-modal').classList.add('active');">⚙️ 수정</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">📈 Monthly Revenue</div>
-          </div>
-          <div class="card-body">
-            <div class="chart-container">
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-              <div class="chart-bar"></div>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px;">
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/10</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/11</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/12</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/13</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/14</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/15</div>
-              <div style="text-align: center; font-size: 10px; color: var(--gray-400);">4/16</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <!-- ===== TAB 3: 수수료 내역 ===== -->
+    <div class="tab-content" id="tab-fee">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">💰 Fee Income History</div>
-          <button class="btn btn-sm btn-outline">📥 Export</button>
-        </div>
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Boost Fees</th>
-                <th>Creator Royalty</th>
-                <th>Marketplace Fees</th>
-                <th>Total Revenue</th>
-                <th>Transactions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2026.04.16</td>
-                <td><strong>$128</strong></td>
-                <td style="color: var(--gray-500);">$2,840</td>
-                <td><strong>$284</strong></td>
-                <td style="color: var(--mint); font-weight: 700;">$3,252</td>
-                <td>487</td>
-              </tr>
-              <tr>
-                <td>2026.04.15</td>
-                <td><strong>$142</strong></td>
-                <td style="color: var(--gray-500);">$3,120</td>
-                <td><strong>$312</strong></td>
-                <td style="color: var(--mint); font-weight: 700;">$3,574</td>
-                <td>512</td>
-              </tr>
-              <tr>
-                <td>2026.04.14</td>
-                <td><strong>$98</strong></td>
-                <td style="color: var(--gray-500);">$2,240</td>
-                <td><strong>$224</strong></td>
-                <td style="color: var(--mint); font-weight: 700;">$2,562</td>
-                <td>364</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- TAB 4: REPORTS -->
-    <div id="report-tab" style="display: none;">
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">📊 Financial Reports</div>
+          <div class="card-title">💰 수수료 내역</div>
           <div style="display: flex; gap: 8px;">
-            <button class="btn btn-sm btn-outline">📥 Export PDF</button>
-            <button class="btn btn-sm btn-outline">📊 Export Excel</button>
+            <button class="btn btn-sm btn-outline">📥 Export</button>
           </div>
         </div>
-        <div class="card-body">
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-            <button class="btn btn-outline" style="width: 100%; justify-content: center;">📄 Weekly Summary (PDF)</button>
-            <button class="btn btn-outline" style="width: 100%; justify-content: center;">📊 Monthly Report (Excel)</button>
-            <button class="btn btn-outline" style="width: 100%; justify-content: center;">💰 Revenue Analysis (CSV)</button>
-            <button class="btn btn-outline" style="width: 100%; justify-content: center;">🎯 Campaign Performance (PDF)</button>
+        <div class="card-body" style="padding-bottom: 0;">
+          <div class="filter-bar" style="margin-bottom: 20px;">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="발생 출처 검색...">
+            </div>
+            <select class="filter-select">
+              <option>유형: 전체</option>
+              <option>Boost Fee</option>
+              <option>Service Fee</option>
+            </select>
+            <select class="filter-select">
+              <option>상태: 전체</option>
+              <option>완료</option>
+              <option>검토중</option>
+              <option>보류</option>
+            </select>
+            <select class="filter-select">
+              <option>기간: 전체</option>
+              <option>최근 7일</option>
+              <option>최근 30일</option>
+              <option>최근 90일</option>
+            </select>
+          </div>
+        </div>
+        <div style="padding: 0;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>수수료 ID</th>
+                  <th>발생 출처</th>
+                  <th>유형</th>
+                  <th>기준 금액</th>
+                  <th>수수료율</th>
+                  <th>수수료 금액</th>
+                  <th>발생일</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">FE-1001</td>
+                  <td style="font-weight: 700; color: var(--dark);">VAYLA Artist Support Vol.1</td>
+                  <td><span class="type-badge type-boostfee">Boost Fee</span></td>
+                  <td style="font-weight: 600;">42,500 USDT</td>
+                  <td style="font-weight: 600; color: var(--purple);">5%</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">2,125 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.17</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">FE-1002</td>
+                  <td style="font-weight: 700; color: var(--dark);">Global Fan Boost Alpha</td>
+                  <td><span class="type-badge type-boostfee">Boost Fee</span></td>
+                  <td style="font-weight: 600;">88,200 USDT</td>
+                  <td style="font-weight: 600; color: var(--purple);">6%</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">5,292 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.16</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">FE-1003</td>
+                  <td style="font-weight: 700; color: var(--dark);">Weekly Reward Distribution</td>
+                  <td><span class="type-badge type-servicefee">Service Fee</span></td>
+                  <td style="font-weight: 600;">8,500 USDT</td>
+                  <td style="font-weight: 600; color: var(--purple);">2%</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">170 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.15</td>
+                  <td><span class="status status-done"><span class="status-dot"></span> 완료</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark); font-family: monospace;">FE-1004</td>
+                  <td style="font-weight: 700; color: var(--dark);">Indie Stage Boost #2</td>
+                  <td><span class="type-badge type-boostfee">Boost Fee</span></td>
+                  <td style="font-weight: 600;">25,000 USDT</td>
+                  <td style="font-weight: 600; color: var(--purple);">5%</td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">1,250 USDT</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026.04.17</td>
+                  <td><span class="status status-review"><span class="status-dot"></span> 검토중</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; color: var(--gray-400);">총 4건</div>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.4;">이전</button>
+            <button class="btn btn-sm btn-mint">1</button>
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.4;">다음</button>
           </div>
         </div>
       </div>
-
     </div>
 
-  </div>
-</div>
+  </div><!-- /content -->
+</div><!-- /main -->
 
-<!-- Modal: Manual Reward Creation -->
-<div id="manual-reward-modal" class="modal-overlay">
+<!-- ===== 수동 리워드 생성 MODAL ===== -->
+<div class="modal-overlay" id="rewardModal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">수동 리워드 생성</div>
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active');">×</button>
+      <div>
+        <div style="font-size: 18px; font-weight: 800; color: var(--dark);">수동 리워드 생성</div>
+        <div style="font-size: 13px; color: var(--gray-400); margin-top: 4px;">직접 리워드를 생성하여 지급합니다</div>
+      </div>
+      <button class="modal-close" onclick="closeRewardModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>리워드 받을 사용자</label>
-        <input type="text" placeholder="사용자명 또는 지갑 주소로 검색...">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px;">지급 대상 <span style="color: var(--red);">*</span></label>
+          <input type="text" placeholder="유저 ID 또는 닉네임" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px;">리워드 유형 <span style="color: var(--red);">*</span></label>
+          <select style="width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; background: #fff; cursor: pointer; font-family: 'Inter', sans-serif;">
+            <option value="">선택하세요</option>
+            <option>Vote Reward</option>
+            <option>Challenge Winner</option>
+            <option>Boost ROI</option>
+            <option>Referral</option>
+            <option>기타</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>리워드 금액 (VAYLA)</label>
-        <input type="number" placeholder="0.00" min="0" step="0.01">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px;">금액 (VAYLA) <span style="color: var(--red);">*</span></label>
+          <input type="number" placeholder="0" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px;">지급 사유 <span style="color: var(--red);">*</span></label>
+          <input type="text" placeholder="지급 사유를 입력하세요" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif;">
+        </div>
       </div>
-      <div class="form-group">
-        <label>리워드 타입</label>
-        <select>
-          <option>Vote Reward</option>
-          <option>Challenge Winner</option>
-          <option>Boost ROI</option>
-          <option>Referral</option>
-          <option>Manual</option>
-        </select>
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px;">내부 메모</label>
+        <textarea placeholder="운영팀 전용 메모" rows="3" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
-      <div class="form-group">
-        <label>리워드 사유</label>
-        <textarea placeholder="리워드 지급 이유를 입력하세요..."></textarea>
+      <div style="padding: 14px 16px; background: var(--yellow-light); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2); font-size: 13px; color: var(--gray-600); line-height: 1.6;">
+        ⚠️ 수동 리워드는 즉시 대기 상태로 등록되며, 배치 처리 시점에 자동으로 지급됩니다.
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').classList.remove('active');">취소</button>
-      <button class="btn btn-mint">확인</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Fee Structure Edit -->
-<div id="fee-edit-modal" class="modal-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">수수료 구조 설정</div>
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active');">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Boost Platform Fee (%)</label>
-        <input type="number" placeholder="0.4" min="0" max="100" step="0.1" value="0.4">
-      </div>
-      <div class="form-group">
-        <label>Marketplace Creator Royalty (%)</label>
-        <input type="number" placeholder="5" min="0" max="100" step="0.1" value="5">
-      </div>
-      <div class="form-group">
-        <label>Marketplace Platform Fee (%)</label>
-        <input type="number" placeholder="1" min="0" max="100" step="0.1" value="1">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').classList.remove('active');">취소</button>
-      <button class="btn btn-mint">저장</button>
+      <button class="btn btn-outline" onclick="closeRewardModal()">취소</button>
+      <button class="btn btn-mint">리워드 생성</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Batch Distribution Schedule -->
-<div id="batch-schedule-modal" class="modal-overlay">
+<!-- ===== 정산 상세 MODAL ===== -->
+<div class="modal-overlay" id="settlementModal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">배분 스케줄 설정</div>
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active');">×</button>
+      <div>
+        <div style="font-size: 18px; font-weight: 800; color: var(--dark);">정산 상세</div>
+        <div style="font-size: 13px; color: var(--gray-400); margin-top: 4px;">ST-1001 · VAYLA Artist Support Vol.1</div>
+      </div>
+      <button class="modal-close" onclick="closeSettlementModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>배분 주기</label>
-        <select>
-          <option>즉시</option>
-          <option>일일</option>
-          <option>주간</option>
-        </select>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">정산 ID</div>
+          <div class="detail-value" style="font-family: monospace;">ST-1001</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">프로젝트명</div>
+          <div class="detail-value">VAYLA Artist Support Vol.1</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">카테고리</div>
+          <div class="detail-value"><span class="cat-badge cat-music">Music</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">총 금액</div>
+          <div class="detail-value">42,500 USDT</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">수수료 (5%)</div>
+          <div class="detail-value" style="color: var(--red);">2,125 USDT</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">순정산 금액</div>
+          <div class="detail-value" style="color: var(--mint-dark);">40,375 USDT</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">정산 상태</div>
+          <div class="detail-value"><span class="status status-done"><span class="status-dot"></span> 완료</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">최종 업데이트</div>
+          <div class="detail-value">2026.04.17 11:40</div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>자동 승인 임계값 (VAYLA)</label>
-        <input type="number" placeholder="0.00" min="0" step="0.01">
+
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">정산 내역 요약</div>
+        <div style="padding: 14px 16px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-600); line-height: 1.7;">
+          VAYLA Artist Support Vol.1 프로젝트의 Boost 캠페인 정산입니다. 총 모금액 42,500 USDT에서 플랫폼 수수료 5%(2,125 USDT)를 제외한 40,375 USDT가 정산 완료되었습니다.
+        </div>
       </div>
-      <div class="form-group">
-        <label style="display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" checked style="width: auto;">
-          배분 알림 활성화
-        </label>
+
+      <div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">내부 메모</div>
+        <div style="padding: 14px 16px; background: var(--yellow-light); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2); font-size: 13px; color: var(--gray-600); line-height: 1.6;">
+          정산 완료 확인 · 아티스트 측 수령 확인 완료 · 다음 볼륨 기획 시 수수료율 재검토 필요
+        </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="this.closest('.modal-overlay').classList.remove('active');">취소</button>
-      <button class="btn btn-mint">저장</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline">💾 메모 저장</button>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-blue">📋 정산서 출력</button>
+        <button class="btn btn-outline" onclick="closeSettlementModal()">닫기</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('[id$="-tab"]').forEach(tab => tab.style.display = 'none');
-    const tabs = ['reward', 'settlement', 'fee', 'report'];
-    document.getElementById(tabs[idx] + '-tab').style.display = 'block';
-  });
-});
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.classList.add('active');
+}
 
-// Close modal on background click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove('active');
-    }
-  });
+function openRewardModal() {
+  document.getElementById('rewardModal').classList.add('show');
+}
+function closeRewardModal() {
+  document.getElementById('rewardModal').classList.remove('show');
+}
+function openSettlementModal() {
+  document.getElementById('settlementModal').classList.add('show');
+}
+function closeSettlementModal() {
+  document.getElementById('settlementModal').classList.remove('show');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
 });
 </script>
 
