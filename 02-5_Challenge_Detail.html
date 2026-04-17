@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - 챌린지 상세</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; transition: all 0.15s; }
+  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
+  .back-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.15s; }
+  .back-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
+
+  /* ===== BUTTONS ===== */
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-lg { padding: 12px 28px; font-size: 15px; border-radius: 10px; }
+
+  /* ===== TABS ===== */
+  .tab-nav {
+    display: flex; gap: 0; background: #fff; border: 1px solid var(--gray-200);
+    border-radius: 14px; overflow: hidden; margin-bottom: 24px;
+  }
+  .tab-btn {
+    flex: 1; padding: 14px 20px; text-align: center; font-size: 14px; font-weight: 600;
+    color: var(--gray-400); background: #fff; border: none; cursor: pointer;
+    transition: all 0.15s; border-right: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { color: var(--dark); background: var(--gray-50); }
+  .tab-btn.active { color: var(--mint-dark); background: var(--mint-light); font-weight: 700; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== CHALLENGE SUMMARY BAR ===== */
+  .challenge-bar {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .cb-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cb-title { font-size: 22px; font-weight: 800; color: var(--dark); }
+  .cb-period { font-size: 13px; color: var(--gray-400); margin-top: 4px; }
+  .cb-badges { display: flex; gap: 8px; margin-top: 8px; }
+  .cb-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .cb-stat-label { font-size: 11px; color: var(--gray-400); font-weight: 500; margin-bottom: 4px; }
+  .cb-stat-value { font-size: 22px; font-weight: 800; color: var(--dark); }
+  .cb-stat-value.mint { color: var(--mint-dark); }
+
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-live { background: var(--mint-light); color: var(--mint-dark); }
+  .status-upcoming { background: var(--blue-light); color: var(--blue); }
+  .status-ended { background: var(--gray-100); color: var(--gray-500); }
+  .status-approved { background: var(--mint-light); color: var(--mint-dark); }
+  .status-rejected { background: var(--red-light); color: var(--red); }
+  .status-pending { background: var(--yellow-light); color: var(--yellow); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .genre-tag { display: inline-block; padding: 3px 10px; background: var(--gray-100); border-radius: 5px; font-size: 11px; font-weight: 600; color: var(--gray-600); }
+  .progress-bar { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--mint), var(--mint-dark)); }
+
+  /* ===== KPI ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-row-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== DETAIL GRID ===== */
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .detail-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .detail-item { padding: 14px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); }
+  .detail-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-value { font-size: 15px; font-weight: 700; color: var(--dark); }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  /* ===== LEADERBOARD ===== */
+  .lb-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .lb-item:last-child { border-bottom: none; }
+  .lb-rank {
+    width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .lb-rank.gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; }
+  .lb-rank.silver { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: #fff; }
+  .lb-rank.bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+  .lb-rank.normal { background: var(--gray-100); color: var(--gray-500); }
+  .lb-title { font-size: 14px; font-weight: 600; color: var(--dark); }
+  .lb-artist { font-size: 12px; color: var(--gray-400); }
+  .lb-votes { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--mint-dark); }
+
+  /* ===== FORM (Edit tab) ===== */
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+  .form-label .required { color: var(--red); margin-left: 2px; }
+  .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+  .form-input { width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--gray-700); outline: none; transition: border 0.15s; font-family: 'Inter', sans-serif; }
+  .form-input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+  .form-input::placeholder { color: var(--gray-300); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  textarea.form-input { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .toggle-switch { display: inline-flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .toggle { position: relative; width: 44px; height: 24px; background: var(--gray-300); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+  .toggle.active { background: var(--mint); }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: all 0.2s; }
+  .toggle.active::after { left: 22px; }
+
+  .reward-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .reward-table th { background: var(--gray-50); padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-600); border: 1px solid var(--gray-200); }
+  .reward-table td { padding: 12px; border: 1px solid var(--gray-200); font-size: 13px; }
+  .reward-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; }
+
+  .form-checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .form-checkbox { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; cursor: pointer; }
+  .form-checkbox:hover { background: var(--gray-100); }
+  .form-checkbox input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--mint); cursor: pointer; flex-shrink: 0; }
+  .form-checkbox-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+
+  /* ===== TWO COL ===== */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-73 { display: grid; grid-template-columns: 7fr 3fr; gap: 24px; }
+
+  /* ===== BOTTOM BAR ===== */
+  .bottom-bar {
+    position: sticky; bottom: 0;
+    background: #fff; border-top: 1px solid var(--gray-200);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 40;
+  }
+
+  /* ===== ACTIVITY LOG ===== */
+  .history-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+  .history-item:last-child { border-bottom: none; }
+  .history-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .history-content { font-size: 13px; color: var(--gray-700); }
+  .history-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+  .history-author { font-weight: 600; color: var(--dark); }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item active" href="02_Discovery.html"><span class="icon">🎵</span> Discovery <span class="badge">8</span></a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="window.location.href='02_Discovery.html'">&#8592;</button>
+      <div style="margin-left: 8px;">
+        <div class="header-title">챌린지 상세</div>
+        <div class="header-breadcrumb">서비스 관리 → Discovery → 챌린지 상세</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== CHALLENGE SUMMARY BAR ===== -->
+    <div class="challenge-bar">
+      <div class="cb-top">
+        <div>
+          <div class="cb-title">Neon Night Beat</div>
+          <div class="cb-period">2026.04.10 ~ 2026.04.24 (D-7)</div>
+          <div class="cb-badges">
+            <span class="status status-live"><span class="status-dot"></span> LIVE</span>
+            <span class="genre-tag">K-POP</span>
+            <span class="genre-tag">EDM</span>
+            <span class="genre-tag">Hip-Hop</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-danger btn-sm">챌린지 종료</button>
+        </div>
+      </div>
+      <div class="progress-bar" style="margin-bottom: 12px;">
+        <div class="progress-fill" style="width: 58%;"></div>
+      </div>
+      <div style="font-size: 12px; color: var(--gray-400); margin-bottom: 16px;">진행률 58% · 남은 기간 7일</div>
+      <div class="cb-stats">
+        <div>
+          <div class="cb-stat-label">제출 트랙</div>
+          <div class="cb-stat-value">47</div>
+        </div>
+        <div>
+          <div class="cb-stat-label">총 투표</div>
+          <div class="cb-stat-value mint">3,284</div>
+        </div>
+        <div>
+          <div class="cb-stat-label">참여자</div>
+          <div class="cb-stat-value">892</div>
+        </div>
+        <div>
+          <div class="cb-stat-label">VAYLA 소비</div>
+          <div class="cb-stat-value">470</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TABS ===== -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('detail')">📋 상세 정보</button>
+      <button class="tab-btn" onclick="switchTab('tracks')">🎵 트랙 목록</button>
+      <button class="tab-btn" onclick="switchTab('votes')">🗳️ 투표 현황</button>
+      <button class="tab-btn" onclick="switchTab('edit')">✏️ 편집</button>
+    </div>
+
+    <!-- ======================== TAB 1: 상세 정보 ======================== -->
+    <div id="tab-detail" class="tab-content active">
+
+      <div class="two-col">
+        <!-- 기본 정보 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 기본 정보</div>
+          </div>
+          <div class="card-body">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <div class="detail-label">챌린지 ID</div>
+                <div class="detail-value">DC-001</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">챌린지명</div>
+                <div class="detail-value">Neon Night Beat</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">기간</div>
+                <div class="detail-value">2026.04.10 ~ 04.24</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">상태</div>
+                <div class="detail-value"><span class="status status-live"><span class="status-dot"></span> LIVE</span></div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">투표 방식</div>
+                <div class="detail-value">VAYLA 토큰 투표</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">투표 당 소비</div>
+                <div class="detail-value">1 VAYLA</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">허용 장르</div>
+                <div class="detail-value">K-POP, EDM, Hip-Hop</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">최대 트랙 길이</div>
+                <div class="detail-value">5분 00초</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 리워드 정보 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏆 리워드 구조</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 16px;">
+              <div class="detail-item" style="margin-bottom: 12px;">
+                <div class="detail-label">총 리워드 풀</div>
+                <div class="detail-value" style="font-size: 22px; color: var(--mint-dark);">5,000 VAYLA</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">리워드 타입</div>
+                <div class="detail-value">순위 기반 + Spotlight</div>
+              </div>
+            </div>
+            <table class="reward-table">
+              <thead>
+                <tr>
+                  <th>순위</th>
+                  <th>VAYLA 리워드</th>
+                  <th>NFT 뱃지</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="font-weight: 700;">🥇 1위</td><td>2,000 VAYLA</td><td>Gold Champion</td></tr>
+                <tr><td style="font-weight: 700;">🥈 2위</td><td>1,200 VAYLA</td><td>Silver Star</td></tr>
+                <tr><td style="font-weight: 700;">🥉 3위</td><td>800 VAYLA</td><td>Bronze Beat</td></tr>
+                <tr><td>4~5위</td><td>각 300 VAYLA</td><td>Top 5 Badge</td></tr>
+                <tr><td>Spotlight</td><td>100 VAYLA</td><td>Spotlight Pick</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 설명 & 규칙 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 챌린지 설명 & 규칙</div>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom: 20px;">
+            <div style="font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">설명</div>
+            <div style="font-size: 14px; color: var(--gray-600); line-height: 1.7; padding: 16px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100);">
+              네온 조명 아래에서 울려 퍼지는 비트를 테마로 한 음악 챌린지입니다. K-POP, EDM, Hip-Hop 장르의 오리지널 트랙을 제출해주세요. 커버곡 및 리믹스는 허용되지 않습니다. 모든 참여곡은 저작권 검증을 거치며, 최종 순위는 VAYLA 토큰 투표로 결정됩니다.
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">참여 규칙</div>
+            <div style="padding: 16px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-600); line-height: 1.8;">
+              1. 참여자당 최대 2곡까지 제출 가능<br>
+              2. 트랙 길이는 최소 1분, 최대 5분<br>
+              3. 오리지널 곡만 허용 (커버/리믹스 불가)<br>
+              4. 투표는 1인 1일 10표까지 (1표 = 1 VAYLA)<br>
+              5. 부정 투표 감지 시 자동 제외<br>
+              6. 심사 미통과 트랙은 투표 대상에서 제외
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 활동 로그 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 활동 로그</div>
+          <span style="font-size: 12px; color: var(--gray-400);">최근 5건</span>
+        </div>
+        <div class="card-body">
+          <div class="history-item">
+            <div class="history-dot" style="background: var(--mint);"></div>
+            <div>
+              <div class="history-content"><span class="history-author">System</span> — 챌린지 LIVE 시작</div>
+              <div class="history-time">2026-04-10 00:00</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot" style="background: var(--blue);"></div>
+            <div>
+              <div class="history-content"><span class="history-author">Jay</span> — 장르에 Hip-Hop 추가</div>
+              <div class="history-time">2026-04-09 18:30</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot" style="background: var(--purple);"></div>
+            <div>
+              <div class="history-content"><span class="history-author">Jay</span> — 리워드 풀 5,000 VAYLA로 확정</div>
+              <div class="history-time">2026-04-08 14:00</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot" style="background: var(--yellow);"></div>
+            <div>
+              <div class="history-content"><span class="history-author">Kai</span> — 챌린지 정보 검토 완료</div>
+              <div class="history-time">2026-04-08 11:20</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-dot" style="background: var(--gray-300);"></div>
+            <div>
+              <div class="history-content"><span class="history-author">Jay</span> — 챌린지 생성</div>
+              <div class="history-time">2026-04-07 09:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== TAB 2: 트랙 목록 ======================== -->
+    <div id="tab-tracks" class="tab-content">
+
+      <div class="kpi-row">
+        <div class="kpi-card mint">
+          <div class="kpi-label">승인 트랙</div>
+          <div class="kpi-value">38</div>
+          <div class="kpi-sub">투표 가능</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">심사 대기</div>
+          <div class="kpi-value">5</div>
+          <div class="kpi-sub">검토 필요</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">거절</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-sub">저작권 등</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">보류</div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-sub">확인 중</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎵 제출 트랙</div>
+          <div style="display: flex; gap: 8px;">
+            <a href="02-2_Track_Review.html" class="btn btn-sm btn-mint" style="text-decoration: none;">전체 심사 페이지 →</a>
+          </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+          <div class="table-wrapper">
+            <table style="min-width: 900px;">
+              <thead>
+                <tr>
+                  <th>트랙명</th>
+                  <th>아티스트</th>
+                  <th>장르</th>
+                  <th>길이</th>
+                  <th>제출일</th>
+                  <th>상태</th>
+                  <th>투표 수</th>
+                  <th>심사자</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark);">Starlight Express</td>
+                  <td>Yuna Park</td>
+                  <td><span class="genre-tag">K-POP</span></td>
+                  <td>3:42</td>
+                  <td style="color: var(--gray-400); font-size: 12px;">04-15</td>
+                  <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">482</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Admin Jay</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark);">Digital Paradise</td>
+                  <td>DJ Min</td>
+                  <td><span class="genre-tag">EDM</span></td>
+                  <td>4:15</td>
+                  <td style="color: var(--gray-400); font-size: 12px;">04-15</td>
+                  <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">371</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Admin Jay</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark);">Midnight Groove</td>
+                  <td>Zion K</td>
+                  <td><span class="genre-tag">EDM</span></td>
+                  <td>3:28</td>
+                  <td style="color: var(--gray-400); font-size: 12px;">04-16</td>
+                  <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+                  <td style="font-weight: 700; color: var(--mint-dark);">298</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Admin Jay</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark);">Neon Streets</td>
+                  <td>MC Flow</td>
+                  <td><span class="genre-tag">Hip-Hop</span></td>
+                  <td>3:55</td>
+                  <td style="color: var(--gray-400); font-size: 12px;">04-16</td>
+                  <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
+                  <td style="color: var(--gray-300);">-</td>
+                  <td style="font-size: 12px; color: var(--gray-400);">-</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600; color: var(--dark);">Cyber Punk Dreams</td>
+                  <td>AXEL</td>
+                  <td><span class="genre-tag">EDM</span></td>
+                  <td>5:02</td>
+                  <td style="color: var(--gray-400); font-size: 12px;">04-16</td>
+                  <td><span class="status status-rejected"><span class="status-dot"></span> 거절</span></td>
+                  <td style="color: var(--gray-300);">-</td>
+                  <td style="font-size: 12px; color: var(--gray-500);">Admin Kim</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== TAB 3: 투표 현황 ======================== -->
+    <div id="tab-votes" class="tab-content">
+
+      <div class="kpi-row-6">
+        <div class="kpi-card mint">
+          <div class="kpi-label">총 투표 수</div>
+          <div class="kpi-value">3,284</div>
+          <div class="kpi-sub">표</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">총 참여자</div>
+          <div class="kpi-value">892</div>
+          <div class="kpi-sub">명</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">VAYLA 소비</div>
+          <div class="kpi-value">470</div>
+          <div class="kpi-sub">VAYLA</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">오늘 투표</div>
+          <div class="kpi-value">284</div>
+          <div class="kpi-sub">표 (24h)</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-label">이상 투표 감지</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-sub">건</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">평균 투표/인</div>
+          <div class="kpi-value">3.7</div>
+          <div class="kpi-sub">표</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- 리더보드 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏆 투표 순위</div>
+            <span style="font-size: 12px; color: var(--gray-400);">실시간</span>
+          </div>
+          <div class="card-body">
+            <div class="lb-item">
+              <div class="lb-rank gold">1</div>
+              <div><div class="lb-title">Starlight Express</div><div class="lb-artist">Yuna Park · K-POP</div></div>
+              <div class="lb-votes">482표</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank silver">2</div>
+              <div><div class="lb-title">Digital Paradise</div><div class="lb-artist">DJ Min · EDM</div></div>
+              <div class="lb-votes">371표</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank bronze">3</div>
+              <div><div class="lb-title">Midnight Groove</div><div class="lb-artist">Zion K · EDM</div></div>
+              <div class="lb-votes">298표</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank normal">4</div>
+              <div><div class="lb-title">Seoul Dreams</div><div class="lb-artist">Luna · K-POP</div></div>
+              <div class="lb-votes">245표</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank normal">5</div>
+              <div><div class="lb-title">Bass Drop City</div><div class="lb-artist">NOVA · EDM</div></div>
+              <div class="lb-votes">218표</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 투표 활동 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 투표 활동</div>
+            <a href="02-3_Vote_Monitor.html" class="btn btn-sm btn-mint" style="text-decoration: none;">모니터링 상세 →</a>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">시간대별 투표 분포 (최근 24h)</div>
+              <div style="display: flex; align-items: flex-end; gap: 4px; height: 100px;">
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 20%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 15%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 10%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 8%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 5%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 12%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 25%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 35%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 55%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 70%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 85%;"></div>
+                <div style="flex: 1; background: var(--mint-dark); border-radius: 4px 4px 0 0; height: 100%;"></div>
+                <div style="flex: 1; background: var(--mint-dark); border-radius: 4px 4px 0 0; height: 92%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 78%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 65%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 50%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 42%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 48%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 60%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 75%;"></div>
+                <div style="flex: 1; background: var(--mint-dark); border-radius: 4px 4px 0 0; height: 90%;"></div>
+                <div style="flex: 1; background: var(--mint-dark); border-radius: 4px 4px 0 0; height: 95%;"></div>
+                <div style="flex: 1; background: var(--mint); border-radius: 4px 4px 0 0; height: 70%;"></div>
+                <div style="flex: 1; background: var(--mint-light); border-radius: 4px 4px 0 0; height: 40%;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 10px; color: var(--gray-400);">
+                <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+              </div>
+            </div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">이상 투표 감지</div>
+            <div style="padding: 12px 16px; background: var(--red-light); border-radius: 10px; border: 1px solid rgba(239,68,68,0.2); margin-bottom: 8px;">
+              <div style="font-size: 13px; font-weight: 600; color: var(--red);">user_3341 — 동일 트랙 연속 10회 투표</div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">04-17 14:22 · 자동 제외 처리</div>
+            </div>
+            <div style="padding: 12px 16px; background: var(--yellow-light); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2); margin-bottom: 8px;">
+              <div style="font-size: 13px; font-weight: 600; color: var(--yellow);">user_7780 — 짧은 시간 내 다량 투표</div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">04-17 11:05 · 검토 필요</div>
+            </div>
+            <div style="padding: 12px 16px; background: var(--yellow-light); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2);">
+              <div style="font-size: 13px; font-weight: 600; color: var(--yellow);">user_5120 — 동일 IP 다중 계정 의심</div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">04-16 22:40 · 확인 중</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== TAB 4: 편집 ======================== -->
+    <div id="tab-edit" class="tab-content">
+
+      <div class="grid-73">
+        <!-- Left: Edit Form -->
+        <div>
+          <!-- 기본 정보 편집 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 기본 정보 편집</div>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">챌린지명 <span class="required">*</span></label>
+                <input type="text" class="form-input" value="Neon Night Beat">
+              </div>
+              <div class="form-group">
+                <label class="form-label">설명</label>
+                <textarea class="form-input" rows="4">네온 조명 아래에서 울려 퍼지는 비트를 테마로 한 음악 챌린지입니다. K-POP, EDM, Hip-Hop 장르의 오리지널 트랙을 제출해주세요. 커버곡 및 리믹스는 허용되지 않습니다.</textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">시작일 <span class="required">*</span></label>
+                  <input type="date" class="form-input" value="2026-04-10">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">종료일 <span class="required">*</span></label>
+                  <input type="date" class="form-input" value="2026-04-24">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">허용 장르</label>
+                <div class="form-checkbox-group">
+                  <label class="form-checkbox"><input type="checkbox" checked><span class="form-checkbox-label">K-POP</span></label>
+                  <label class="form-checkbox"><input type="checkbox" checked><span class="form-checkbox-label">EDM</span></label>
+                  <label class="form-checkbox"><input type="checkbox" checked><span class="form-checkbox-label">Hip-Hop</span></label>
+                  <label class="form-checkbox"><input type="checkbox"><span class="form-checkbox-label">R&B</span></label>
+                  <label class="form-checkbox"><input type="checkbox"><span class="form-checkbox-label">Indie</span></label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">최대 트랙 길이</label>
+                  <input type="text" class="form-input" value="5:00">
+                  <div class="form-hint">분:초 형식</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">참여자당 최대 제출 수</label>
+                  <input type="number" class="form-input" value="2">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 투표 설정 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🗳️ 투표 설정</div>
+            </div>
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">투표 방식</label>
+                  <select class="form-input">
+                    <option selected>VAYLA 토큰 투표</option>
+                    <option>무료 투표</option>
+                    <option>하이브리드</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">투표 당 소비</label>
+                  <input type="text" class="form-input" value="1 VAYLA">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">1인 1일 최대 투표</label>
+                  <input type="number" class="form-input" value="10">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">부정 투표 자동 제외</label>
+                  <div class="toggle-switch">
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                    <span style="font-size: 13px; color: var(--gray-600);">활성화</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 리워드 편집 -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">🏆 리워드 편집</div>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">총 리워드 풀 <span class="required">*</span></label>
+                <input type="text" class="form-input" value="5,000 VAYLA">
+              </div>
+              <table class="reward-table">
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>VAYLA 리워드</th>
+                    <th>NFT 뱃지</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight: 700;">🥇 1위</td>
+                    <td><input type="text" value="2,000"></td>
+                    <td><input type="text" value="Gold Champion"></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 700;">🥈 2위</td>
+                    <td><input type="text" value="1,200"></td>
+                    <td><input type="text" value="Silver Star"></td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 700;">🥉 3위</td>
+                    <td><input type="text" value="800"></td>
+                    <td><input type="text" value="Bronze Beat"></td>
+                  </tr>
+                  <tr>
+                    <td>4~5위</td>
+                    <td><input type="text" value="300"></td>
+                    <td><input type="text" value="Top 5 Badge"></td>
+                  </tr>
+                  <tr>
+                    <td>Spotlight</td>
+                    <td><input type="text" value="100"></td>
+                    <td><input type="text" value="Spotlight Pick"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Preview & Actions -->
+        <div>
+          <div class="card" style="position: sticky; top: 80px;">
+            <div class="card-header">
+              <div class="card-title">👁️ 미리보기</div>
+            </div>
+            <div class="card-body">
+              <div style="border: 2px solid var(--mint); border-radius: 16px; overflow: hidden; background: #fff;">
+                <div style="height: 120px; background: linear-gradient(135deg, #667EEA, #764BA2); display: flex; align-items: center; justify-content: center; font-size: 40px;">🎵</div>
+                <div style="padding: 16px;">
+                  <div style="font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px;">Neon Night Beat</div>
+                  <div style="font-size: 11px; color: var(--gray-400); margin-bottom: 12px;">2026.04.10 ~ 04.24</div>
+                  <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                    <span class="genre-tag">K-POP</span>
+                    <span class="genre-tag">EDM</span>
+                    <span class="genre-tag">Hip-Hop</span>
+                  </div>
+                  <div class="progress-bar" style="margin-bottom: 8px;">
+                    <div class="progress-fill" style="width: 58%;"></div>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                    <div><span style="color: var(--gray-400);">트랙</span> <strong>47</strong></div>
+                    <div><span style="color: var(--gray-400);">투표</span> <strong style="color: var(--mint-dark);">3,284</strong></div>
+                    <div><span style="color: var(--gray-400);">참여자</span> <strong>892</strong></div>
+                    <div><span style="color: var(--gray-400);">리워드</span> <strong>5,000</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-mint btn-lg" style="width: 100%; justify-content: center;">💾 변경사항 저장</button>
+                <button class="btn btn-outline" style="width: 100%; justify-content: center;">🔄 변경사항 초기화</button>
+                <button class="btn btn-danger" style="width: 100%; justify-content: center;">🗑️ 챌린지 삭제</button>
+              </div>
+
+              <div style="margin-top: 20px; padding: 12px 16px; background: var(--yellow-light); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2);">
+                <div style="font-size: 12px; font-weight: 600; color: var(--yellow);">⚠️ LIVE 중 편집 주의</div>
+                <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">챌린지가 진행 중입니다. 기간, 리워드 변경은 참여자에게 영향을 줄 수 있습니다.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+}
+
+// URL hash support for deep linking
+window.addEventListener('load', function() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && document.getElementById('tab-' + hash)) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + hash).classList.add('active');
+    // Activate the correct tab button
+    const tabs = ['detail', 'tracks', 'votes', 'edit'];
+    const idx = tabs.indexOf(hash);
+    if (idx >= 0) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  }
+});
+</script>
+
+</body>
+</html>

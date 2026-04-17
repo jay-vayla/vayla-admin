@@ -394,49 +394,40 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label">제출 파일 형식 <span class="required">*</span></label>
-              <div class="form-checkbox-group">
-                <label class="form-checkbox">
-                  <input type="checkbox" checked>
+              <label class="form-label">제출 방식 <span class="required">*</span></label>
+              <div style="padding: 20px; background: var(--gray-50); border: 2px solid var(--mint); border-radius: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 44px; height: 44px; background: #FF0000; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0;">▶</div>
                   <div>
-                    <div class="form-checkbox-label">MP3</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--dark);">YouTube 임베드</div>
+                    <div style="font-size: 12px; color: var(--gray-500);">참여자가 YouTube 링크를 제출하면 자동으로 임베드됩니다</div>
                   </div>
-                </label>
-                <label class="form-checkbox">
-                  <input type="checkbox" checked>
-                  <div>
-                    <div class="form-checkbox-label">WAV</div>
-                  </div>
-                </label>
-                <label class="form-checkbox">
-                  <input type="checkbox">
-                  <div>
-                    <div class="form-checkbox-label">FLAC</div>
-                  </div>
-                </label>
-                <label class="form-checkbox">
-                  <input type="checkbox">
-                  <div>
-                    <div class="form-checkbox-label">MP4 (비디오)</div>
-                  </div>
-                </label>
+                </div>
+                <div style="padding: 12px 14px; background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 12px; color: var(--gray-500); display: flex; flex-direction: column; gap: 6px;">
+                  <div>✓ YouTube URL 형식만 허용 (youtube.com/watch, youtu.be)</div>
+                  <div>✓ 제출 시 자동으로 영상 메타데이터 (제목, 길이) 추출</div>
+                  <div>✓ 비공개/삭제된 영상은 자동 감지 후 알림</div>
+                  <div>✓ 쇼츠(Shorts) 형식도 허용</div>
+                </div>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">최소 길이</label>
+                <label class="form-label">최소 영상 길이</label>
                 <div class="form-input-group">
                   <input type="number" class="form-input" value="30" style="padding-right: 70px;">
                   <span class="form-input-suffix">초</span>
                 </div>
+                <div class="form-hint">YouTube 영상 메타데이터에서 자동 확인</div>
               </div>
               <div class="form-group">
-                <label class="form-label">최대 길이</label>
+                <label class="form-label">최대 영상 길이</label>
                 <div class="form-input-group">
                   <input type="number" class="form-input" value="300" style="padding-right: 70px;">
                   <span class="form-input-suffix">초</span>
                 </div>
+                <div class="form-hint">5분 초과 영상은 제출 불가</div>
               </div>
             </div>
 
@@ -663,6 +654,7 @@
               </div>
 
               <div class="preview-detail">📤 제출 비용: <strong>10 VAYLA</strong></div>
+              <div class="preview-detail">🎬 제출 방식: <strong>YouTube 링크</strong></div>
               <div class="preview-detail">🗳️ 투표 비용: <strong>1.1 VAYLA/회</strong></div>
 
               <div class="preview-stats">
@@ -729,12 +721,177 @@
     </div>
     <div class="bottom-bar-right">
       <button class="btn btn-outline" onclick="window.location.href='02_Discovery.html'">취소</button>
-      <button class="btn btn-outline">임시 저장</button>
-      <button class="btn btn-mint btn-lg">챌린지 발행</button>
+      <button class="btn btn-outline" onclick="showDraftModal()">임시 저장</button>
+      <button class="btn btn-mint btn-lg" onclick="showPublishConfirm()">챌린지 발행</button>
     </div>
   </div>
 
 </div>
+
+<!-- ===== DRAFT SAVE MODAL ===== -->
+<div class="modal-overlay" id="draftModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; width:440px; padding:32px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+    <div style="width:64px; height:64px; margin:0 auto 20px; background:var(--mint-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px;">💾</div>
+    <div style="font-size:18px; font-weight:800; color:var(--dark); margin-bottom:8px;">임시 저장 완료</div>
+    <div style="font-size:14px; color:var(--gray-500); margin-bottom:8px;">챌린지가 임시 저장되었습니다.</div>
+    <div style="padding:16px; background:var(--gray-50); border-radius:10px; margin-bottom:24px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <span style="font-size:12px; color:var(--gray-400);">챌린지명</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">Summer Music Challenge</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <span style="font-size:12px; color:var(--gray-400);">상태</span>
+        <span style="padding:3px 8px; background:var(--yellow-light); border-radius:5px; font-size:11px; font-weight:600; color:var(--yellow);">임시 저장</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="font-size:12px; color:var(--gray-400);">저장 시각</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">2026-04-17 14:35:22</span>
+      </div>
+    </div>
+    <div style="font-size:12px; color:var(--gray-400); margin-bottom:20px; padding:10px 14px; background:var(--blue-light); border-radius:8px; text-align:left;">
+      💡 임시 저장된 챌린지는 <strong style="color:var(--blue);">Discovery 관리 → 임시 저장</strong> 목록에서 확인하고 이어서 편집할 수 있습니다.
+    </div>
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <button class="btn btn-outline" onclick="closeDraftModal()">계속 편집</button>
+      <button class="btn btn-mint" onclick="window.location.href='02_Discovery.html'">Discovery로 이동</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PUBLISH CONFIRM MODAL ===== -->
+<div class="modal-overlay" id="publishConfirm" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; width:480px; padding:32px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-size:40px; margin-bottom:12px;">⚠️</div>
+      <div style="font-size:18px; font-weight:800; color:var(--dark); margin-bottom:8px;">챌린지를 발행하시겠습니까?</div>
+      <div style="font-size:13px; color:var(--gray-500);">발행 후에는 일부 항목을 변경할 수 없습니다</div>
+    </div>
+    <div style="padding:16px; background:var(--gray-50); border-radius:10px; margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">챌린지명</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">Summer Music Challenge</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">기간</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">2026.05.15 ~ 06.15</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">제출 방식</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">YouTube 임베드</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">총 리워드 풀</span>
+        <span style="font-size:13px; font-weight:700; color:var(--mint-dark);">175 VAYLA</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="font-size:12px; color:var(--gray-400);">투표 방식</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">1인 1투표 · 1.1 VAYLA/회</span>
+      </div>
+    </div>
+    <div style="padding:12px 14px; background:var(--yellow-light); border-radius:8px; margin-bottom:24px; font-size:12px; color:var(--yellow); display:flex; gap:8px; align-items:flex-start;">
+      <span style="flex-shrink:0;">⚠️</span>
+      <div>
+        <div style="font-weight:600; margin-bottom:2px;">발행 후 변경 불가 항목</div>
+        <div style="color:var(--gray-500);">투표 방식, 제출 방식, NFT 보상 기준은 발행 후 수정할 수 없습니다. 기간, 설명, 리워드 금액은 편집 가능합니다.</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closePublishConfirm()">취소</button>
+      <button class="btn btn-mint btn-lg" onclick="doPublish()">🚀 챌린지 발행</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PUBLISH SUCCESS MODAL ===== -->
+<div class="modal-overlay" id="publishSuccess" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; width:480px; padding:40px 32px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+    <div style="width:80px; height:80px; margin:0 auto 20px; background:var(--mint-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px;">🎉</div>
+    <div style="font-size:22px; font-weight:800; color:var(--dark); margin-bottom:8px;">챌린지가 발행되었습니다!</div>
+    <div style="font-size:14px; color:var(--gray-500); margin-bottom:24px;">설정된 시작일에 자동으로 LIVE 상태로 전환됩니다</div>
+
+    <div style="padding:20px; background:var(--gray-50); border-radius:12px; margin-bottom:24px; text-align:left;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">챌린지명</span>
+        <span style="font-size:13px; font-weight:700; color:var(--dark);">Summer Music Challenge</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">상태</span>
+        <span style="padding:3px 10px; background:var(--blue-light); border-radius:5px; font-size:11px; font-weight:600; color:var(--blue);">🕐 예정 (Upcoming)</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">LIVE 시작</span>
+        <span style="font-size:13px; font-weight:600; color:var(--mint-dark);">2026.05.15 00:00</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:12px; color:var(--gray-400);">제출 방식</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">YouTube 임베드</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="font-size:12px; color:var(--gray-400);">발행 시각</span>
+        <span style="font-size:13px; font-weight:600; color:var(--dark);">2026-04-17 14:36:10</span>
+      </div>
+    </div>
+
+    <div style="padding:14px; background:var(--mint-light); border-radius:10px; margin-bottom:24px;">
+      <div style="font-size:13px; font-weight:600; color:var(--mint-dark); margin-bottom:4px;">📢 알림 예약 완료</div>
+      <div style="font-size:12px; color:var(--gray-500);">챌린지 시작 Push · 종료 D-1 Push · 결과 발표 Push</div>
+    </div>
+
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <a href="02-5_Challenge_Detail.html#detail" class="btn btn-outline" style="text-decoration:none;">📋 챌린지 상세 보기</a>
+      <a href="02_Discovery.html" class="btn btn-mint" style="text-decoration:none;">Discovery로 이동</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// Draft Save Modal
+function showDraftModal() {
+  document.getElementById('draftModal').style.display = 'flex';
+}
+function closeDraftModal() {
+  document.getElementById('draftModal').style.display = 'none';
+}
+document.getElementById('draftModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDraftModal();
+});
+
+// Publish Confirm Modal
+function showPublishConfirm() {
+  document.getElementById('publishConfirm').style.display = 'flex';
+}
+function closePublishConfirm() {
+  document.getElementById('publishConfirm').style.display = 'none';
+}
+document.getElementById('publishConfirm').addEventListener('click', function(e) {
+  if (e.target === this) closePublishConfirm();
+});
+
+// Publish Success
+function doPublish() {
+  document.getElementById('publishConfirm').style.display = 'none';
+  document.getElementById('publishSuccess').style.display = 'flex';
+}
+document.getElementById('publishSuccess').addEventListener('click', function(e) {
+  if (e.target === this) document.getElementById('publishSuccess').style.display = 'none';
+});
+
+// Radio toggle
+document.querySelectorAll('.form-radio').forEach(function(radio) {
+  radio.addEventListener('click', function() {
+    var group = this.closest('.form-radio-group');
+    group.querySelectorAll('.form-radio').forEach(function(r) { r.classList.remove('selected'); });
+    this.classList.add('selected');
+  });
+});
+
+// Toggle
+document.querySelectorAll('.toggle').forEach(function(toggle) {
+  toggle.addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+});
+</script>
 
 </body>
 </html>
