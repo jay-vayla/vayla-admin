@@ -217,6 +217,8 @@
 
   .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
 
+  .tab-shortcut:hover { background: var(--mint-light) !important; color: var(--mint) !important; }
+
   .tab-btn.active {
     background: var(--mint);
     color: #fff;
@@ -803,9 +805,18 @@
     <!-- TAB NAV -->
     <div class="tab-nav">
       <button class="tab-btn active">🎵 챌린지 관리 <span class="count">4</span></button>
-      <button class="tab-btn">📋 트랙 심사 <span class="count">8</span></button>
-      <button class="tab-btn">🗳️ 투표 모니터링</button>
-      <button class="tab-btn">🎁 리워드 배분</button>
+      <div style="display: flex; align-items: center; gap: 0;">
+        <button class="tab-btn">📋 트랙 심사 <span class="count">8</span></button>
+        <a href="02-2_Track_Review.html" title="트랙 심사 전체 페이지" class="tab-shortcut" style="width: 28px; height: 28px; border-radius: 6px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 12px; text-decoration: none; color: var(--gray-500); margin-left: -4px; transition: all 0.15s;">↗</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0;">
+        <button class="tab-btn">🗳️ 투표 모니터링</button>
+        <a href="02-3_Vote_Monitor.html" title="투표 모니터링 전체 페이지" class="tab-shortcut" style="width: 28px; height: 28px; border-radius: 6px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 12px; text-decoration: none; color: var(--gray-500); margin-left: -4px; transition: all 0.15s;">↗</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0;">
+        <button class="tab-btn">🎁 리워드 배분</button>
+        <a href="02-4_Reward_Distribution.html" title="리워드 배분 전체 페이지" class="tab-shortcut" style="width: 28px; height: 28px; border-radius: 6px; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 12px; text-decoration: none; color: var(--gray-500); margin-left: -4px; transition: all 0.15s;">↗</a>
+      </div>
       <button class="tab-btn">🏷️ 장르 관리</button>
     </div>
 
