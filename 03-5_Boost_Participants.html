@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Boost 참여현황</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; transition: all 0.15s; }
+  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
+  .back-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.15s; }
+  .back-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
+
+  /* ===== BUTTONS ===== */
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-purple { background: var(--purple-light); color: var(--purple); }
+  .btn-purple:hover { background: var(--purple); color: #fff; }
+
+  /* ===== PROJECT SUMMARY BAR ===== */
+  .project-bar {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .pb-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-right: 8px;
+  }
+
+  .pb-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pb-label { font-size: 10px; color: var(--gray-400); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pb-value { font-size: 13px; font-weight: 600; color: var(--dark); }
+
+  .pb-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--gray-200);
+  }
+
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-normal { background: var(--mint-light); color: var(--mint-dark); }
+  .status-review { background: var(--yellow-light); color: var(--yellow); }
+  .status-excluded { background: var(--red-light); color: var(--red); }
+  .status-cancelled { background: var(--gray-100); color: var(--gray-500); }
+  .status-refunded { background: var(--blue-light); color: var(--blue); }
+  .status-active { background: var(--mint-light); color: var(--mint-dark); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .settle-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .settle-done { background: var(--mint-light); color: var(--mint-dark); }
+  .settle-hold { background: var(--yellow-light); color: var(--yellow); }
+  .settle-not { background: var(--gray-100); color: var(--gray-400); }
+  .settle-pending { background: var(--orange-light); color: var(--orange); }
+
+  .cat-badge { display: inline-flex; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .cat-music { background: var(--purple-light); color: var(--purple); }
+
+  .vis-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .vis-public { background: var(--green-light); color: var(--green); }
+
+  /* ===== KPI ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+  thead th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); cursor: pointer; }
+  tbody tr.row-review { border-left: 3px solid var(--yellow); }
+  tbody tr.row-excluded { border-left: 3px solid var(--red); }
+
+  /* ===== FILTER ===== */
+  .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .search-box { position: relative; flex: 1; max-width: 260px; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+  .filter-select { padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; width: 680px; max-height: 90vh;
+    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-header {
+    padding: 24px; border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: var(--gray-100); font-size: 18px; color: var(--gray-500);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .modal-close:hover { background: var(--gray-200); }
+  .modal-body { padding: 24px; }
+  .modal-footer {
+    padding: 20px 24px; border-top: 1px solid var(--gray-100);
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+
+  /* ===== DETAIL INFO ===== */
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
+  }
+  .detail-item { padding: 14px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100); }
+  .detail-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-value { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .detail-value.mono { font-family: monospace; font-size: 13px; color: var(--gray-600); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+  .form-textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+    font-size: 14px; color: var(--gray-700); outline: none; font-family: 'Inter', sans-serif;
+  }
+  .form-textarea:focus { border-color: var(--mint); }
+
+  /* ===== HISTORY TIMELINE ===== */
+  .history-item {
+    display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .history-content { font-size: 13px; color: var(--gray-700); }
+  .history-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery <span class="badge">8</span></a>
+    <a class="nav-item active" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="window.location.href='03_Boost.html'">←</button>
+      <div style="margin-left: 8px;">
+        <div class="header-title">참여현황 상세</div>
+        <div class="header-breadcrumb">서비스 관리 → Boost → 참여현황</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== PROJECT SUMMARY BAR ===== -->
+    <div class="project-bar">
+      <div>
+        <div class="pb-title">VAYLA Artist Support Vol.1</div>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <span class="cat-badge cat-music">Music</span>
+          <span class="status status-active"><span class="status-dot"></span> 진행중</span>
+          <span class="vis-badge vis-public">공개</span>
+        </div>
+      </div>
+      <div class="pb-divider"></div>
+      <div class="pb-item">
+        <div class="pb-label">총 참여자</div>
+        <div class="pb-value">1,284명</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-label">총 모금액</div>
+        <div class="pb-value" style="color: var(--mint-dark);">42,500 USDT</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-label">최소 참여</div>
+        <div class="pb-value">50 USDT</div>
+      </div>
+      <div class="pb-divider"></div>
+      <div class="pb-item">
+        <div class="pb-label">기간</div>
+        <div class="pb-value">04.10 ~ 04.30</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-label">수수료</div>
+        <div class="pb-value">5%</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-label">정산 상태</div>
+        <div><span class="settle-badge settle-pending">정산 대기</span></div>
+      </div>
+    </div>
+
+    <!-- ===== KPI CARDS ===== -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">총 참여자 수</div>
+        <div class="kpi-value" style="font-size: 24px;">1,284</div>
+        <div class="kpi-sub">명</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">총 참여 금액</div>
+        <div class="kpi-value" style="font-size: 24px;">42,500</div>
+        <div class="kpi-sub">USDT</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">평균 참여 금액</div>
+        <div class="kpi-value" style="font-size: 24px;">33.1</div>
+        <div class="kpi-sub">USDT</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">검토 필요</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">제외 대상</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">건</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">정산 반영 완료</div>
+        <div class="kpi-value" style="font-size: 22px;">1,268</div>
+        <div class="kpi-sub">건</div>
+      </div>
+    </div>
+
+    <!-- ===== PARTICIPANTS TABLE ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">👥 참여자 목록</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+      </div>
+
+      <!-- Filter Toolbar -->
+      <div style="padding: 16px 24px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100);">
+        <div class="filter-bar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="유저 ID, 지갑 주소 검색...">
+          </div>
+          <select class="filter-select">
+            <option>상태 (전체)</option>
+            <option>정상</option>
+            <option>검토 필요</option>
+            <option>제외</option>
+            <option>취소</option>
+            <option>환불 완료</option>
+          </select>
+          <select class="filter-select">
+            <option>정산 반영 (전체)</option>
+            <option>반영 완료</option>
+            <option>보류</option>
+            <option>미반영</option>
+          </select>
+          <select class="filter-select">
+            <option>기간 (전체)</option>
+            <option>오늘</option>
+            <option>최근 7일</option>
+            <option>최근 30일</option>
+          </select>
+          <select class="filter-select">
+            <option>금액 (전체)</option>
+            <option>50 USDT 이하</option>
+            <option>50 ~ 100 USDT</option>
+            <option>100 ~ 500 USDT</option>
+            <option>500 USDT 이상</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>참여 ID</th>
+              <th>유저 ID</th>
+              <th>지갑 주소</th>
+              <th>참여 금액</th>
+              <th>참여 시각</th>
+              <th>참여 횟수</th>
+              <th>상태</th>
+              <th>정산 반영</th>
+              <th>메모</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: 정상 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1001</td>
+              <td style="font-weight: 600; color: var(--dark);">user_1024</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x71A2...9Fd2</td>
+              <td style="font-weight: 600;">100 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.10 14:12</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
+              <td><span class="settle-badge settle-done">반영 완료</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 2: 정상 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1002</td>
+              <td style="font-weight: 600; color: var(--dark);">user_2291</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x43Bc...28Ae</td>
+              <td style="font-weight: 600;">50 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.10 14:18</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
+              <td><span class="settle-badge settle-done">반영 완료</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 3: 검토 필요 -->
+            <tr class="row-review" onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1003</td>
+              <td style="font-weight: 600; color: var(--dark);">user_8754</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x992D...7Ac1</td>
+              <td style="font-weight: 600;">300 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.10 15:02</td>
+              <td style="text-align: center; color: var(--yellow); font-weight: 600;">2회</td>
+              <td><span class="status status-review"><span class="status-dot"></span> 검토 필요</span></td>
+              <td><span class="settle-badge settle-hold">보류</span></td>
+              <td style="font-size: 12px; color: var(--yellow);">중복 참여 확인 필요</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 4: 제외 -->
+            <tr class="row-excluded" onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1004</td>
+              <td style="font-weight: 600; color: var(--dark);">user_4108</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x18Df...73Bd</td>
+              <td style="font-weight: 600;">50 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.10 15:10</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-excluded"><span class="status-dot"></span> 제외</span></td>
+              <td><span class="settle-badge settle-not">미반영</span></td>
+              <td style="font-size: 12px; color: var(--red);">취소 요청 반영</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 5: 정상 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1005</td>
+              <td style="font-weight: 600; color: var(--dark);">user_6620</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x81Bc...19Ac</td>
+              <td style="font-weight: 600;">200 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.10 15:42</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
+              <td><span class="settle-badge settle-done">반영 완료</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 6: 취소 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1006</td>
+              <td style="font-weight: 600; color: var(--dark);">user_3312</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x55Ab...44Cd</td>
+              <td style="font-weight: 600;">100 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.11 09:30</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-cancelled"><span class="status-dot"></span> 취소</span></td>
+              <td><span class="settle-badge settle-not">미반영</span></td>
+              <td style="font-size: 12px; color: var(--gray-500);">유저 자발적 취소</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 7: 환불 완료 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1007</td>
+              <td style="font-weight: 600; color: var(--dark);">user_9981</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x66Ef...88Ab</td>
+              <td style="font-weight: 600;">150 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.11 11:15</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-refunded"><span class="status-dot"></span> 환불 완료</span></td>
+              <td><span class="settle-badge settle-not">미반영</span></td>
+              <td style="font-size: 12px; color: var(--blue);">환불 TX 완료</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+            <!-- Row 8: 정상 -->
+            <tr onclick="openDetailModal()">
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">PT-1008</td>
+              <td style="font-weight: 600; color: var(--dark);">user_7745</td>
+              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x22Cd...91Ef</td>
+              <td style="font-weight: 600;">500 USDT</td>
+              <td style="font-size: 12px; color: var(--gray-500);">04.12 10:05</td>
+              <td style="text-align: center;">1회</td>
+              <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
+              <td><span class="settle-badge settle-done">반영 완료</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+              <td><button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); openDetailModal()">상세</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div style="padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-100);">
+        <div style="font-size: 13px; color: var(--gray-500);">총 1,284건 중 1-8 표시</div>
+        <div style="display: flex; gap: 4px;">
+          <button class="btn btn-sm btn-outline" disabled style="opacity: 0.5;">← 이전</button>
+          <button class="btn btn-sm btn-mint">1</button>
+          <button class="btn btn-sm btn-outline">2</button>
+          <button class="btn btn-sm btn-outline">3</button>
+          <button class="btn btn-sm btn-outline">...</button>
+          <button class="btn btn-sm btn-outline">161</button>
+          <button class="btn btn-sm btn-outline">다음 →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== DETAIL MODAL ===== -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div style="font-size: 18px; font-weight: 800; color: var(--dark);">참여 상세 — PT-1003</div>
+        <div style="font-size: 13px; color: var(--gray-500); margin-top: 4px;">VAYLA Artist Support Vol.1</div>
+      </div>
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Detail Info Grid -->
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">참여 ID</div>
+          <div class="detail-value mono">PT-1003</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">유저 ID</div>
+          <div class="detail-value">user_8754</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">닉네임</div>
+          <div class="detail-value">NeoWave</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">지갑 주소</div>
+          <div class="detail-value mono">0x992D...7Ac1 <a href="#" style="font-size: 11px; color: var(--mint); margin-left: 4px;">BscScan ↗</a></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">참여 금액</div>
+          <div class="detail-value" style="color: var(--mint-dark);">300 USDT</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">참여 시각</div>
+          <div class="detail-value">2026-04-10 15:02</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">누적 참여 횟수</div>
+          <div class="detail-value" style="color: var(--yellow);">2회</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">누적 참여 금액</div>
+          <div class="detail-value">450 USDT</div>
+        </div>
+      </div>
+
+      <!-- Status Row -->
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <div style="flex: 1; padding: 14px; background: var(--yellow-light); border-radius: 10px; border: 1px solid var(--yellow);">
+          <div style="font-size: 11px; color: var(--yellow); font-weight: 600; margin-bottom: 4px;">상태</div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--yellow);">검토 필요</div>
+        </div>
+        <div style="flex: 1; padding: 14px; background: var(--orange-light); border-radius: 10px; border: 1px solid var(--orange);">
+          <div style="font-size: 11px; color: var(--orange); font-weight: 600; margin-bottom: 4px;">정산 반영</div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--orange);">보류</div>
+        </div>
+      </div>
+
+      <!-- Change History -->
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 12px;">📋 변경 이력</div>
+        <div class="history-item">
+          <div class="history-dot" style="background: var(--yellow);"></div>
+          <div>
+            <div class="history-content">상태 변경: 정상 → 검토 필요 (시스템 자동 감지)</div>
+            <div class="history-time">2026-04-10 15:05</div>
+          </div>
+        </div>
+        <div class="history-item">
+          <div class="history-dot" style="background: var(--orange);"></div>
+          <div>
+            <div class="history-content">정산 반영 보류 처리 — 운영자: Jay Kim</div>
+            <div class="history-time">2026-04-10 16:30</div>
+          </div>
+        </div>
+        <div class="history-item">
+          <div class="history-dot" style="background: var(--mint);"></div>
+          <div>
+            <div class="history-content">참여 등록 — 300 USDT, TX: 0x992D...7Ac1</div>
+            <div class="history-time">2026-04-10 15:02</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operator Memo -->
+      <div class="form-group">
+        <div class="form-label">운영자 메모</div>
+        <textarea class="form-textarea" rows="3" placeholder="참여 관련 메모를 입력하세요...">같은 프로젝트에 짧은 시간 내 2회 참여. 추가 확인 후 반영 여부 결정.</textarea>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-mint" onclick="alert('상태가 변경되었습니다.')">🔄 상태 변경</button>
+        <button class="btn btn-blue" onclick="alert('정산 반영되었습니다.')">✅ 정산 반영</button>
+        <button class="btn btn-danger" onclick="alert('정산 제외되었습니다.')">❌ 정산 제외</button>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline" onclick="alert('메모가 저장되었습니다.')">💾 메모 저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openDetailModal() {
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('show');
+}
+
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if(e.target === this) closeDetailModal();
+});
+</script>
+
+</body>
+</html>
