@@ -171,6 +171,32 @@
   }
   .form-textarea:focus { border-color: var(--mint); }
 
+  /* ===== NFT THUMBNAILS ===== */
+  .nft-thumb {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .nft-thumb-purple { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+  .nft-thumb-mint { background: linear-gradient(135deg, #00C9A7, #34D399); }
+  .nft-thumb-blue { background: linear-gradient(135deg, #3B82F6, #60A5FA); }
+  .nft-thumb-orange { background: linear-gradient(135deg, #F97316, #FB923C); }
+  .nft-thumb-yellow { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+  .nft-name-cell { display: flex; align-items: center; gap: 12px; }
+
+  .nft-img-large {
+    width: 120px; height: 120px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; color: #fff; flex-shrink: 0;
+  }
+  .nft-detail-top {
+    display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px;
+    padding: 20px; background: var(--gray-50); border-radius: 14px; border: 1px solid var(--gray-100);
+  }
+  .nft-detail-top-info { flex: 1; }
+  .nft-detail-top-info h3 { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .nft-detail-top-info p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+
   /* ===== HOLDER SUB-TABLE ===== */
   .sub-table { width: 100%; border-collapse: collapse; min-width: 600px; }
   .sub-table thead th { padding: 10px 12px; font-size: 11px; }
@@ -196,7 +222,7 @@
     <div class="nav-section">NFT</div>
     <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
     <a class="nav-item active" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
-    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT Policy & Utility</a>
     <div class="nav-section">운영</div>
     <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
     <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
@@ -229,11 +255,11 @@
 
     <!-- ===== KPI CARDS ===== -->
     <div class="kpi-row">
-      <div class="kpi-card purple">
+      <a href="06-3_NFT_Creator_List.html" class="kpi-card purple" style="text-decoration:none; color:inherit; cursor:pointer;">
         <div class="kpi-label">총 NFT 종류</div>
         <div class="kpi-value">8</div>
-        <div class="kpi-sub">개</div>
-      </div>
+        <div class="kpi-sub">개 →</div>
+      </a>
       <div class="kpi-card blue">
         <div class="kpi-label">총 발행 수량</div>
         <div class="kpi-value">1,240</div>
@@ -267,7 +293,7 @@
         <div class="card-title">⭐ Creator NFT 목록</div>
         <div style="display: flex; gap: 8px;">
           <button class="btn btn-sm btn-outline">📥 내보내기</button>
-          <button class="btn btn-sm btn-mint">+ 새 NFT 등록</button>
+          <a href="06-1_NFT_Creator_Create.html" class="btn btn-sm btn-mint">+ 새 NFT 등록</a>
         </div>
       </div>
       <div class="card-body" style="padding-bottom: 0;">
@@ -322,7 +348,7 @@
             <tbody>
               <!-- Row 1: First Track Published -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">First Track Published</td>
+                <td><div class="nft-name-cell"><div class="nft-thumb nft-thumb-purple">F</div><span style="font-weight: 700; color: var(--dark);">First Track Published</span></div></td>
                 <td><span class="cat-badge-common cat-achievement">Achievement</span></td>
                 <td><span class="type-badge type-auto">자동</span></td>
                 <td style="font-weight: 600;">420</td>
@@ -334,13 +360,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="06-2_NFT_Creator_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 2: Top 10 Discovery Creator -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Top 10 Discovery Creator</td>
+                <td><div class="nft-name-cell"><div class="nft-thumb nft-thumb-orange">T</div><span style="font-weight: 700; color: var(--dark);">Top 10 Discovery Creator</span></div></td>
                 <td><span class="cat-badge-common cat-ranking">Ranking Reward</span></td>
                 <td><span class="type-badge type-auto">자동</span></td>
                 <td style="font-weight: 600;">80</td>
@@ -352,13 +378,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="06-2_NFT_Creator_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 3: Verified Creator Badge -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Verified Creator Badge</td>
+                <td><div class="nft-name-cell"><div class="nft-thumb nft-thumb-mint">V</div><span style="font-weight: 700; color: var(--dark);">Verified Creator Badge</span></div></td>
                 <td><span class="cat-badge-common cat-verified">Verified Creator</span></td>
                 <td><span class="type-badge type-manual">수동</span></td>
                 <td style="font-weight: 600;">145</td>
@@ -370,13 +396,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="06-2_NFT_Creator_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 4: 1000 Plays Milestone -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">1000 Plays Milestone</td>
+                <td><div class="nft-name-cell"><div class="nft-thumb nft-thumb-blue">1</div><span style="font-weight: 700; color: var(--dark);">1000 Plays Milestone</span></div></td>
                 <td><span class="cat-badge-common cat-milestone">Milestone</span></td>
                 <td><span class="type-badge type-auto">자동</span></td>
                 <td style="font-weight: 600;">310</td>
@@ -388,13 +414,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="06-2_NFT_Creator_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 5: Genesis Creator Pass -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Genesis Creator Pass</td>
+                <td><div class="nft-name-cell"><div class="nft-thumb nft-thumb-yellow">G</div><span style="font-weight: 700; color: var(--dark);">Genesis Creator Pass</span></div></td>
                 <td><span class="cat-badge-common cat-creator-badge">Creator Badge</span></td>
                 <td><span class="type-badge type-manual">수동</span></td>
                 <td style="font-weight: 600;">35</td>
@@ -406,7 +432,7 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="06-2_NFT_Creator_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
@@ -440,6 +466,20 @@
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
+
+      <!-- NFT Image + Title -->
+      <div class="nft-detail-top">
+        <div class="nft-img-large nft-thumb-purple" style="background: linear-gradient(135deg, #8B5CF6, #A78BFA);">F</div>
+        <div class="nft-detail-top-info">
+          <h3>First Track Published</h3>
+          <p>VAYLA 플랫폼에 첫 곡 업로드를 완료한 크리에이터에게 발행되는 업적형 NFT입니다.</p>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <span class="cat-badge-common cat-achievement">Achievement</span>
+            <span class="transfer-badge transfer-no">Soulbound</span>
+            <span class="status status-active"><span class="status-dot"></span> 활성</span>
+          </div>
+        </div>
+      </div>
 
       <!-- Detail Info -->
       <div class="detail-grid">
