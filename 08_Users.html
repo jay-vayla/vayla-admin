@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - 회원 관리</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED; --pink: #EC4899; --pink-light: #FDF2F8;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; }
+  .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  .tab-nav { display: flex; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; }
+  .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
+  .tab-btn .count { background: rgba(255,255,255,0.25); padding: 1px 7px; border-radius: 6px; font-size: 11px; }
+  .tab-btn:not(.active) .count { background: var(--gray-100); color: var(--gray-500); }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-active { background: var(--mint-light); color: var(--mint-dark); }
+  .status-inactive { background: var(--gray-100); color: var(--gray-500); }
+  .status-suspended { background: var(--red-light); color: var(--red); }
+  .status-verified { background: var(--blue-light); color: var(--blue); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  .user-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; background: linear-gradient(135deg, var(--mint), var(--blue)); }
+  .user-cell { display: flex; align-items: center; gap: 12px; }
+  .user-info { display: flex; flex-direction: column; }
+  .user-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .user-handle { font-size: 11px; color: var(--gray-400); }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+  .page-info { font-size: 13px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+  .search-box { position: relative; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+
+  .role-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--purple-light); color: var(--purple); }
+  .role-badge.creator { background: var(--orange-light); color: var(--orange); }
+
+  .info-box { background: var(--gray-50); padding: 16px; border-radius: 10px; margin-top: 24px; border-left: 3px solid var(--mint); }
+  .info-box h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+  .info-box .tier-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .info-box .tier-item { padding: 10px; background: #fff; border-radius: 8px; border: 1px solid var(--gray-200); }
+  .info-box .tier-name { font-size: 12px; font-weight: 600; color: var(--dark); }
+  .info-box .tier-desc { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 14px; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+  .modal-header { padding: 28px 28px 20px; font-size: 18px; font-weight: 700; color: var(--dark); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-100); }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); }
+  .modal-body { padding: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--mint); }
+  .modal-section { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-100); }
+  .modal-section:last-of-type { border-bottom: none; }
+  .modal-section-title { font-size: 12px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; margin-bottom: 12px; }
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 13px; }
+  .info-row-label { color: var(--gray-500); }
+  .info-row-value { font-weight: 600; color: var(--dark); }
+  .activity-list { display: flex; flex-direction: column; gap: 8px; }
+  .activity-item { padding: 10px; background: var(--gray-50); border-radius: 8px; font-size: 12px; color: var(--gray-600); }
+  .form-select { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-select:focus { border-color: var(--mint); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 20px 28px; border-top: 1px solid var(--gray-100); background: var(--gray-50); }
+  .modal-actions .btn { margin: 0; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item active" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <div><div class="header-title">회원 관리</div><div class="header-breadcrumb">운영 → 회원 관리</div></div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- KPI CARDS -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">Total Users</div>
+        <div class="kpi-value">12,847</div>
+        <div class="kpi-sub">전월 대비 +284</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">New Today</div>
+        <div class="kpi-value">+47</div>
+        <div class="kpi-sub">지난주 평균 42명</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">Active (24h)</div>
+        <div class="kpi-value">3,284</div>
+        <div class="kpi-sub">활성율 25.5%</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">Creator Accounts</div>
+        <div class="kpi-value">89</div>
+        <div class="kpi-sub">0.69% 크리에이터</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Suspended</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">정지 상태 회원</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-nav">
+      <button class="tab-btn active">👥 전체 회원 <span class="count">12,847</span></button>
+      <button class="tab-btn">🎵 크리에이터 <span class="count">89</span></button>
+      <button class="tab-btn">⛔ 정지/제재 <span class="count">12</span></button>
+      <button class="tab-btn">📢 신고 관리 <span class="count">8</span></button>
+    </div>
+
+    <!-- USER TABLE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">👤 회원 목록</div>
+        <div style="display: flex; gap: 8px;">
+          <div class="search-box" style="width: 240px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Username, Wallet, Email...">
+          </div>
+          <select class="filter-select">
+            <option>모든 역할</option>
+            <option>User</option>
+            <option>Creator</option>
+            <option>Admin</option>
+          </select>
+          <select class="filter-select">
+            <option>모든 상태</option>
+            <option>Active</option>
+            <option>Inactive</option>
+            <option>Suspended</option>
+          </select>
+          <button class="btn btn-sm btn-outline">📅 날짜 범위</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px;"><input type="checkbox"></th>
+              <th>User</th>
+              <th>Wallet Address</th>
+              <th>Role</th>
+              <th>Join Date</th>
+              <th>NFTs</th>
+              <th>VAYLA Balance</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar">DJ</div>
+                  <div class="user-info">
+                    <div class="user-name">DJ Hana</div>
+                    <div class="user-handle">@dj_hana</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x7a3b...f21d</span></td>
+              <td><span class="role-badge creator">Creator</span></td>
+              <td>2026.02.15</td>
+              <td><strong>8</strong></td>
+              <td><strong>4,280 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--blue), var(--purple));">NV</div>
+                  <div class="user-info">
+                    <div class="user-name">NOVA</div>
+                    <div class="user-handle">@nova_beats</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x2c8d...e47a</span></td>
+              <td><span class="role-badge creator">Creator</span></td>
+              <td>2026.02.20</td>
+              <td><strong>7</strong></td>
+              <td><strong>3,150 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--mint), var(--blue));">MC</div>
+                  <div class="user-info">
+                    <div class="user-name">MC Park</div>
+                    <div class="user-handle">@mc_park_official</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x5e3a...b8c4</span></td>
+              <td><span class="role-badge creator">Creator</span></td>
+              <td>2026.03.01</td>
+              <td><strong>6</strong></td>
+              <td><strong>2,890 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--purple), var(--pink));">UK</div>
+                  <div class="user-info">
+                    <div class="user-name">user_jk2845</div>
+                    <div class="user-handle">@user_jk2845</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x91ab...3c7f</span></td>
+              <td><span class="role-badge">User</span></td>
+              <td>2026.02.28</td>
+              <td><strong>3</strong></td>
+              <td><strong>1,245 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--red), var(--orange));">CL</div>
+                  <div class="user-info">
+                    <div class="user-name">Chris Lee</div>
+                    <div class="user-handle">@chrislee_prod</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0xa2b9...4e1f</span></td>
+              <td><span class="role-badge creator">Creator</span></td>
+              <td>2026.03.05</td>
+              <td><strong>5</strong></td>
+              <td><strong>2,145 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--yellow), var(--orange));">LK</div>
+                  <div class="user-info">
+                    <div class="user-name">Luna Kim</div>
+                    <div class="user-handle">@lunakim_music</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x6d1a...b5e2</span></td>
+              <td><span class="role-badge creator">Creator</span></td>
+              <td>2026.03.10</td>
+              <td><strong>4</strong></td>
+              <td><strong>1,870 V</strong></td>
+              <td><span class="status status-inactive"><span class="status-dot"></span> Inactive</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--blue), var(--cyan));">RS</div>
+                  <div class="user-info">
+                    <div class="user-name">user_ryan_seo</div>
+                    <div class="user-handle">@user_ryan_seo</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x4e2f...a91c</span></td>
+              <td><span class="role-badge">User</span></td>
+              <td>2026.03.12</td>
+              <td><strong>2</strong></td>
+              <td><strong>856 V</strong></td>
+              <td><span class="status status-suspended"><span class="status-dot"></span> Suspended</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" style="accent-color:#00C9A7;"></td>
+              <td>
+                <div class="user-cell">
+                  <div class="user-avatar" style="background: linear-gradient(135deg, var(--green), var(--teal));">SA</div>
+                  <div class="user-info">
+                    <div class="user-name">user_sakura</div>
+                    <div class="user-handle">@user_sakura</div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">0x8f4c...d3a2</span></td>
+              <td><span class="role-badge">User</span></td>
+              <td>2026.03.08</td>
+              <td><strong>1</strong></td>
+              <td><strong>543 V</strong></td>
+              <td><span class="status status-active"><span class="status-dot"></span> Active</span></td>
+              <td><a href="08-1_User_Detail.html" class="btn btn-sm btn-outline" style="text-decoration:none;">상세</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 8 / 12,847건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">...</button>
+          <button class="page-btn">1605</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BULK ACTIONS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⚡ Bulk Actions</div>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline">📧 알림 발송</button>
+          <button class="btn btn-outline">⛔ 일괄 정지</button>
+          <button class="btn btn-outline">♻️ 복구</button>
+          <button class="btn btn-outline">📥 Export</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN PERMISSION LEVELS -->
+    <div class="info-box">
+      <h4>👨‍💼 Admin Permission Levels (관리자 권한 등급)</h4>
+      <div class="info-box tier-list">
+        <div class="info-box tier-item">
+          <div class="info-box tier-name">1️⃣ Super Admin</div>
+          <div class="info-box tier-desc">모든 시스템 접근 & 설정 변경 권한</div>
+        </div>
+        <div class="info-box tier-item">
+          <div class="info-box tier-name">2️⃣ Admin</div>
+          <div class="info-box tier-desc">주요 기능 관리 & 회원 정지 권한</div>
+        </div>
+        <div class="info-box tier-item">
+          <div class="info-box tier-name">3️⃣ Operator</div>
+          <div class="info-box tier-desc">일일 운영 & 모니터링 권한</div>
+        </div>
+        <div class="info-box tier-item">
+          <div class="info-box tier-name">4️⃣ Content Manager</div>
+          <div class="info-box tier-desc">콘텐츠 & NFT 관리 권한만</div>
+        </div>
+        <div class="info-box tier-item">
+          <div class="info-box tier-name">5️⃣ CS Manager</div>
+          <div class="info-box tier-desc">고객 지원 & 보고 관리만</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div id="userDetailModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>회원 상세정보</span>
+      <button class="modal-close" onclick="closeUserDetailModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <!-- Profile Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">프로필</div>
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+          <div class="user-avatar" style="width: 60px; height: 60px; font-size: 20px;">DJ</div>
+          <div>
+            <div style="font-size: 16px; font-weight: 700; color: var(--dark);">DJ Hana</div>
+            <div style="font-size: 12px; color: var(--gray-400);">@dj_hana</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-label">역할</div>
+          <div class="info-row-value"><span class="role-badge creator">Creator</span></div>
+        </div>
+      </div>
+
+      <!-- Account Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">계정정보</div>
+        <div class="info-row">
+          <div class="info-row-label">지갑 주소</div>
+          <div class="info-row-value" style="font-family: monospace; font-size: 12px;">0x7a3b...f21d</div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-label">가입일</div>
+          <div class="info-row-value">2026.02.15</div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-label">상태</div>
+          <div class="info-row-value"><span class="status status-active"><span class="status-dot"></span> Active</span></div>
+        </div>
+      </div>
+
+      <!-- Assets Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">자산</div>
+        <div class="info-row">
+          <div class="info-row-label">보유 NFT</div>
+          <div class="info-row-value">8개</div>
+        </div>
+        <div class="info-row">
+          <div class="info-row-label">VAYLA 잔액</div>
+          <div class="info-row-value">4,280 V</div>
+        </div>
+      </div>
+
+      <!-- Activity Section -->
+      <div class="modal-section">
+        <div class="modal-section-title">최근 활동</div>
+        <div class="activity-list">
+          <div class="activity-item">10곡 업로드 - 2026.04.15 14:23</div>
+          <div class="activity-item">Top 3 Finish NFT 민팅 - 2026.04.12 09:31</div>
+          <div class="activity-item">투표 참여 - 2026.04.10 16:42</div>
+        </div>
+      </div>
+
+      <!-- Actions Section -->
+      <div class="modal-section" style="border-bottom: none;">
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-outline" style="flex: 1;" onclick="openSuspendModal()">정지</button>
+          <button class="btn btn-outline" style="flex: 1;">역할 변경</button>
+          <button class="btn btn-outline" style="flex: 1;">알림 발송</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeUserDetailModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUSPEND USER MODAL -->
+<div id="suspendModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>회원 정지</span>
+      <button class="modal-close" onclick="closeSuspendModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">정지 사유</label>
+        <select class="form-select">
+          <option>선택하세요</option>
+          <option>부정 투표</option>
+          <option>사기 의심</option>
+          <option>커뮤니티 위반</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">정지 기간</label>
+        <select class="form-select">
+          <option>7일</option>
+          <option>30일</option>
+          <option>영구</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">상세 설명 (선택)</label>
+        <textarea class="form-input" style="resize: vertical; min-height: 100px; padding: 12px;" placeholder="정지 사유에 대한 추가 설명을 입력하세요"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeSuspendModal()">취소</button>
+      <button class="btn btn-mint">정지 실행</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+function openUserDetailModal() { document.getElementById('userDetailModal').classList.add('active'); }
+function closeUserDetailModal() { document.getElementById('userDetailModal').classList.remove('active'); }
+function openSuspendModal() {
+  closeUserDetailModal();
+  document.getElementById('suspendModal').classList.add('active');
+}
+function closeSuspendModal() { document.getElementById('suspendModal').classList.remove('active'); }
+</script>
+
+</body>
+</html>

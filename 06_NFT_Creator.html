@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Creator NFT 관리</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED; --pink: #EC4899; --pink-light: #FDF2F8;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; }
+  .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-active { background: var(--mint-light); color: var(--mint-dark); }
+  .status-inactive { background: var(--gray-100); color: var(--gray-500); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .soulbound-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--red-light); color: var(--red); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+  .nft-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .nft-item { border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; background: #fff; transition: all 0.2s; }
+  .nft-item:hover { border-color: var(--mint); box-shadow: 0 4px 16px rgba(0,201,167,0.1); transform: translateY(-2px); }
+  .nft-image { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 64px; position: relative; background: linear-gradient(135deg, #667EEA, #764BA2); }
+  .nft-type-tag { position: absolute; top: 8px; left: 8px; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: var(--orange-light); color: var(--orange); }
+  .nft-soulbound { position: absolute; top: 8px; right: 8px; padding: 3px 8px; border-radius: 6px; font-size: 9px; font-weight: 700; background: var(--red-light); color: var(--red); }
+  .nft-info { padding: 14px; }
+  .nft-name { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .nft-id { font-size: 11px; color: var(--gray-400); font-family: monospace; margin-bottom: 8px; }
+  .nft-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nft-meta-tag { padding: 2px 8px; background: var(--gray-50); border-radius: 4px; font-size: 11px; color: var(--gray-500); }
+  .nft-footer { padding: 10px 14px; border-top: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center; }
+  .nft-date { font-size: 11px; color: var(--gray-400); }
+
+  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+  .search-box { position: relative; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+  .page-info { font-size: 13px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .leaderboard-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
+  .leaderboard-row:last-child { border-bottom: none; }
+  .rank-badge { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 700; font-size: 14px; background: var(--mint-light); color: var(--mint-dark); }
+  .rank-badge.top { background: #FFD700; color: #B8860B; }
+  .creator-info { flex: 1; }
+  .creator-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .creator-handle { font-size: 11px; color: var(--gray-400); }
+  .achievement-count { font-size: 14px; font-weight: 700; color: var(--mint); }
+
+  .achievement-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 8px; background: var(--mint-light); color: var(--mint-dark); font-size: 12px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item active" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <div><div class="header-title">Creator NFT 관리</div><div class="header-breadcrumb">NFT → Creator NFT (Achievement)</div></div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- KPI CARDS -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">Total Creator NFTs</div>
+        <div class="kpi-value">302</div>
+        <div class="kpi-sub">⭐ Soulbound (Non-transferable)</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Active Creators</div>
+        <div class="kpi-value">89</div>
+        <div class="kpi-sub">Achievement 보유 중</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">This Month Minted</div>
+        <div class="kpi-value">+24</div>
+        <div class="kpi-sub">전월 대비 +12%</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">Achievement Types</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">활성 기준 정의</div>
+      </div>
+    </div>
+
+    <!-- CREATOR NFT GRID -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⭐ Creator Achievement NFTs</div>
+        <div style="display: flex; gap: 8px;">
+          <div class="search-box" style="width: 240px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Creator, Token ID...">
+          </div>
+          <select class="filter-select">
+            <option>모든 Achievement</option>
+            <option>First Upload</option>
+            <option>10 Tracks</option>
+            <option>100 Votes Received</option>
+            <option>Top 3 Finish</option>
+            <option>Community Leader</option>
+          </select>
+          <button class="btn btn-sm btn-outline">🔲 Grid</button>
+          <button class="btn btn-sm btn-outline">📋 List</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="nft-grid">
+          <!-- Creator NFT 1 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #FFB347, #FF7F50);">
+              ⭐
+              <span class="nft-type-tag">FIRST UPLOAD</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Creator Debut</div>
+              <div class="nft-id">#CA-0042</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.15</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 2 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #00C9A7, #00A88A);">
+              ⭐
+              <span class="nft-type-tag">10 TRACKS</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Prolific Creator</div>
+              <div class="nft-id">#CA-0041</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.14</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 3 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+              ⭐
+              <span class="nft-type-tag">100 VOTES</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Crowd Favorite</div>
+              <div class="nft-id">#CA-0040</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.13</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 4 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+              ⭐
+              <span class="nft-type-tag">TOP 3 FINISH</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Champion Creator</div>
+              <div class="nft-id">#CA-0039</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.12</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 5 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+              ⭐
+              <span class="nft-type-tag">LEADER</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Community Leader</div>
+              <div class="nft-id">#CA-0038</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Manual</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.11</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 6 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+              ⭐
+              <span class="nft-type-tag">CONSISTENCY</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Consistent Creator</div>
+              <div class="nft-id">#CA-0037</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.10</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 7 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #EC4899, #BE185D);">
+              ⭐
+              <span class="nft-type-tag">COLLABORATION</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Collaborator</div>
+              <div class="nft-id">#CA-0036</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Manual</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.09</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+
+          <!-- Creator NFT 8 -->
+          <div class="nft-item">
+            <div class="nft-image" style="background: linear-gradient(135deg, #10B981, #059669);">
+              ⭐
+              <span class="nft-type-tag">TRENDSETTER</span>
+              <span class="nft-soulbound">SOULBOUND</span>
+            </div>
+            <div class="nft-info">
+              <div class="nft-name">Trendsetter</div>
+              <div class="nft-id">#CA-0035</div>
+              <div class="nft-meta">
+                <span class="nft-meta-tag">🎵 Creator</span>
+                <span class="nft-meta-tag">Auto-mint</span>
+              </div>
+            </div>
+            <div class="nft-footer">
+              <div class="nft-date">2026.04.08</div>
+              <div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">상세</button><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 8 / 302건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">...</button>
+          <button class="page-btn">38</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATOR LEADERBOARD & ACHIEVEMENT DEFINITIONS -->
+    <div class="grid-2">
+      <!-- Creator Leaderboard -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🏆 Top Creators by Achievements</div>
+          <button class="btn btn-sm btn-outline">전체 보기</button>
+        </div>
+        <div class="card-body">
+          <div class="leaderboard-row">
+            <div class="rank-badge top">🥇</div>
+            <div class="creator-info">
+              <div class="creator-name">DJ Hana</div>
+              <div class="creator-handle">@dj_hana</div>
+            </div>
+            <div class="achievement-count">8</div>
+          </div>
+          <div class="leaderboard-row">
+            <div class="rank-badge top" style="background: #C0C0C0; color: #696969;">🥈</div>
+            <div class="creator-info">
+              <div class="creator-name">NOVA</div>
+              <div class="creator-handle">@nova_beats</div>
+            </div>
+            <div class="achievement-count">7</div>
+          </div>
+          <div class="leaderboard-row">
+            <div class="rank-badge top" style="background: #CD7F32; color: #8B4513;">🥉</div>
+            <div class="creator-info">
+              <div class="creator-name">MC Park</div>
+              <div class="creator-handle">@mc_park_official</div>
+            </div>
+            <div class="achievement-count">6</div>
+          </div>
+          <div class="leaderboard-row">
+            <div class="rank-badge">4</div>
+            <div class="creator-info">
+              <div class="creator-name">Chris Lee</div>
+              <div class="creator-handle">@chrislee_prod</div>
+            </div>
+            <div class="achievement-count">5</div>
+          </div>
+          <div class="leaderboard-row">
+            <div class="rank-badge">5</div>
+            <div class="creator-info">
+              <div class="creator-name">Luna Kim</div>
+              <div class="creator-handle">@lunakim_music</div>
+            </div>
+            <div class="achievement-count">5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievement Definitions -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 Achievement Definitions</div>
+          <button class="btn btn-sm btn-mint">+ 새로운 정의</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="font-size: 12px;">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Criteria</th>
+                <th>Type</th>
+                <th>Icon</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>First Upload</strong></td>
+                <td>첫 곡 업로드</td>
+                <td><span class="status status-active"><span class="status-dot"></span> Auto</span></td>
+                <td>🎵</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+              <tr>
+                <td><strong>10 Tracks</strong></td>
+                <td>10곡 이상 업로드</td>
+                <td><span class="status status-active"><span class="status-dot"></span> Auto</span></td>
+                <td>📚</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+              <tr>
+                <td><strong>100 Votes Received</strong></td>
+                <td>누적 100표 이상</td>
+                <td><span class="status status-active"><span class="status-dot"></span> Auto</span></td>
+                <td>🗳️</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Top 3 Finish</strong></td>
+                <td>3위 이내 우승</td>
+                <td><span class="status status-active"><span class="status-dot"></span> Auto</span></td>
+                <td>🏆</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Community Leader</strong></td>
+                <td>커뮤니티 인정</td>
+                <td><span class="status" style="background: var(--yellow-light); color: var(--yellow);"><span class="status-dot"></span> Manual</span></td>
+                <td>👑</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+              <tr>
+                <td><strong>Collaboration</strong></td>
+                <td>5회 이상 협업</td>
+                <td><span class="status" style="background: var(--yellow-light); color: var(--yellow);"><span class="status-dot"></span> Manual</span></td>
+                <td>🤝</td>
+                <td><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-outline">편집</button><button class="btn btn-sm btn-outline">삭제</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINTING HISTORY -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📜 Minting History</div>
+        <div style="display: flex; gap: 8px;">
+          <select class="filter-select">
+            <option>모든 기간</option>
+            <option>이번 주</option>
+            <option>이번 달</option>
+            <option>지난 3개월</option>
+          </select>
+          <select class="filter-select">
+            <option>모든 Achievement</option>
+            <option>First Upload</option>
+            <option>10 Tracks</option>
+            <option>100 Votes Received</option>
+          </select>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Creator</th>
+              <th>Achievement</th>
+              <th>Token ID</th>
+              <th>Minted At</th>
+              <th>Minting Type</th>
+              <th>TX Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong style="color: var(--dark);">DJ Hana</strong><br><span style="font-size: 11px; color: var(--gray-400);">@dj_hana</span></td>
+              <td><span class="achievement-badge">⭐ Top 3 Finish</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">#CA-0042</span></td>
+              <td>2026.04.15 14:23</td>
+              <td><span style="padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--mint-light); color: var(--mint-dark);">Auto-mint</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x7a3b...f21d</span></td>
+            </tr>
+            <tr>
+              <td><strong style="color: var(--dark);">NOVA</strong><br><span style="font-size: 11px; color: var(--gray-400);">@nova_beats</span></td>
+              <td><span class="achievement-badge">⭐ Community Leader</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">#CA-0041</span></td>
+              <td>2026.04.14 10:15</td>
+              <td><span style="padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--yellow-light); color: var(--yellow);">Manual</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x2c8d...e47a</span></td>
+            </tr>
+            <tr>
+              <td><strong style="color: var(--dark);">MC Park</strong><br><span style="font-size: 11px; color: var(--gray-400);">@mc_park_official</span></td>
+              <td><span class="achievement-badge">⭐ 100 Votes Received</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">#CA-0040</span></td>
+              <td>2026.04.13 16:42</td>
+              <td><span style="padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--mint-light); color: var(--mint-dark);">Auto-mint</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x5e3a...b8c4</span></td>
+            </tr>
+            <tr>
+              <td><strong style="color: var(--dark);">Chris Lee</strong><br><span style="font-size: 11px; color: var(--gray-400);">@chrislee_prod</span></td>
+              <td><span class="achievement-badge">⭐ 10 Tracks</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">#CA-0039</span></td>
+              <td>2026.04.12 09:31</td>
+              <td><span style="padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--mint-light); color: var(--mint-dark);">Auto-mint</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0xa2b9...4e1f</span></td>
+            </tr>
+            <tr>
+              <td><strong style="color: var(--dark);">Luna Kim</strong><br><span style="font-size: 11px; color: var(--gray-400);">@lunakim_music</span></td>
+              <td><span class="achievement-badge">⭐ First Upload</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue);">#CA-0038</span></td>
+              <td>2026.04.11 11:08</td>
+              <td><span style="padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; background: var(--mint-light); color: var(--mint-dark);">Auto-mint</span></td>
+              <td><span style="font-family: monospace; font-size: 12px; color: var(--blue); cursor: pointer;">0x91ab...3c7f</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 5 / 312건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

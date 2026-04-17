@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - NFT 정책 & 마켓플레이스</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED; --pink: #EC4899; --pink-light: #FDF2F8;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; }
+  .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  .tab-nav { display: flex; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; }
+  .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-active { background: var(--mint-light); color: var(--mint-dark); }
+  .status-inactive { background: var(--gray-100); color: var(--gray-500); }
+  .status-transferable { background: var(--blue-light); color: var(--blue); }
+  .status-soulbound { background: var(--red-light); color: var(--red); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .utility-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--gray-50); }
+  .utility-row:last-child { border-bottom: none; }
+  .utility-label { font-size: 13px; color: var(--gray-600); display: flex; align-items: center; gap: 8px; }
+  .utility-status { font-size: 12px; font-weight: 600; }
+
+  .fee-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
+  .fee-row:last-child { border-bottom: none; }
+  .fee-label { font-size: 13px; color: var(--gray-600); }
+  .fee-value { font-size: 14px; font-weight: 700; color: var(--dark); }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+  .page-info { font-size: 13px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+
+  .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 14px; max-width: 500px; width: 90%; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+  .modal-header { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--mint); }
+  .form-checkbox { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .form-checkbox input { width: 18px; height: 18px; cursor: pointer; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px; }
+  .modal-actions .btn { margin: 0; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item active" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <div><div class="header-title">NFT 정책 & 마켓플레이스</div><div class="header-breadcrumb">NFT → 정책 & 마켓플레이스</div></div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- TABS -->
+    <div class="tab-nav">
+      <button class="tab-btn active">📋 정책 관리</button>
+      <button class="tab-btn">🛍️ 마켓플레이스</button>
+      <button class="tab-btn">💎 유틸리티 관리</button>
+    </div>
+
+    <!-- TAB 1: POLICY MANAGEMENT -->
+    <div id="policy-tab">
+
+      <!-- NFT TYPE REGISTRY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📌 NFT Type Registry</div>
+          <button class="btn btn-sm btn-mint">+ 새로운 Type</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>NFT Type</th>
+                <th>Description</th>
+                <th>Transferable</th>
+                <th>Use Case</th>
+                <th>Total Minted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Badge NFT</strong></td>
+                <td>투표 및 참여 기반 뱃지</td>
+                <td><span class="status status-transferable">✓ Transferable</span></td>
+                <td>Engagement Reward</td>
+                <td style="font-weight: 700;">892</td>
+                <td><button class="btn btn-sm btn-outline" onclick="openNFTTypeModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td><strong>Reward NFT</strong></td>
+                <td>챌린지 및 이벤트 보상</td>
+                <td><span class="status status-transferable">✓ Transferable</span></td>
+                <td>Challenge/Event</td>
+                <td style="font-weight: 700;">421</td>
+                <td><button class="btn btn-sm btn-outline" onclick="openNFTTypeModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td><strong>Event NFT</strong></td>
+                <td>특별 이벤트 참여 기념</td>
+                <td><span class="status status-soulbound">✕ Non-transferable</span></td>
+                <td>Event Attendance</td>
+                <td style="font-weight: 700;">227</td>
+                <td><button class="btn btn-sm btn-outline" onclick="openNFTTypeModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td><strong>Creator Achievement NFT</strong></td>
+                <td>크리에이터 성취 기념</td>
+                <td><span class="status status-soulbound">✕ Non-transferable</span></td>
+                <td>Creator Recognition</td>
+                <td style="font-weight: 700;">302</td>
+                <td><button class="btn btn-sm btn-outline" onclick="openNFTTypeModal()">수정</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- POLICY SETTINGS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚙️ Transferability Policy</div>
+          </div>
+          <div class="card-body">
+            <div class="utility-row">
+              <div class="utility-label">Badge/Reward NFT Market</div>
+              <div class="utility-status" style="color: var(--mint);">활성</div>
+            </div>
+            <div class="utility-row">
+              <div class="utility-label">Event NFT Trade Restriction</div>
+              <div class="utility-status" style="color: var(--mint);">활성</div>
+            </div>
+            <div class="utility-row">
+              <div class="utility-label">Creator NFT Soulbound Lock</div>
+              <div class="utility-status" style="color: var(--mint);">활성</div>
+            </div>
+            <div class="utility-row">
+              <div class="utility-label">Cross-chain Bridge Support</div>
+              <div class="utility-status" style="color: var(--yellow);">부분 지원</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 Marketplace Fees</div>
+          </div>
+          <div class="card-body">
+            <div class="fee-row">
+              <div class="fee-label">Creator Royalty</div>
+              <div class="fee-value">5%</div>
+            </div>
+            <div class="fee-row">
+              <div class="fee-label">Platform Fee</div>
+              <div class="fee-value">1%</div>
+            </div>
+            <div class="fee-row">
+              <div class="fee-label">Total Marketplace Fee</div>
+              <div class="fee-value" style="color: var(--mint);">6%</div>
+            </div>
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200);">
+              <button class="btn btn-sm btn-outline" onclick="openFeeModal()">수수료 설정 변경</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 2: MARKETPLACE STATS -->
+    <div id="marketplace-tab" style="display: none;">
+
+      <div class="kpi-row">
+        <div class="kpi-card mint">
+          <div class="kpi-label">Active Listings</div>
+          <div class="kpi-value">1,284</div>
+          <div class="kpi-sub">지난 주 대비 +8%</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Volume</div>
+          <div class="kpi-value">482 ⧬</div>
+          <div class="kpi-sub">약 $14,280 USD</div>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Avg. Price</div>
+          <div class="kpi-value">0.38 ⧬</div>
+          <div class="kpi-sub">지난 달 대비 +3.2%</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-label">Weekly Trades</div>
+          <div class="kpi-value">847</div>
+          <div class="kpi-sub">평균 141/일</div>
+        </div>
+      </div>
+
+      <!-- ACTIVE LISTINGS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📍 Active Listings</div>
+          <div style="display: flex; gap: 8px;">
+            <select class="filter-select">
+              <option>모든 유형</option>
+              <option>Badge</option>
+              <option>Reward</option>
+              <option>Event</option>
+            </select>
+            <select class="filter-select">
+              <option>최신 순</option>
+              <option>가격 낮은 순</option>
+              <option>가격 높은 순</option>
+              <option>조회 많은 순</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>NFT Name</th>
+                <th>Type</th>
+                <th>Seller</th>
+                <th>Price</th>
+                <th>Views</th>
+                <th>Bids</th>
+                <th>Listed At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Neon Night Champion</strong></td>
+                <td><span class="status status-active"><span class="status-dot"></span> Badge</span></td>
+                <td><span style="font-family: monospace; font-size: 12px;">0x7a3b...f21d</span></td>
+                <td><strong>2.5 ⧬</strong></td>
+                <td>234</td>
+                <td><span style="background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">3 offers</span></td>
+                <td>2026.04.15 09:30</td>
+              </tr>
+              <tr>
+                <td><strong>Electric Dreams Master</strong></td>
+                <td><span class="status status-active"><span class="status-dot"></span> Badge</span></td>
+                <td><span style="font-family: monospace; font-size: 12px;">0x2c8d...e47a</span></td>
+                <td><strong>1.8 ⧬</strong></td>
+                <td>189</td>
+                <td><span style="background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">1 offer</span></td>
+                <td>2026.04.14 15:42</td>
+              </tr>
+              <tr>
+                <td><strong>Top Voter Spring 2026</strong></td>
+                <td><span style="background: var(--mint-light); color: var(--mint-dark); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">Reward</span></td>
+                <td><span style="font-family: monospace; font-size: 12px;">0x91ab...3c7f</span></td>
+                <td><strong>0.75 ⧬</strong></td>
+                <td>156</td>
+                <td><span style="padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--gray-100); color: var(--gray-500);">없음</span></td>
+                <td>2026.04.13 11:20</td>
+              </tr>
+              <tr>
+                <td><strong>Seoul Streets Legend</strong></td>
+                <td><span class="status status-active"><span class="status-dot"></span> Badge</span></td>
+                <td><span style="font-family: monospace; font-size: 12px;">0x5e3a...b8c4</span></td>
+                <td><strong>1.2 ⧬</strong></td>
+                <td>245</td>
+                <td><span style="background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">2 offers</span></td>
+                <td>2026.04.12 14:08</td>
+              </tr>
+              <tr>
+                <td><strong>Boost Supporter Gold</strong></td>
+                <td><span style="background: var(--mint-light); color: var(--mint-dark); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">Reward</span></td>
+                <td><span style="font-family: monospace; font-size: 12px;">0x6d1a...b5e2</span></td>
+                <td><strong>1.1 ⧬</strong></td>
+                <td>198</td>
+                <td><span style="background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">1 offer</span></td>
+                <td>2026.04.11 10:45</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="page-info">1 - 5 / 1,284건</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTION HISTORY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 Transaction History</div>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="font-size: 12px;">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>NFT</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Price</th>
+                <th>Creator Royalty</th>
+                <th>Platform Fee</th>
+                <th>TX Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026.04.16 08:15</td>
+                <td><strong>Neon Night Champion</strong></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x7a3b...f21d</span></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x9e2c...a4b1</span></td>
+                <td style="font-weight: 700;">2.5 ⧬</td>
+                <td style="color: var(--mint); font-weight: 600;">0.125 ⧬</td>
+                <td style="color: var(--gray-500);">0.025 ⧬</td>
+                <td><span style="font-family: monospace; font-size: 11px; color: var(--blue); cursor: pointer;">0x4f8d...c9e2</span></td>
+              </tr>
+              <tr>
+                <td>2026.04.15 16:42</td>
+                <td><strong>Top Voter Spring 2026</strong></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x91ab...3c7f</span></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x3d5e...f8a2</span></td>
+                <td style="font-weight: 700;">0.75 ⧬</td>
+                <td style="color: var(--mint); font-weight: 600;">0.0375 ⧬</td>
+                <td style="color: var(--gray-500);">0.0075 ⧬</td>
+                <td><span style="font-family: monospace; font-size: 11px; color: var(--blue); cursor: pointer;">0x7b2a...e1d5</span></td>
+              </tr>
+              <tr>
+                <td>2026.04.15 12:30</td>
+                <td><strong>Electric Dreams Master</strong></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x2c8d...e47a</span></td>
+                <td><span style="font-family: monospace; font-size: 11px;">0x5f3a...b7c1</span></td>
+                <td style="font-weight: 700;">1.8 ⧬</td>
+                <td style="color: var(--mint); font-weight: 600;">0.09 ⧬</td>
+                <td style="color: var(--gray-500);">0.018 ⧬</td>
+                <td><span style="font-family: monospace; font-size: 11px; color: var(--blue); cursor: pointer;">0x6c3f...a9d8</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="page-info">1 - 3 / 847건</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 3: UTILITY MANAGEMENT -->
+    <div id="utility-tab" style="display: none;">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💎 NFT Utility Benefits (16개 Benefit)</div>
+          <button class="btn btn-sm btn-mint">+ 새로운 Utility</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Utility Name</th>
+                <th>Description</th>
+                <th>Applicable NFT Types</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>독점 콘텐츠</strong></td>
+                <td>프리미엄 크리에이터 콘텐츠 접근권</td>
+                <td>Badge, Reward, Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>거버넌스 투표</strong></td>
+                <td>커뮤니티 투표에서 가중치 적용</td>
+                <td>Badge, Reward</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>이벤트 우선입장</strong></td>
+                <td>오프라인 이벤트 얼리 액세스</td>
+                <td>Event, Creator, Badge</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td><strong>에어드롭</strong></td>
+                <td>토큰 에어드롭 자격 부여</td>
+                <td>Badge, Reward, Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td><strong>마켓할인</strong></td>
+                <td>마켓플레이스 거래 수수료 감소</td>
+                <td>Badge, Reward</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td><strong>프리미엄배지</strong></td>
+                <td>프로필에 프리미엄 뱃지 표시</td>
+                <td>Creator, Badge</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td><strong>팬미팅초대</strong></td>
+                <td>크리에이터 팬미팅 초대 우선권</td>
+                <td>Creator, Event</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td><strong>스테이킹보너스</strong></td>
+                <td>NFT 스테이킹 시 추가 보상</td>
+                <td>Badge, Reward</td>
+                <td><span class="status" style="background: var(--yellow-light); color: var(--yellow);"><span class="status-dot"></span> 준비중</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td><strong>VIP라운지</strong></td>
+                <td>커뮤니티 VIP 라운지 접근권</td>
+                <td>Creator</td>
+                <td><span class="status" style="background: var(--yellow-light); color: var(--yellow);"><span class="status-dot"></span> 준비중</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td><strong>머천다이즈할인</strong></td>
+                <td>공식 머천다이즈 구매 할인</td>
+                <td>Badge, Reward, Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td><strong>크리에이터미팅</strong></td>
+                <td>크리에이터와의 1:1 미팅 기회</td>
+                <td>Creator</td>
+                <td><span class="status" style="background: var(--yellow-light); color: var(--yellow);"><span class="status-dot"></span> 준비중</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td><strong>음원프리뷰</strong></td>
+                <td>신곡 미리 듣기 권한</td>
+                <td>Badge, Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td><strong>한정판접근</strong></td>
+                <td>한정판 에디션 음원 접근</td>
+                <td>Creator, Event</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td><strong>투표가중치</strong></td>
+                <td>커뮤니티 투표 가중치 2배</td>
+                <td>Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td><strong>커뮤니티뱃지</strong></td>
+                <td>커뮤니티 그룹 내 특별 뱃지</td>
+                <td>Badge, Creator</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td><strong>프로필커스터마이즈</strong></td>
+                <td>프로필 커스터마이즈 고급 옵션</td>
+                <td>Creator, Event</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 활성</span></td>
+                <td><button class="btn btn-sm btn-outline" onclick="openUtilityModal()">수정</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="page-info">1 - 16 / 16건</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- NFT TYPE POLICY MODAL -->
+<div id="nftTypeModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>NFT Type Policy 수정</span>
+      <button class="modal-close" onclick="closeNFTTypeModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type Name</label>
+      <input type="text" class="form-input" placeholder="e.g., Badge NFT" value="Badge NFT">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Transferability</label>
+      <select class="form-input">
+        <option>Transferable</option>
+        <option>Non-transferable</option>
+        <option>Soulbound</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Max Supply</label>
+      <input type="number" class="form-input" placeholder="unlimited for 0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Auto-mint Criteria</label>
+      <input type="text" class="form-input" placeholder="e.g., 100 votes">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-input" style="resize:vertical; min-height:80px;" placeholder="Type description"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeNFTTypeModal()">취소</button>
+      <button class="btn btn-mint">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- UTILITY BENEFITS MODAL -->
+<div id="utilityModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>Utility Benefit 수정</span>
+      <button class="modal-close" onclick="closeUtilityModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Benefit Name</label>
+      <input type="text" class="form-input" placeholder="e.g., 독점 콘텐츠">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-input" style="resize:vertical; min-height:80px;" placeholder="Benefit description"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Applicable NFT Types</label>
+      <div class="form-checkbox">
+        <input type="checkbox" id="badge"> <label for="badge" style="margin:0;">Badge</label>
+      </div>
+      <div class="form-checkbox">
+        <input type="checkbox" id="reward"> <label for="reward" style="margin:0;">Reward</label>
+      </div>
+      <div class="form-checkbox">
+        <input type="checkbox" id="event"> <label for="event" style="margin:0;">Event</label>
+      </div>
+      <div class="form-checkbox">
+        <input type="checkbox" id="creator"> <label for="creator" style="margin:0;">Creator</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-input">
+        <option>활성</option>
+        <option>준비중</option>
+        <option>비활성</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeUtilityModal()">취소</button>
+      <button class="btn btn-mint">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- MARKETPLACE FEE SETTINGS MODAL -->
+<div id="feeModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>수수료 설정</span>
+      <button class="modal-close" onclick="closeFeeModal()">×</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Creator Royalty (%)</label>
+      <input type="number" class="form-input" placeholder="e.g., 5" value="5" min="0" max="100">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Platform Fee (%)</label>
+      <input type="number" class="form-input" placeholder="e.g., 1" value="1" min="0" max="100">
+    </div>
+    <div class="form-group" style="background: var(--gray-50); padding: 12px; border-radius: 8px;">
+      <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Total Marketplace Fee</div>
+      <div style="font-size: 18px; font-weight: 700; color: var(--mint);" id="totalFee">6%</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeFeeModal()">취소</button>
+      <button class="btn btn-mint">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('[id$="-tab"]').forEach(tab => tab.style.display = 'none');
+    const tabs = ['policy', 'marketplace', 'utility'];
+    document.getElementById(tabs[idx] + '-tab').style.display = 'block';
+  });
+});
+
+function openNFTTypeModal() { document.getElementById('nftTypeModal').classList.add('active'); }
+function closeNFTTypeModal() { document.getElementById('nftTypeModal').classList.remove('active'); }
+function openUtilityModal() { document.getElementById('utilityModal').classList.add('active'); }
+function closeUtilityModal() { document.getElementById('utilityModal').classList.remove('active'); }
+function openFeeModal() { document.getElementById('feeModal').classList.add('active'); }
+function closeFeeModal() { document.getElementById('feeModal').classList.remove('active'); }
+
+document.getElementById('feeModal').addEventListener('input', (e) => {
+  if (e.target.type === 'number') {
+    const inputs = document.querySelectorAll('#feeModal input[type="number"]');
+    const total = Array.from(inputs).reduce((sum, inp) => sum + (parseFloat(inp.value) || 0), 0);
+    document.getElementById('totalFee').textContent = total + '%';
+  }
+});
+</script>
+
+</body>
+</html>

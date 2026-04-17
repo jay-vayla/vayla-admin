@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Boost 프로젝트 상세</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mint: #00C9A7;
+    --mint-light: #E6FAF5;
+    --mint-dark: #00A88A;
+    --dark: #1A2332;
+    --dark-2: #243044;
+    --dark-3: #2D3B50;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --red: #EF4444;
+    --red-light: #FEF2F2;
+    --yellow: #F59E0B;
+    --yellow-light: #FFFBEB;
+    --blue: #3B82F6;
+    --blue-light: #EFF6FF;
+    --purple: #8B5CF6;
+    --purple-light: #F5F3FF;
+    --orange: #F97316;
+    --orange-light: #FFF7ED;
+    --sidebar-w: 260px;
+    --header-h: 64px;
+  }
+
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0, 201, 167, 0.08); }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-back { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.15s; text-decoration: none; color: var(--dark); }
+  .header-back:hover { border-color: var(--mint); color: var(--mint); }
+  .header-info { display: flex; flex-direction: column; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-title-with-badge { display: flex; align-items: center; gap: 10px; }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-live { background: var(--mint-light); color: var(--mint-dark); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ===== KPI ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .kpi-sub .up { color: var(--mint); font-weight: 600; }
+  .kpi-sub .down { color: var(--red); font-weight: 600; }
+
+  /* ===== HERO CARD ===== */
+  .hero-card { background: linear-gradient(135deg, var(--dark), var(--dark-2)); border-radius: 14px; padding: 32px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; color: #fff; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; }
+  .hero-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .hero-org { font-size: 14px; color: var(--gray-300); margin-bottom: 8px; }
+  .hero-artist { font-size: 13px; color: var(--gray-400); margin-bottom: 16px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; background: rgba(0, 201, 167, 0.2); border: 1px solid var(--mint); width: fit-content; font-size: 12px; font-weight: 600; color: var(--mint); }
+  .hero-right { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .hero-stat { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .hero-stat:last-child { border-bottom: none; }
+  .hero-stat-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hero-stat-value { font-size: 18px; font-weight: 700; }
+  .hero-stat-sub { font-size: 11px; color: var(--gray-300); margin-top: 4px; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-col { flex: 1; }
+  .mb-24 { margin-bottom: 24px; }
+
+  .progress-bar { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .progress-fill.mint { background: linear-gradient(90deg, var(--mint), var(--mint-dark)); }
+  .progress-fill.blue { background: linear-gradient(90deg, var(--blue), #2563EB); }
+
+  .chart-container { height: 300px; position: relative; margin-bottom: 16px; display: flex; align-items: flex-end; gap: 6px; }
+  .chart-bar { flex: 1; background: linear-gradient(180deg, var(--mint), var(--mint-dark)); border-radius: 4px 4px 0 0; transition: all 0.2s; }
+  .chart-bar:hover { opacity: 0.8; }
+  .chart-label { text-align: center; font-size: 10px; color: var(--gray-400); margin-top: 4px; }
+  .chart-controls { display: flex; gap: 8px; margin-top: 16px; }
+  .chart-btn { padding: 6px 12px; border-radius: 6px; border: 1px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
+  .chart-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+  .chart-btn:hover:not(.active) { border-color: var(--mint); color: var(--mint); }
+
+  .reward-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
+  .reward-row:last-child { border-bottom: none; }
+  .reward-label { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 8px; }
+  .reward-value { font-size: 14px; font-weight: 700; color: var(--dark); }
+
+  /* ===== TIMELINE ===== */
+  .timeline-item { display: flex; gap: 16px; padding: 16px 0; position: relative; }
+  .timeline-item:not(:last-child)::after { content: ''; position: absolute; left: 17px; top: 50px; bottom: -8px; width: 2px; background: var(--gray-100); }
+  .timeline-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; z-index: 1; background: var(--mint-light); border: 2px solid #fff; }
+  .timeline-info { flex: 1; }
+  .timeline-title { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .timeline-desc { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .timeline-time { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  .milestone-bar { height: 40px; background: linear-gradient(90deg, var(--mint) 33%, transparent 33%, transparent 67%, var(--mint) 67%); border-radius: 6px; margin: 16px 0; position: relative; }
+  .milestone-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+  .search-box { flex: 1; max-width: 320px; position: relative; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+  .page-info { font-size: 13px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .copy-icon { cursor: pointer; font-size: 14px; transition: all 0.15s; }
+  .copy-icon:hover { color: var(--mint); }
+
+  .dark-card { background: var(--dark-2); border-radius: 12px; padding: 16px; color: #fff; }
+  .dark-card-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .dark-card-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dark-card-value { font-size: 13px; color: var(--mint); font-family: monospace; font-weight: 600; word-break: break-all; }
+
+  .alert-box { padding: 16px; border-radius: 10px; border-left: 4px solid var(--yellow); margin-bottom: 16px; }
+  .alert-yellow { background: var(--yellow-light); color: var(--dark); }
+  .alert-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .alert-desc { font-size: 12px; color: var(--gray-600); }
+  .alert-actions { margin-top: 8px; display: flex; gap: 8px; }
+
+  .risk-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gray-50); }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-label { font-size: 12px; color: var(--gray-600); }
+  .risk-value { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .risk-value.warning { color: var(--yellow); }
+  .risk-value.success { color: var(--mint); }
+
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); border: none; }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div>
+      <div class="logo-text">VAYLA Arena</div>
+      <div class="logo-sub">Admin Console</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item active" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info">
+      <div class="user-name">Jay Kim</div>
+      <div class="user-role">Super Admin</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <a href="03_Boost.html" class="header-back">←</a>
+      <div class="header-info">
+        <div class="header-title-with-badge">
+          <span>Waterbomb Festival 2026</span>
+          <span class="status status-live"><span class="status-dot"></span> 진행 중</span>
+        </div>
+        <div class="header-breadcrumb">서비스 관리 → Boost → 프로젝트 상세</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+      <button class="btn btn-outline">수정</button>
+      <button class="btn btn-danger">프로젝트 중단</button>
+      <button class="btn btn-mint">정산 실행</button>
+      <button style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: all 0.15s;" onclick="alert('More options')">⚙️</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== HERO CARD - PROJECT SUMMARY ===== -->
+    <div class="hero-card">
+      <div class="hero-left">
+        <div class="hero-title">🎪 Waterbomb Festival 2026</div>
+        <div class="hero-org">CJ ENM</div>
+        <div class="hero-artist">Various Artists</div>
+        <div class="hero-badge">FESTIVAL</div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat">
+          <div class="hero-stat-label">목표 금액</div>
+          <div class="hero-stat-value">500,000 USDT</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">현재 모금</div>
+          <div class="hero-stat-value">347,250 USDT</div>
+          <div class="hero-stat-sub">69.5% 달성</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">참여자 수</div>
+          <div class="hero-stat-value">1,847명</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-label">남은 기간</div>
+          <div class="hero-stat-value">23일</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KPI STAT CARDS ===== -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">오늘 참여</div>
+        <div class="kpi-value">127명</div>
+        <div class="kpi-sub"><span class="up">+12%</span> vs 어제</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">오늘 모금</div>
+        <div class="kpi-value">18,500</div>
+        <div class="kpi-sub"><span class="up">+8%</span> USDT</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">예상 ROI</div>
+        <div class="kpi-value">15.2%</div>
+        <div class="kpi-sub">조정된 추정치</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">에스크로 잔액</div>
+        <div class="kpi-value">347,250</div>
+        <div class="kpi-sub">USDT</div>
+      </div>
+    </div>
+
+    <!-- ===== TWO-COLUMN GRID ===== -->
+    <div class="grid-23">
+      <!-- LEFT COLUMN -->
+      <div class="grid-col">
+
+        <!-- Card 1: 모금 현황 차트 -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">📊 모금 현황 차트</div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <div class="chart-bar" style="height: 45%;"></div>
+              <div class="chart-bar" style="height: 52%;"></div>
+              <div class="chart-bar" style="height: 58%;"></div>
+              <div class="chart-bar" style="height: 62%;"></div>
+              <div class="chart-bar" style="height: 65%;"></div>
+              <div class="chart-bar" style="height: 68%;"></div>
+              <div class="chart-bar" style="height: 71%;"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
+              <div class="chart-label">04/11</div>
+              <div class="chart-label">04/12</div>
+              <div class="chart-label">04/13</div>
+              <div class="chart-label">04/14</div>
+              <div class="chart-label">04/15</div>
+              <div class="chart-label">04/16</div>
+              <div class="chart-label">04/17</div>
+            </div>
+            <div class="chart-controls">
+              <button class="chart-btn">일일</button>
+              <button class="chart-btn active">주간</button>
+              <button class="chart-btn">월간</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: 참여자 목록 -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">👥 참여자 목록</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="참여자 검색...">
+              </div>
+              <select class="filter-select">
+                <option>전체 금액</option>
+                <option>5,000 이상</option>
+                <option>10,000 이상</option>
+              </select>
+              <button class="btn btn-sm btn-outline">📥 CSV</button>
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>참여자</th>
+                  <th>지갑 주소</th>
+                  <th>참여금액</th>
+                  <th>참여일시</th>
+                  <th>TX Hash</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color: var(--dark);">Alex Kim</strong></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x7a3B...9f2E</td>
+                  <td><strong style="color: var(--dark);">5,000 USDT</strong></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026-04-15 14:23</td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xabc...def</td>
+                  <td><span class="status status-live"><span class="status-dot"></span> 확인됨</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Sarah J</strong></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x4c2D...8b1A</td>
+                  <td><strong style="color: var(--dark);">2,500 USDT</strong></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026-04-15 11:45</td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0x123...789</td>
+                  <td><span class="status status-live"><span class="status-dot"></span> 확인됨</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Michel Lee</strong></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x9d5e...c4f3</td>
+                  <td><strong style="color: var(--dark);">7,500 USDT</strong></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026-04-15 09:30</td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0x456...012</td>
+                  <td><span class="status status-live"><span class="status-dot"></span> 확인됨</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Jun Park</strong></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x2b8c...e6d1</td>
+                  <td><strong style="color: var(--dark);">3,250 USDT</strong></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026-04-14 16:20</td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0x789...345</td>
+                  <td><span class="status status-live"><span class="status-dot"></span> 확인됨</span></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Emily Chen</strong></td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0x5f1a...b7c2</td>
+                  <td><strong style="color: var(--dark);">1,500 USDT</strong></td>
+                  <td style="font-size: 12px; color: var(--gray-400);">2026-04-14 13:15</td>
+                  <td style="font-family: monospace; font-size: 11px; color: var(--gray-500);">0xdef...ghi</td>
+                  <td><span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--orange-light); color: var(--orange);"><span class="status-dot"></span> 대기 중</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="page-info">1 - 5 / 1,847명</div>
+            <div class="page-btns">
+              <button class="page-btn">‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">...</button>
+              <button class="page-btn">369</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: 정산 내역 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">💰 정산 내역</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--dark);">마일스톤 1 정산</div>
+                <span class="status status-live"><span class="status-dot"></span> 완료</span>
+              </div>
+              <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">100,000 USDT · 2026-03-15</div>
+              <div class="progress-bar" style="height: 6px;">
+                <div class="progress-fill mint" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div style="margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--dark);">마일스톤 2 정산</div>
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--orange-light); color: var(--orange);"><span class="status-dot"></span> 대기 중</span>
+              </div>
+              <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">200,000 USDT · 예정: 2026-05-01</div>
+              <div class="progress-bar" style="height: 6px;">
+                <div class="progress-fill blue" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div style="padding: 16px; background: var(--gray-50); border-radius: 10px; margin-top: 20px;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">플랫폼 수수료 정산</div>
+              <div class="reward-row">
+                <div class="reward-label">참여금의 0.4%</div>
+                <div class="reward-value" style="color: var(--mint);">1,389 USDT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="grid-col">
+
+        <!-- Card 1: 마일스톤 진행 -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">🎯 마일스톤 진행</div>
+          </div>
+          <div class="card-body">
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--mint-light); color: var(--mint);">✅</div>
+              <div class="timeline-info">
+                <div class="timeline-title">MS1: 아티스트 라인업 확정</div>
+                <div class="timeline-desc">100,000 USDT / 완료</div>
+                <div class="timeline-time">2026-03-15</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--blue-light); color: var(--blue);">🔄</div>
+              <div class="timeline-info">
+                <div class="timeline-title">MS2: 장소 확정 & 무대 설치</div>
+                <div class="timeline-desc">200,000 USDT / 진행 중</div>
+                <div class="timeline-time">예정: 2026-05-01</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--gray-100); color: var(--gray-400);">⏳</div>
+              <div class="timeline-info">
+                <div class="timeline-title">MS3: 최종 리허설 & 오픈</div>
+                <div class="timeline-desc">200,000 USDT / 대기</div>
+                <div class="timeline-time">예정: 2026-06-15</div>
+              </div>
+            </div>
+            <div class="milestone-bar" style="background: linear-gradient(90deg, var(--mint) 33%, var(--blue) 33%, var(--blue) 67%, var(--gray-300) 67%);"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--gray-400);">
+              <span>0 USDT</span>
+              <span>166,500 USDT</span>
+              <span>333,000 USDT</span>
+              <span>500,000 USDT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: 스마트 컨트랙트 정보 -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">📜 스마트 컨트랙트 정보</div>
+          </div>
+          <div class="card-body">
+            <div class="dark-card" style="margin-bottom: 12px;">
+              <div class="dark-card-label">Contract Type</div>
+              <div class="dark-card-value" style="color: var(--mint);">Escrow</div>
+            </div>
+            <div class="dark-card" style="margin-bottom: 12px;">
+              <div class="dark-card-label">Contract Address</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <div class="dark-card-value" style="flex: 1;">0x9B2c...4E7a</div>
+                <div class="copy-icon" onclick="alert('Copied to clipboard!')">📋</div>
+              </div>
+            </div>
+            <div class="dark-card" style="margin-bottom: 12px;">
+              <div class="dark-card-label">Network</div>
+              <div class="dark-card-value" style="color: #fff;">BSC Mainnet</div>
+            </div>
+            <div class="dark-card" style="margin-bottom: 12px;">
+              <div class="dark-card-label">Deploy TX</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <div class="dark-card-value" style="flex: 1;">0xdef...abc</div>
+                <div class="copy-icon" onclick="alert('Copied to clipboard!')">📋</div>
+              </div>
+            </div>
+            <div class="dark-card" style="margin-bottom: 12px;">
+              <div class="dark-card-label">Status</div>
+              <div style="display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <span style="font-size: 13px; color: var(--mint); font-weight: 600;">Active</span>
+                <span style="font-size: 16px;">✅</span>
+              </div>
+            </div>
+            <div class="dark-card">
+              <div class="dark-card-label">Last Interaction</div>
+              <div class="dark-card-value" style="color: #fff; font-family: 'Inter';">2026-04-15 14:23</div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 16px;">
+              <button class="btn btn-sm btn-outline" style="flex: 1;">BscScan에서 보기</button>
+              <button class="btn btn-sm btn-danger" style="flex: 1;">컨트랙트 일시정지</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: 리스크 모니터링 -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">⚠️ 리스크 모니터링</div>
+          </div>
+          <div class="card-body">
+            <div style="padding: 12px; background: var(--mint-light); border-radius: 8px; margin-bottom: 16px; text-align: center;">
+              <div style="font-size: 11px; color: var(--gray-500); margin-bottom: 4px;">위험도</div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--mint); margin-bottom: 4px;">낮음</div>
+              <div style="width: 100%; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden;">
+                <div style="width: 30%; height: 100%; background: var(--mint);"></div>
+              </div>
+            </div>
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">체크리스트</div>
+              <div class="risk-item">
+                <div class="risk-label">✅ KYC 인증 완료</div>
+                <div class="risk-value success">검증됨</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-label">✅ 에스크로 잔액 정상</div>
+                <div class="risk-value success">정상</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-label">✅ 마일스톤 일정 준수</div>
+                <div class="risk-value success">진행 중</div>
+              </div>
+              <div class="risk-item">
+                <div class="risk-label">⚠️ 참여율 목표 대비</div>
+                <div class="risk-value warning">69.5%</div>
+              </div>
+            </div>
+            <button class="btn btn-outline" style="width: 100%;">리스크 리포트 생성</button>
+          </div>
+        </div>
+
+        <!-- Card 4: 활동 로그 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📝 활동 로그</div>
+          </div>
+          <div class="card-body">
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--mint-light);">💰</div>
+              <div class="timeline-info">
+                <div class="timeline-title">Alex Kim 5,000 USDT 참여</div>
+                <div class="timeline-time">04-15 14:23</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--mint-light);">💰</div>
+              <div class="timeline-info">
+                <div class="timeline-title">Sarah J 2,500 USDT 참여</div>
+                <div class="timeline-time">04-15 11:45</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--blue-light);">📋</div>
+              <div class="timeline-info">
+                <div class="timeline-title">마일스톤 2 검토 요청</div>
+                <div class="timeline-time">04-14</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--purple-light);">✏️</div>
+              <div class="timeline-info">
+                <div class="timeline-title">프로젝트 정보 수정</div>
+                <div class="timeline-time">04-10</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background: var(--mint-light);">✅</div>
+              <div class="timeline-info">
+                <div class="timeline-title">마일스톤 1 정산 완료</div>
+                <div class="timeline-time">04-01</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

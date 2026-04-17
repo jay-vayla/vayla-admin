@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - 새 Discovery 챌린지 생성</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ===== BUTTONS ===== */
+  .btn { padding: 10px 20px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red-light); color: var(--red); border: none; }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-lg { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
+  .btn-disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-desc { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+  .card-body { padding: 24px; }
+
+  /* ===== FORM ===== */
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+  .form-label .required { color: var(--red); margin-left: 2px; }
+  .form-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+  .form-input { width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 14px; color: var(--gray-700); outline: none; transition: border 0.15s; font-family: 'Inter', sans-serif; }
+  .form-input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+  .form-input::placeholder { color: var(--gray-300); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  textarea.form-input { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .form-input-group { position: relative; }
+  .form-input-group input { padding-right: 60px; }
+  .form-input-suffix { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: var(--gray-400); }
+
+  .form-checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .form-checkbox { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; cursor: pointer; }
+  .form-checkbox:hover { background: var(--gray-100); }
+  .form-checkbox input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--mint); cursor: pointer; flex-shrink: 0; }
+  .form-checkbox-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .form-checkbox-desc { font-size: 12px; color: var(--gray-400); }
+
+  .form-radio-group { display: flex; gap: 12px; margin-top: 4px; flex-direction: column; }
+  .form-radio {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 10px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .form-radio:hover { border-color: var(--gray-300); }
+  .form-radio.selected { border-color: var(--mint); background: var(--mint-light); }
+  .form-radio input[type="radio"] { display: none; }
+  .form-radio .radio-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--gray-300); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; margin-top: 2px;
+  }
+  .form-radio.selected .radio-dot { border-color: var(--mint); }
+  .form-radio.selected .radio-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--mint); }
+  .form-radio .radio-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .form-radio .radio-desc { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+  /* ===== IMAGE UPLOAD ===== */
+  .upload-area {
+    border: 2px dashed var(--gray-200); border-radius: 14px;
+    padding: 40px 20px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--gray-50);
+  }
+  .upload-area:hover { border-color: var(--mint); background: var(--mint-light); }
+  .upload-icon { font-size: 48px; margin-bottom: 12px; }
+  .upload-title { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .upload-desc { font-size: 12px; color: var(--gray-400); }
+
+  .upload-thumb-row { display: flex; gap: 12px; margin-top: 16px; }
+  .upload-thumb {
+    width: 80px; height: 80px; border-radius: 10px;
+    background: var(--gray-100); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; border: 1px solid var(--gray-200); position: relative;
+  }
+  .upload-thumb .remove-btn {
+    position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--red); color: #fff; border: 2px solid #fff;
+    font-size: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ===== STEPPER ===== */
+  .stepper {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 32px; padding: 0 40px;
+  }
+  .step { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .step-number {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; border: 2px solid var(--gray-200);
+    color: var(--gray-400); background: #fff; transition: all 0.2s;
+  }
+  .step.active .step-number { border-color: var(--mint); background: var(--mint); color: #fff; }
+  .step.done .step-number { border-color: var(--mint); background: var(--mint-light); color: var(--mint-dark); }
+  .step-label { font-size: 13px; font-weight: 600; color: var(--gray-400); }
+  .step.active .step-label { color: var(--dark); }
+  .step.done .step-label { color: var(--mint-dark); }
+  .step-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 12px; }
+  .step-line.done { background: var(--mint); }
+
+  /* ===== PREVIEW TABLE ===== */
+  .reward-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .reward-table th { background: var(--gray-50); padding: 12px; text-align: left; font-size: 12px; font-weight: 600; color: var(--gray-600); border: 1px solid var(--gray-200); }
+  .reward-table td { padding: 12px; border: 1px solid var(--gray-200); font-size: 13px; }
+  .reward-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; }
+
+  /* ===== TOGGLE ===== */
+  .toggle-switch { display: inline-flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .toggle { position: relative; width: 44px; height: 24px; background: var(--gray-300); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+  .toggle.active { background: var(--mint); }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: all 0.2s; }
+  .toggle.active::after { left: 22px; }
+
+  /* ===== PREVIEW ===== */
+  .preview-card {
+    border: 2px solid var(--mint); border-radius: 16px;
+    overflow: hidden; background: #fff;
+  }
+  .preview-cover {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 60px; position: relative;
+  }
+  .preview-body { padding: 20px; }
+  .preview-title { font-size: 18px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .preview-meta { font-size: 12px; color: var(--gray-400); margin-bottom: 12px; }
+  .preview-badge { display: inline-block; padding: 4px 10px; background: var(--mint-light); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--mint-dark); margin-right: 6px; }
+  .preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .preview-stat-label { font-size: 11px; color: var(--gray-400); }
+  .preview-stat-value { font-size: 16px; font-weight: 700; color: var(--dark); }
+  .preview-detail { font-size: 12px; color: var(--gray-600); margin-bottom: 8px; }
+  .preview-detail strong { color: var(--dark); }
+  .progress-bar { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--mint), var(--mint-dark)); }
+
+  /* ===== GRID ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-73 { display: grid; grid-template-columns: 7fr 3fr; gap: 24px; }
+
+  /* ===== BOTTOM BAR ===== */
+  .bottom-bar {
+    position: sticky; bottom: 0;
+    background: #fff; border-top: 1px solid var(--gray-200);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 40;
+  }
+  .bottom-bar-left { display: flex; align-items: center; gap: 12px; }
+  .bottom-bar-right { display: flex; align-items: center; gap: 12px; }
+  .draft-indicator { font-size: 12px; color: var(--gray-400); display: flex; align-items: center; gap: 6px; }
+  .draft-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+
+  /* ===== TAG INPUT ===== */
+  .tag-input-area { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; min-height: 44px; cursor: text; }
+  .tag-input-area:focus-within { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.1); }
+  .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--mint-light); border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .tag .tag-remove { cursor: pointer; font-size: 14px; opacity: 0.6; }
+  .tag .tag-remove:hover { opacity: 1; }
+  .tag-input-area input { border: none; outline: none; font-size: 13px; flex: 1; min-width: 100px; background: transparent; }
+
+  /* ===== CHECKLIST ===== */
+  .checklist-item { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 0; }
+  .checklist-item.complete span:first-child { color: var(--mint); }
+  .checklist-item.incomplete span:first-child { color: var(--yellow); }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item active" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <a href="02_Discovery.html" style="text-decoration: none; color: var(--gray-400); font-size: 20px; margin-right: 8px;">←</a>
+      <div>
+        <div class="header-title">새 챌린지 생성</div>
+        <div class="header-breadcrumb">서비스 관리 → Discovery → 새 챌린지 생성</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step active">
+        <div class="step-number">1</div>
+        <div class="step-label">기본 정보</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-label">참여 규칙</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-label">리워드 설정</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-label">미리보기 & 발행</div>
+      </div>
+    </div>
+
+    <div class="grid-73">
+      <!-- LEFT: FORM AREA -->
+      <div>
+
+        <!-- ===== SECTION 1: 기본 정보 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎵 기본 정보</div>
+              <div class="card-desc">챌린지의 핵심 정보를 입력하세요</div>
+            </div>
+            <span style="font-size: 12px; color: var(--gray-400);">Step 1 / 4</span>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">챌린지명 <span class="required">*</span></label>
+              <input type="text" class="form-input" placeholder="예: Summer Music Challenge 2026">
+              <div class="form-hint">유저에게 노출되는 공식 챌린지 이름입니다</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">챌린지 설명 <span class="required">*</span></label>
+              <textarea class="form-input" placeholder="챌린지의 목적, 참여 방법, 상금 정보 등을 상세히 작성하세요..."></textarea>
+              <div class="form-hint">최소 100자 이상 권장 · Markdown 지원</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">카테고리/장르 <span class="required">*</span></label>
+                <select class="form-input">
+                  <option value="">장르 선택</option>
+                  <option>K-POP</option>
+                  <option>EDM</option>
+                  <option>Hip-hop</option>
+                  <option>R&B</option>
+                  <option>Indie</option>
+                  <option>Rock</option>
+                  <option>Latin</option>
+                  <option>Jazz</option>
+                  <option>Classical</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">태그 입력</label>
+                <div class="tag-input-area">
+                  <span class="tag">#Summer <span class="tag-remove">✕</span></span>
+                  <span class="tag">#Dance <span class="tag-remove">✕</span></span>
+                  <input type="text" placeholder="태그 입력 후 Enter...">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">시작일 <span class="required">*</span></label>
+                <input type="datetime-local" class="form-input" value="2026-05-15T00:00">
+              </div>
+              <div class="form-group">
+                <label class="form-label">종료일 <span class="required">*</span></label>
+                <input type="datetime-local" class="form-input" value="2026-06-15T23:59">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">대표 이미지 <span class="required">*</span></label>
+              <div class="upload-area">
+                <div class="upload-icon">🎸</div>
+                <div class="upload-title">클릭하여 이미지 업로드</div>
+                <div class="upload-desc">1200 x 400px 권장 · JPG, PNG, WebP · 최대 5MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 2: 참여 규칙 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📋 참여 규칙</div>
+              <div class="card-desc">제출 비용, 파일 형식, 투표 방식 등을 설정하세요</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">제출 비용 <span class="required">*</span></label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="10" style="padding-right: 70px;">
+                  <span class="form-input-suffix">VAYLA</span>
+                </div>
+                <div class="form-hint">사용자가 트랙 제출 시 소비할 VAYLA</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">최대 제출 수 (1인당) <span class="required">*</span></label>
+                <input type="number" class="form-input" value="3" placeholder="제한 없음 시 공백">
+                <div class="form-hint">사용자당 제출 가능 최대 트랙 수</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">제출 파일 형식 <span class="required">*</span></label>
+              <div class="form-checkbox-group">
+                <label class="form-checkbox">
+                  <input type="checkbox" checked>
+                  <div>
+                    <div class="form-checkbox-label">MP3</div>
+                  </div>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" checked>
+                  <div>
+                    <div class="form-checkbox-label">WAV</div>
+                  </div>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox">
+                  <div>
+                    <div class="form-checkbox-label">FLAC</div>
+                  </div>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox">
+                  <div>
+                    <div class="form-checkbox-label">MP4 (비디오)</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">최소 길이</label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="30" style="padding-right: 70px;">
+                  <span class="form-input-suffix">초</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">최대 길이</label>
+                <div class="form-input-group">
+                  <input type="number" class="form-input" value="300" style="padding-right: 70px;">
+                  <span class="form-input-suffix">초</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">투표 비용 <span class="required">*</span></label>
+              <div style="padding: 12px 14px; background: var(--gray-50); border-radius: 8px; font-size: 12px; color: var(--gray-600); margin-bottom: 8px;">
+                <div>기본 투표 비용: <strong>1 VAYLA</strong></div>
+                <div>네트워크 수수료: <strong>0.1 VAYLA</strong></div>
+                <div style="margin-top: 4px; color: var(--gray-500);">총: <strong>1.1 VAYLA / 투표</strong></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">투표 방식 <span class="required">*</span></label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="vote-type" checked>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">1인 1투표</div>
+                    <div class="radio-desc">각 사용자는 1개 트랙에만 투표 가능</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="vote-type">
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">1인 다중 투표</div>
+                    <div class="radio-desc">최대 N개 트랙에 투표 가능</div>
+                  </div>
+                </label>
+              </div>
+              <div style="margin-top: 12px; padding: 12px 14px; background: var(--mint-light); border-radius: 8px; display: none;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                  최대 투표 수:
+                  <input type="number" value="5" style="width: 60px; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 12px;">
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">심사 방식 <span class="required">*</span></label>
+              <div class="form-radio-group">
+                <label class="form-radio selected">
+                  <input type="radio" name="review-type" checked>
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">자동 승인</div>
+                    <div class="radio-desc">제출 직후 자동으로 공개</div>
+                  </div>
+                </label>
+                <label class="form-radio">
+                  <input type="radio" name="review-type">
+                  <div class="radio-dot"></div>
+                  <div>
+                    <div class="radio-label">관리자 심사 후 공개</div>
+                    <div class="radio-desc">관리자 검수 후 수동 공개</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 3: 리워드 설정 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">💰 리워드 설정</div>
+              <div class="card-desc">NFT 발행 기준과 순위별 보상을 설정합니다</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">NFT 보상 기준 <span class="required">*</span></label>
+                <input type="number" class="form-input" value="5">
+                <div class="form-hint">이 투표 수 이상 받은 트랙에 NFT 자동 발행</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">발행 NFT 유형 <span class="required">*</span></label>
+                <select class="form-input">
+                  <option>Badge</option>
+                  <option>Reward</option>
+                  <option>Event</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">상위 순위 보상</label>
+              <table class="reward-table">
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>VAYLA 보상</th>
+                    <th>NFT 발행</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>🥇 1등</strong></td>
+                    <td><input type="number" value="100" placeholder="0"></td>
+                    <td style="text-align: center;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);" checked></td>
+                  </tr>
+                  <tr>
+                    <td><strong>🥈 2등</strong></td>
+                    <td><input type="number" value="50" placeholder="0"></td>
+                    <td style="text-align: center;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);" checked></td>
+                  </tr>
+                  <tr>
+                    <td><strong>🥉 3등</strong></td>
+                    <td><input type="number" value="25" placeholder="0"></td>
+                    <td style="text-align: center;"><input type="checkbox" style="width: 18px; height: 18px; accent-color: var(--mint);"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="margin-top: 12px; padding: 12px 14px; background: var(--blue-light); border-radius: 8px; font-size: 12px; color: var(--blue); display: flex; align-items: flex-start; gap: 8px;">
+                <span style="margin-top: 2px;">💡</span>
+                <div>총 보상 풀: <strong>175 VAYLA</strong></div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Creator NFT 발행</label>
+              <div class="toggle-switch">
+                <div class="toggle active"></div>
+                <span style="font-size: 12px; color: var(--gray-600);">챌린지 우승 시 Creator Achievement NFT 자동 부여</span>
+              </div>
+              <div class="form-hint" style="margin-top: 12px;">우승 크리에이터에게 특별한 Creator NFT를 발행하여 인정합니다</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== SECTION 4: 미디어 & 알림 ===== -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎨 미디어 & 알림</div>
+              <div class="card-desc">배너, SNS 공유 이미지와 알림 설정</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">배너 이미지</label>
+              <div class="upload-area">
+                <div class="upload-icon">🖼️</div>
+                <div class="upload-title">클릭하여 이미지 업로드</div>
+                <div class="upload-desc">1600 x 600px 권장 · JPG, PNG, WebP · 최대 5MB</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">소셜 공유 이미지</label>
+              <div class="upload-area">
+                <div class="upload-icon">📱</div>
+                <div class="upload-title">클릭하여 이미지 업로드</div>
+                <div class="upload-desc">1200 x 630px 권장 · JPG, PNG, WebP · 최대 5MB</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">알림 설정</label>
+              <div class="form-checkbox-group">
+                <label class="form-checkbox">
+                  <input type="checkbox" checked>
+                  <div>
+                    <div class="form-checkbox-label">🔔 챌린지 시작 Push</div>
+                    <div class="form-checkbox-desc">챌린지 시작 시점에 푸시 알림</div>
+                  </div>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" checked>
+                  <div>
+                    <div class="form-checkbox-label">⏰ 종료 D-1 Push</div>
+                    <div class="form-checkbox-desc">챌린지 종료 하루 전 리마인더 알림</div>
+                  </div>
+                </label>
+                <label class="form-checkbox">
+                  <input type="checkbox" checked>
+                  <div>
+                    <div class="form-checkbox-label">🏆 결과 발표 Push</div>
+                    <div class="form-checkbox-desc">우승자 공개 시 알림</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">타겟 유저</label>
+              <select class="form-input">
+                <option>전체 유저</option>
+                <option>활성 유저</option>
+                <option>VIP 유저</option>
+                <option>K-POP 팬</option>
+                <option>Music Creator</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: LIVE PREVIEW -->
+      <div>
+        <div style="position: sticky; top: 88px;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            👁️ 유저 화면 미리보기
+          </div>
+
+          <!-- Preview Card -->
+          <div class="preview-card">
+            <div class="preview-cover" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53);">
+              🎸
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span style="padding: 4px 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border-radius: 6px; font-size: 11px; font-weight: 600; color: #fff;">ACTIVE</span>
+              </div>
+            </div>
+            <div class="preview-body">
+              <div class="preview-title">Summer Music Challenge</div>
+              <div class="preview-meta">
+                <span class="preview-badge">K-POP</span>
+                <span style="font-size: 12px; color: var(--gray-400);">05.15 ~ 06.15</span>
+              </div>
+
+              <div class="preview-detail">📤 제출 비용: <strong>10 VAYLA</strong></div>
+              <div class="preview-detail">🗳️ 투표 비용: <strong>1.1 VAYLA/회</strong></div>
+
+              <div class="preview-stats">
+                <div>
+                  <div class="preview-stat-label">1등</div>
+                  <div class="preview-stat-value" style="font-size: 14px;">100 VAYLA</div>
+                </div>
+                <div>
+                  <div class="preview-stat-label">2등</div>
+                  <div class="preview-stat-value" style="font-size: 14px;">50 VAYLA</div>
+                </div>
+              </div>
+
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 16px;">
+                <span>0 / 100 투표</span>
+                <span>0%</span>
+              </div>
+
+              <div style="padding: 10px; background: var(--mint); border-radius: 8px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer;">참여하기</div>
+            </div>
+          </div>
+
+          <!-- Checklist -->
+          <div style="margin-top: 16px; padding: 16px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">📋 입력 체크리스트</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="checklist-item complete">
+                <span>✓</span>
+                <span style="color: var(--gray-600);">기본 정보</span>
+              </div>
+              <div class="checklist-item complete">
+                <span>✓</span>
+                <span style="color: var(--gray-600);">참여 규칙</span>
+              </div>
+              <div class="checklist-item complete">
+                <span>✓</span>
+                <span style="color: var(--gray-600);">리워드 설정</span>
+              </div>
+              <div class="checklist-item complete">
+                <span>✓</span>
+                <span style="color: var(--gray-600);">미디어 & 알림</span>
+              </div>
+            </div>
+            <div style="margin-top: 16px; padding: 10px; background: var(--mint-light); border-radius: 8px; font-size: 12px; color: var(--mint-dark); text-align: center;">
+              ✓ 모든 필수 항목이 완료되었습니다
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ACTION BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-bar-left">
+      <div class="draft-indicator">
+        <div class="draft-dot"></div>
+        자동 저장 12:34:56
+      </div>
+    </div>
+    <div class="bottom-bar-right">
+      <button class="btn btn-outline" onclick="window.location.href='02_Discovery.html'">취소</button>
+      <button class="btn btn-outline">임시 저장</button>
+      <button class="btn btn-mint btn-lg">챌린지 발행</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

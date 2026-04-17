@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - 사용자 상세</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --sidebar-w: 260px; --header-h: 64px;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
+
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: center; gap: 24px; }
+  .header-back { font-size: 20px; cursor: pointer; color: var(--gray-600); }
+  .header-titles { display: flex; flex-direction: column; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 12px; }
+  .header-breadcrumb { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; background: var(--mint-light); color: var(--mint-dark); border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
+
+  .hero-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 28px; display: flex; align-items: flex-start; gap: 32px; margin-bottom: 24px; }
+  .hero-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--mint), var(--blue)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 48px; color: #fff; flex-shrink: 0; }
+  .hero-info { flex: 1; }
+  .hero-name { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 2px; }
+  .hero-email { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
+  .hero-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .hero-detail-item { display: flex; flex-direction: column; }
+  .hero-detail-label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+  .hero-detail-value { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex-shrink: 0; }
+  .hero-stat-card { background: var(--gray-50); padding: 16px; border-radius: 10px; border: 1px solid var(--gray-200); text-align: center; }
+  .hero-stat-label { font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600; }
+  .hero-stat-value { font-size: 16px; font-weight: 800; color: var(--mint); line-height: 1; }
+
+  .tab-nav { display: flex; gap: 8px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 6px; margin-bottom: 24px; width: fit-content; }
+  .tab-btn { padding: 8px 18px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #DC2626; }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-active { background: var(--mint-light); color: var(--mint-dark); }
+  .status-inactive { background: var(--gray-100); color: var(--gray-500); }
+  .status-suspended { background: var(--red-light); color: var(--red); }
+  .status-verified { background: var(--blue-light); color: var(--blue); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
+  tbody tr:hover { background: var(--gray-50); }
+
+  .wallet-address { font-family: monospace; font-size: 12px; color: var(--blue); }
+  .copy-btn { background: var(--gray-100); border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-left: 6px; }
+  .copy-btn:hover { background: var(--gray-200); }
+
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--gray-50); font-size: 13px; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--gray-500); font-weight: 500; }
+  .info-value { font-weight: 600; color: var(--dark); }
+
+  .balance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .balance-card { background: var(--gray-50); padding: 16px; border-radius: 10px; border: 1px solid var(--gray-200); }
+  .balance-label { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+  .balance-amount { font-size: 18px; font-weight: 800; color: var(--dark); }
+  .balance-sub { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  .nft-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 24px; background: var(--gray-50); }
+  .nft-item { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
+  .nft-image { width: 100%; height: 120px; background: linear-gradient(135deg, var(--purple), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; }
+  .nft-badge { position: absolute; top: 8px; right: 8px; background: var(--mint); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+  .nft-info { padding: 12px; }
+  .nft-name { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .nft-id { font-size: 11px; color: var(--gray-400); margin-bottom: 8px; font-family: monospace; }
+  .nft-transfer { font-size: 10px; color: var(--green); margin-bottom: 8px; }
+  .nft-actions { display: flex; gap: 4px; }
+  .nft-action { flex: 1; padding: 5px; background: var(--gray-100); border: none; border-radius: 4px; font-size: 11px; cursor: pointer; }
+  .nft-action:hover { background: var(--gray-200); }
+
+  .timeline { padding: 24px; }
+  .timeline-item { position: relative; padding-left: 24px; margin-bottom: 20px; }
+  .timeline-item::before { content: ''; position: absolute; left: 0; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--mint); border: 3px solid #fff; box-shadow: 0 0 0 1px var(--mint); }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-date { font-size: 12px; color: var(--gray-500); font-weight: 600; margin-bottom: 2px; }
+  .timeline-action { font-size: 13px; color: var(--dark); font-weight: 600; margin-bottom: 4px; }
+  .timeline-detail { font-size: 12px; color: var(--gray-500); }
+
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+  .page-info { font-size: 13px; color: var(--gray-400); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
+  .search-box { position: relative; display: inline-block; }
+  .search-box input { padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
+  .search-box input:focus { border-color: var(--mint); }
+  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+
+  .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+  .modal.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 14px; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+  .modal-header { padding: 28px 28px 20px; font-size: 18px; font-weight: 700; color: var(--dark); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-100); }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); }
+  .modal-body { padding: 24px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--mint); }
+  .form-select { width: 100%; padding: 10px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-select:focus { border-color: var(--mint); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; padding: 20px 28px; border-top: 1px solid var(--gray-100); background: var(--gray-50); }
+  .modal-actions .btn { margin: 0; }
+
+  .table-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+  .table-controls-export { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div><div class="logo-text">VAYLA Arena</div><div class="logo-sub">Admin Console</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item" href="02_Discovery.html"><span class="icon">🎵</span> Discovery</a>
+    <a class="nav-item" href="03_Boost.html"><span class="icon">🚀</span> Boost</a>
+    <a class="nav-item" href="04_Wallet.html"><span class="icon">💰</span> 지갑 & 트랜잭션</a>
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html"><span class="icon">🎨</span> User NFT</a>
+    <a class="nav-item" href="06_NFT_Creator.html"><span class="icon">⭐</span> Creator NFT</a>
+    <a class="nav-item" href="07_NFT_Policy.html"><span class="icon">📋</span> NFT 정책 & 마켓</a>
+    <div class="nav-section">운영</div>
+    <a class="nav-item active" href="08_Users.html"><span class="icon">👥</span> 회원 관리</a>
+    <a class="nav-item" href="09_Rewards.html"><span class="icon">💎</span> 리워드 & 정산</a>
+    <a class="nav-item" href="10_CMS.html"><span class="icon">📝</span> 서비스 가이드</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info"><div class="user-name">Jay Kim</div><div class="user-role">Super Admin</div></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="header">
+    <div class="header-left">
+      <div class="header-back" onclick="window.location.href='08_Users.html';">←</div>
+      <div class="header-titles">
+        <div class="header-title">Alex Kim <span class="status-badge"><span class="status-badge-dot"></span> 활성</span></div>
+        <div class="header-breadcrumb">운영 → 회원 관리 → 사용자 상세</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-outline btn-sm" onclick="openMemoModal()">메모 추가</button>
+      <button class="btn btn-danger btn-sm" onclick="openSuspendModal()">정지</button>
+      <button class="btn btn-outline btn-sm">메시지 발송</button>
+      <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- HERO CARD -->
+    <div class="hero-card">
+      <div class="hero-avatar">AK</div>
+      <div class="hero-info">
+        <div class="hero-name">Alex Kim</div>
+        <div class="hero-email">alex.kim@email.com</div>
+        <div class="hero-details">
+          <div class="hero-detail-item">
+            <div class="hero-detail-label">가입일</div>
+            <div class="hero-detail-value">2025-08-15</div>
+          </div>
+          <div class="hero-detail-item">
+            <div class="hero-detail-label">마지막 로그인</div>
+            <div class="hero-detail-value">2026-04-17 09:32</div>
+          </div>
+          <div class="hero-detail-item">
+            <div class="hero-detail-label">사용자 ID</div>
+            <div class="hero-detail-value">USR-00847</div>
+          </div>
+          <div class="hero-detail-item">
+            <div class="hero-detail-label">역할</div>
+            <div class="hero-detail-value">일반 유저</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <div class="hero-stat-label">총 투표</div>
+          <div class="hero-stat-value">342회</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-label">Boost 참여</div>
+          <div class="hero-stat-value">3건</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-label">보유 NFT</div>
+          <div class="hero-stat-value">12개</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hero-stat-label">총 거래량</div>
+          <div class="hero-stat-value">8.45k</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab(0)">💰 지갑 정보</button>
+      <button class="tab-btn" onclick="switchTab(1)">🎵 활동 내역</button>
+      <button class="tab-btn" onclick="switchTab(2)">🖼️ 보유 NFT</button>
+      <button class="tab-btn" onclick="switchTab(3)">🚀 Boost 참여</button>
+      <button class="tab-btn" onclick="switchTab(4)">📋 관리 이력</button>
+    </div>
+
+    <!-- TAB 1: 지갑 정보 -->
+    <div class="tab-content active">
+      <!-- 지갑 주소 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💳 지갑 주소</div>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-label">BSC Wallet</div>
+            <div class="info-value">
+              <span class="wallet-address">0x7a3B...9f2E</span>
+              <button class="copy-btn" onclick="copyToClipboard('0x7a3B2C4E5F6G7H8I9J0K9f2E')">복사</button>
+              <a href="#" style="margin-left: 8px; color: var(--blue); font-size: 12px; text-decoration: none;">BscScan</a>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Ethereum</div>
+            <div class="info-value"><span class="wallet-address">0x7a3B...9f2E</span></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">Solana</div>
+            <div class="info-value"><span class="wallet-address">7YWD...x9Kp</span></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">KYC 상태</div>
+            <div class="info-value"><span class="status status-verified"><span class="status-dot"></span> 인증 완료</span> (인증일: 2025-09-01)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 잔액 현황 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💵 잔액 현황</div>
+        </div>
+        <div class="card-body">
+          <div class="balance-grid">
+            <div class="balance-card">
+              <div class="balance-label">VAYLA</div>
+              <div class="balance-amount">2,340</div>
+              <div class="balance-sub">≈ $234.00</div>
+            </div>
+            <div class="balance-card">
+              <div class="balance-label">USDT (BSC)</div>
+              <div class="balance-amount">1,250</div>
+              <div class="balance-sub">≈ $1,250.00</div>
+            </div>
+            <div class="balance-card">
+              <div class="balance-label">USDT (ETH)</div>
+              <div class="balance-amount">0.00</div>
+              <div class="balance-sub">≈ $0.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 최근 트랜잭션 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 최근 트랜잭션</div>
+          <div class="table-controls">
+            <div class="search-box" style="width: 200px;">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="검색...">
+            </div>
+            <select class="filter-select" style="width: 150px;">
+              <option>모든 기간</option>
+              <option>7일</option>
+              <option>30일</option>
+              <option>90일</option>
+            </select>
+            <button class="btn btn-outline btn-sm table-controls-export">📥 Export</button>
+          </div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>일시</th>
+                <th>유형</th>
+                <th>금액</th>
+                <th>TX Hash</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-04-15 14:23</td>
+                <td>Boost 참여</td>
+                <td>-5,000 USDT</td>
+                <td><span class="wallet-address">0xabc...def</span></td>
+                <td><span class="status status-active"><span class="status-dot"></span> 완료</span></td>
+              </tr>
+              <tr>
+                <td>2026-04-14 09:15</td>
+                <td>투표</td>
+                <td>-10 VAYLA</td>
+                <td><span class="wallet-address">0x123...456</span></td>
+                <td><span class="status status-active"><span class="status-dot"></span> 완료</span></td>
+              </tr>
+              <tr>
+                <td>2026-04-13 18:00</td>
+                <td>리워드 수령</td>
+                <td>+50 VAYLA</td>
+                <td><span class="wallet-address">0x789...012</span></td>
+                <td><span class="status status-active"><span class="status-dot"></span> 완료</span></td>
+              </tr>
+              <tr>
+                <td>2026-04-12 11:30</td>
+                <td>USDT 입금</td>
+                <td>+1,250 USDT</td>
+                <td><span class="wallet-address">0xdef...345</span></td>
+                <td><span class="status status-active"><span class="status-dot"></span> 완료</span></td>
+              </tr>
+              <tr>
+                <td>2026-04-10 20:45</td>
+                <td>NFT 마켓 구매</td>
+                <td>-200 USDT</td>
+                <td><span class="wallet-address">0x456...789</span></td>
+                <td><span class="status status-active"><span class="status-dot"></span> 완료</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="page-info">1 - 5 / 47건</div>
+          <div class="page-btns">
+            <button class="page-btn">‹</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 활동 내역 -->
+    <div class="tab-content">
+      <!-- Discovery 활동 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎵 Discovery 활동</div>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <div class="info-label">제출 트랙 수</div>
+            <div class="info-value">5개</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">총 투표 수</div>
+            <div class="info-value">342회</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">투표 소비 VAYLA</div>
+            <div class="info-value">3,420 VAYLA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 투표 이력 테이블 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📈 투표 이력</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>챌린지명</th>
+                <th>트랙명</th>
+                <th>득표수</th>
+                <th>순위</th>
+                <th>NFT 수령</th>
+                <th>날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Neon Night Beat</td>
+                <td>Midnight Groove</td>
+                <td>482</td>
+                <td>1위 🏆</td>
+                <td>✅ Badge</td>
+                <td>2026-03-20</td>
+              </tr>
+              <tr>
+                <td>Urban Flow</td>
+                <td>City Lights</td>
+                <td>231</td>
+                <td>5위</td>
+                <td>❌</td>
+                <td>2026-02-15</td>
+              </tr>
+              <tr>
+                <td>K-Pop Rising</td>
+                <td>Spring Song</td>
+                <td>89</td>
+                <td>12위</td>
+                <td>❌</td>
+                <td>2026-01-10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 보유 NFT -->
+    <div class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎨 보유 NFT</div>
+        </div>
+        <div class="nft-grid">
+          <div class="nft-item">
+            <div class="nft-image">🏆<span class="nft-badge">Badge</span></div>
+            <div class="nft-info">
+              <div class="nft-name">Neon Night Champion</div>
+              <div class="nft-id">#0847</div>
+              <div class="nft-transfer">양도 ✓</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+          <div class="nft-item">
+            <div class="nft-image">🎯<span class="nft-badge">Event</span></div>
+            <div class="nft-info">
+              <div class="nft-name">Urban Flow Participant</div>
+              <div class="nft-id">#1203</div>
+              <div class="nft-transfer">양도 ✗</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+          <div class="nft-item">
+            <div class="nft-image">🎪<span class="nft-badge">Reward</span></div>
+            <div class="nft-info">
+              <div class="nft-name">Waterbomb VIP</div>
+              <div class="nft-id">#0512</div>
+              <div class="nft-transfer">양도 ✓</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+          <div class="nft-item">
+            <div class="nft-image">⭐<span class="nft-badge">Badge</span></div>
+            <div class="nft-info">
+              <div class="nft-name">K-Pop Rising Star</div>
+              <div class="nft-id">#0089</div>
+              <div class="nft-transfer">양도 ✗</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+          <div class="nft-item">
+            <div class="nft-image">🚀<span class="nft-badge">Event</span></div>
+            <div class="nft-info">
+              <div class="nft-name">Early Adopter</div>
+              <div class="nft-id">#0001</div>
+              <div class="nft-transfer">양도 ✓</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+          <div class="nft-item">
+            <div class="nft-image">🗳️<span class="nft-badge">Badge</span></div>
+            <div class="nft-info">
+              <div class="nft-name">Voting Master</div>
+              <div class="nft-id">#0334</div>
+              <div class="nft-transfer">양도 ✓</div>
+              <div class="nft-actions">
+                <button class="nft-action">상세</button>
+                <button class="nft-action">이전</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: Boost 참여 -->
+    <div class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🚀 Boost 참여 현황</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>프로젝트명</th>
+                <th>참여금액</th>
+                <th>참여일</th>
+                <th>현재 상태</th>
+                <th>예상 ROI</th>
+                <th>TX Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Waterbomb Festival</td>
+                <td>5,000 USDT</td>
+                <td>2026-04-15</td>
+                <td><span class="status" style="background: #EFF6FF; color: #3B82F6;"><span class="status-dot"></span> 진행 중</span></td>
+                <td>15.2%</td>
+                <td><span class="wallet-address">0xabc...def</span></td>
+              </tr>
+              <tr>
+                <td>G-Dragon Tour</td>
+                <td>2,000 USDT</td>
+                <td>2026-03-01</td>
+                <td><span class="status" style="background: #FFFBEB; color: #F59E0B;"><span class="status-dot"></span> 모금 중</span></td>
+                <td>12.5%</td>
+                <td><span class="wallet-address">0xdef...ghi</span></td>
+              </tr>
+              <tr>
+                <td>MAMA Awards</td>
+                <td>1,450 USDT</td>
+                <td>2025-12-10</td>
+                <td><span class="status status-active"><span class="status-dot"></span> 정산 완료</span></td>
+                <td>18.3%</td>
+                <td><span class="wallet-address">0x789...jkl</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 관리 이력 -->
+    <div class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 관리 이력</div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">2026-04-10</div>
+            <div class="timeline-action">관리자 메모 추가</div>
+            <div class="timeline-detail">"VIP 유저, CS 우선 대응" - by Jay Kim</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2026-02-15</div>
+            <div class="timeline-action">KYC 인증 완료</div>
+            <div class="timeline-detail">자동 처리</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2025-12-01</div>
+            <div class="timeline-action">신고 접수 처리</div>
+            <div class="timeline-detail">부적절한 트랙 제출 → 경고 처리 - by Admin Lee</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2025-09-01</div>
+            <div class="timeline-action">KYC 인증 요청</div>
+            <div class="timeline-detail">사용자에게 인증 요청 발송</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2025-08-15</div>
+            <div class="timeline-action">계정 생성</div>
+            <div class="timeline-detail">신규 사용자 회원가입</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUSPEND MODAL -->
+<div id="suspendModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>회원 정지</span>
+      <button class="modal-close" onclick="closeSuspendModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">정지 사유</label>
+        <select class="form-select">
+          <option>선택하세요</option>
+          <option>이용약관 위반</option>
+          <option>부정행위</option>
+          <option>스팸</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">정지 기간</label>
+        <select class="form-select">
+          <option>1일</option>
+          <option>7일</option>
+          <option>30일</option>
+          <option>영구</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">상세 사유</label>
+        <textarea class="form-input" style="resize: vertical; min-height: 100px; padding: 12px;" placeholder="정지 사유에 대한 추가 설명을 입력하세요"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeSuspendModal()">취소</button>
+      <button class="btn btn-danger">정지 실행</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEMO MODAL -->
+<div id="memoModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>메모 추가</span>
+      <button class="modal-close" onclick="closeMemoModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">메모 내용</label>
+        <textarea class="form-input" style="resize: vertical; min-height: 120px; padding: 12px;" placeholder="사용자에 대한 메모를 입력하세요"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeMemoModal()">취소</button>
+      <button class="btn btn-mint">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(index) {
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
+  });
+
+  contents.forEach((content, i) => {
+    content.classList.toggle('active', i === index);
+  });
+}
+
+function openSuspendModal() {
+  document.getElementById('suspendModal').classList.add('active');
+}
+
+function closeSuspendModal() {
+  document.getElementById('suspendModal').classList.remove('active');
+}
+
+function openMemoModal() {
+  document.getElementById('memoModal').classList.add('active');
+}
+
+function closeMemoModal() {
+  document.getElementById('memoModal').classList.remove('active');
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+  alert('복사되었습니다!');
+}
+
+// Close modals when clicking outside
+window.addEventListener('click', (e) => {
+  const suspendModal = document.getElementById('suspendModal');
+  const memoModal = document.getElementById('memoModal');
+
+  if (e.target === suspendModal) {
+    suspendModal.classList.remove('active');
+  }
+  if (e.target === memoModal) {
+    memoModal.classList.remove('active');
+  }
+});
+</script>
+
+</body>
+</html>

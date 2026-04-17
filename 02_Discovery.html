@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAYLA Arena Admin - Discovery 관리</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --mint: #00C9A7;
+    --mint-light: #E6FAF5;
+    --mint-dark: #00A88A;
+    --dark: #1A2332;
+    --dark-2: #243044;
+    --dark-3: #2D3B50;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --red: #EF4444;
+    --red-light: #FEF2F2;
+    --yellow: #F59E0B;
+    --yellow-light: #FFFBEB;
+    --blue: #3B82F6;
+    --blue-light: #EFF6FF;
+    --purple: #8B5CF6;
+    --purple-light: #F5F3FF;
+    --orange: #F97316;
+    --orange-light: #FFF7ED;
+    --sidebar-w: 260px;
+    --header-h: 64px;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--dark);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--dark-3);
+  }
+
+  .sidebar-logo .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--mint), var(--mint-dark));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; color: #fff;
+  }
+
+  .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
+
+  .sidebar-nav { padding: 16px 0; flex: 1; }
+
+  .nav-section {
+    padding: 8px 24px 4px;
+    font-size: 10px; font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 1.2px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 24px;
+    color: var(--gray-300); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: all 0.15s; cursor: pointer;
+    position: relative;
+  }
+
+  .nav-item:hover { color: #fff; background: var(--dark-2); }
+
+  .nav-item.active {
+    color: var(--mint);
+    background: rgba(0, 201, 167, 0.08);
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: 0; top: 4px; bottom: 4px;
+    width: 3px;
+    background: var(--mint);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--dark-3);
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .sidebar-footer .avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--mint), var(--blue));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .sidebar-footer .user-info { flex: 1; }
+  .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
+  .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
+
+  /* ===== MAIN ===== */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+  /* ===== HEADER ===== */
+  .header {
+    height: var(--header-h);
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+    position: sticky; top: 0; z-index: 50;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .header-btn {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+    font-size: 18px; transition: all 0.15s;
+  }
+
+  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
+
+  .header-btn .dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 8px; height: 8px;
+    background: var(--red); border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  .network-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: var(--mint-light);
+    border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    color: var(--mint-dark);
+  }
+
+  .network-badge .pulse {
+    width: 8px; height: 8px;
+    background: var(--mint); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ===== CONTENT ===== */
+  .content { padding: 28px 32px; flex: 1; }
+
+  /* ===== TAB NAV ===== */
+  .tab-nav {
+    display: flex; gap: 4px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+
+  .tab-btn.active {
+    background: var(--mint);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 201, 167, 0.3);
+  }
+
+  .tab-btn .count {
+    background: rgba(255,255,255,0.25);
+    padding: 1px 7px; border-radius: 6px;
+    font-size: 11px;
+  }
+
+  .tab-btn:not(.active) .count {
+    background: var(--gray-100);
+    color: var(--gray-500);
+  }
+
+  /* ===== KPI CARDS ===== */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+
+  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .kpi-sub .up { color: var(--mint); font-weight: 600; }
+  .kpi-sub .down { color: var(--red); font-weight: 600; }
+
+  /* ===== CARD ===== */
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .btn-mint { background: var(--mint); color: #fff; }
+  .btn-mint:hover { background: var(--mint-dark); }
+  .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+
+  /* ===== STATUS BADGES ===== */
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .status-live { background: var(--mint-light); color: var(--mint-dark); }
+  .status-upcoming { background: var(--blue-light); color: var(--blue); }
+  .status-ended { background: var(--gray-100); color: var(--gray-500); }
+  .status-reviewing { background: var(--yellow-light); color: var(--yellow); }
+  .status-approved { background: var(--mint-light); color: var(--mint-dark); }
+  .status-rejected { background: var(--red-light); color: var(--red); }
+  .status-hold { background: var(--purple-light); color: var(--purple); }
+  .status-pending { background: var(--orange-light); color: var(--orange); }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px; font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--gray-50);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--gray-50);
+    vertical-align: middle;
+  }
+
+  tbody tr:hover { background: var(--gray-50); }
+
+  .track-info { display: flex; align-items: center; gap: 12px; }
+
+  .track-thumb {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .track-name { font-weight: 600; color: var(--dark); font-size: 13px; }
+  .track-artist { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+  .genre-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: var(--gray-100);
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+    color: var(--gray-600);
+  }
+
+  /* ===== GRID LAYOUTS ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .mb-24 { margin-bottom: 24px; }
+
+  /* ===== CHALLENGE CARD ===== */
+  .challenge-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .challenge-card:hover {
+    border-color: var(--mint);
+    box-shadow: 0 4px 16px rgba(0, 201, 167, 0.1);
+  }
+
+  .challenge-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .challenge-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .challenge-period { font-size: 12px; color: var(--gray-400); }
+
+  .challenge-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .cstat-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .cstat-value { font-size: 18px; font-weight: 700; color: var(--dark); }
+  .cstat-value.mint { color: var(--mint); }
+
+  .progress-bar {
+    height: 6px; background: var(--gray-100);
+    border-radius: 3px; margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mint), var(--mint-dark));
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .challenge-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px;
+  }
+
+  .challenge-genres { display: flex; gap: 6px; }
+
+  /* ===== REVIEW QUEUE ===== */
+  .review-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-50);
+  }
+
+  .review-item:last-child { border-bottom: none; }
+
+  .review-thumb {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .review-info { flex: 1; }
+  .review-title { font-weight: 600; color: var(--dark); font-size: 14px; }
+  .review-meta { font-size: 12px; color: var(--gray-400); margin-top: 3px; display: flex; gap: 12px; }
+  .review-actions { display: flex; gap: 8px; }
+
+  .play-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--mint-light);
+    border: none;
+    color: var(--mint);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px;
+    transition: all 0.15s;
+  }
+  .play-btn:hover { background: var(--mint); color: #fff; }
+
+  /* ===== VOTE CHART ===== */
+  .vote-chart-area {
+    height: 200px;
+    position: relative;
+    margin-top: 16px;
+  }
+
+  /* ===== GENRE MANAGER ===== */
+  .genre-list { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .genre-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+  }
+
+  .genre-count {
+    background: var(--mint-light);
+    color: var(--mint-dark);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 11px; font-weight: 600;
+  }
+
+  .genre-remove {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: none;
+    background: var(--gray-200);
+    color: var(--gray-500);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .genre-remove:hover { background: var(--red); color: #fff; }
+
+  /* ===== REWARD SUMMARY ===== */
+  .reward-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-50);
+  }
+
+  .reward-row:last-child { border-bottom: none; }
+
+  .reward-label { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 8px; }
+  .reward-value { font-size: 14px; font-weight: 700; color: var(--dark); }
+
+  /* ===== SEARCH & FILTER ===== */
+  .toolbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .search-box {
+    flex: 1; max-width: 320px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 9px 14px 9px 38px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray-700);
+    background: #fff;
+    outline: none;
+    transition: border 0.15s;
+  }
+
+  .search-box input:focus { border-color: var(--mint); }
+
+  .search-box .search-icon {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    font-size: 14px;
+  }
+
+  .filter-select {
+    padding: 9px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray-600);
+    background: #fff;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .filter-select:focus { border-color: var(--mint); }
+
+  /* ===== PAGINATION ===== */
+  .pagination {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .page-info { font-size: 13px; color: var(--gray-400); }
+
+  .page-btns { display: flex; gap: 4px; }
+
+  .page-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
+  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  /* ===== WAVEFORM ===== */
+  .waveform {
+    display: flex; align-items: center; gap: 2px;
+    height: 24px;
+  }
+
+  .waveform .bar {
+    width: 3px;
+    border-radius: 2px;
+    background: var(--mint);
+    animation: wave 1.2s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%, 100% { height: 4px; opacity: 0.4; }
+    50% { height: 20px; opacity: 1; }
+  }
+
+  /* ===== LEADERBOARD ===== */
+  .lb-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-50);
+  }
+
+  .lb-item:last-child { border-bottom: none; }
+
+  .lb-rank {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+
+  .lb-rank.gold { background: #FEF3C7; color: #D97706; }
+  .lb-rank.silver { background: var(--gray-100); color: var(--gray-500); }
+  .lb-rank.bronze { background: #FED7AA; color: #EA580C; }
+  .lb-rank.normal { background: var(--gray-50); color: var(--gray-400); }
+
+  .lb-info { flex: 1; }
+  .lb-name { font-weight: 600; color: var(--dark); font-size: 13px; }
+  .lb-artist { font-size: 12px; color: var(--gray-400); }
+  .lb-votes { font-size: 14px; font-weight: 700; color: var(--mint-dark); }
+
+  /* ===== MODAL OVERLAY ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .modal-title { font-size: 18px; font-weight: 700; color: var(--dark); }
+
+  .modal-close {
+    width: 32px; height: 32px;
+    border-radius: 8px; border: none;
+    background: var(--gray-100);
+    font-size: 18px; color: var(--gray-500);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .modal-close:hover { background: var(--gray-200); }
+
+  .modal-body { padding: 24px; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px; color: var(--gray-700);
+    outline: none;
+    transition: border 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--mint); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .modal-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--gray-100);
+    display: flex; justify-content: flex-end; gap: 12px;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; color: var(--gray-400); }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">V</div>
+    <div>
+      <div class="logo-text">VAYLA Arena</div>
+      <div class="logo-sub">Admin Console</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a class="nav-item" href="01_Dashboard.html">
+      <span class="icon">📊</span> Dashboard
+    </a>
+
+    <div class="nav-section">서비스 관리</div>
+    <a class="nav-item active" href="02_Discovery.html">
+      <span class="icon">🎵</span> Discovery
+      <span class="badge">8</span>
+    </a>
+    <a class="nav-item" href="03_Boost.html">
+      <span class="icon">🚀</span> Boost
+    </a>
+    <a class="nav-item" href="04_Wallet.html">
+      <span class="icon">💰</span> 지갑 & 트랜잭션
+    </a>
+
+    <div class="nav-section">NFT</div>
+    <a class="nav-item" href="05_NFT_User.html">
+      <span class="icon">🎨</span> User NFT
+    </a>
+    <a class="nav-item" href="06_NFT_Creator.html">
+      <span class="icon">⭐</span> Creator NFT
+    </a>
+    <a class="nav-item" href="07_NFT_Policy.html">
+      <span class="icon">📋</span> NFT 정책 & 마켓
+    </a>
+
+    <div class="nav-section">운영</div>
+    <a class="nav-item" href="08_Users.html">
+      <span class="icon">👥</span> 회원 관리
+    </a>
+    <a class="nav-item" href="09_Rewards.html">
+      <span class="icon">💎</span> 리워드 & 정산
+    </a>
+    <a class="nav-item" href="10_CMS.html">
+      <span class="icon">📝</span> 서비스 가이드
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="avatar">JK</div>
+    <div class="user-info">
+      <div class="user-name">Jay Kim</div>
+      <div class="user-role">Super Admin</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div>
+        <div class="header-title">Discovery 관리</div>
+        <div class="header-breadcrumb">서비스 관리 → Discovery</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="network-badge">
+        <div class="pulse"></div>
+        BSC Mainnet
+      </div>
+      <button class="header-btn">🔔<div class="dot"></div></button>
+      <button class="header-btn">⚙️</button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+      <button class="tab-btn active">🎵 챌린지 관리 <span class="count">4</span></button>
+      <button class="tab-btn">📋 트랙 심사 <span class="count">8</span></button>
+      <button class="tab-btn">🗳️ 투표 모니터링</button>
+      <button class="tab-btn">🎁 리워드 배분</button>
+      <button class="tab-btn">🏷️ 장르 관리</button>
+    </div>
+
+    <!-- ===== KPI CARDS ===== -->
+    <div class="kpi-row">
+      <div class="kpi-card mint">
+        <div class="kpi-label">진행 중 챌린지</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub"><span class="up">+1</span> 이번 주 신규</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">총 제출 트랙</div>
+        <div class="kpi-value">284</div>
+        <div class="kpi-sub"><span class="up">↑ 23%</span> vs 지난주</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">오늘 투표 수</div>
+        <div class="kpi-value">1,247</div>
+        <div class="kpi-sub"><span class="up">↑ 12%</span> vs 어제</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">심사 대기</div>
+        <div class="kpi-value">8</div>
+        <div class="kpi-sub">평균 대기 4.2h</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">NFT 발행 대기</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">5표 이상 달성자</div>
+      </div>
+    </div>
+
+    <!-- ===== CHALLENGE LIST ===== -->
+    <div class="grid-23">
+      <!-- Left: Active Challenges -->
+      <div>
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">🎵 활성 챌린지</div>
+            <a href="02-1_Discovery_Create.html" class="btn btn-mint" style="text-decoration:none;">+ 새 챌린지</a>
+          </div>
+          <div class="card-body" style="padding: 16px;">
+
+            <!-- Challenge 1: LIVE -->
+            <div class="challenge-card" style="margin-bottom: 16px;">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">Neon Night Beat</div>
+                  <div class="challenge-period">2026.04.10 ~ 2026.04.24 (D-7)</div>
+                </div>
+                <span class="status status-live"><span class="status-dot"></span> LIVE</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 58%;"></div>
+              </div>
+              <div class="challenge-stats">
+                <div>
+                  <div class="cstat-label">제출 트랙</div>
+                  <div class="cstat-value">47</div>
+                </div>
+                <div>
+                  <div class="cstat-label">총 투표</div>
+                  <div class="cstat-value mint">3,284</div>
+                </div>
+                <div>
+                  <div class="cstat-label">참여자</div>
+                  <div class="cstat-value">892</div>
+                </div>
+                <div>
+                  <div class="cstat-label">VAYLA 소비</div>
+                  <div class="cstat-value">470</div>
+                </div>
+              </div>
+              <div class="challenge-footer">
+                <div class="challenge-genres">
+                  <span class="genre-tag">K-POP</span>
+                  <span class="genre-tag">EDM</span>
+                  <span class="genre-tag">Hip-Hop</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm btn-outline">상세</button>
+                  <button class="btn btn-sm btn-outline">편집</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge 2: LIVE -->
+            <div class="challenge-card" style="margin-bottom: 16px;">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">Urban Flow Session</div>
+                  <div class="challenge-period">2026.04.14 ~ 2026.04.28 (D-11)</div>
+                </div>
+                <span class="status status-live"><span class="status-dot"></span> LIVE</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 22%;"></div>
+              </div>
+              <div class="challenge-stats">
+                <div>
+                  <div class="cstat-label">제출 트랙</div>
+                  <div class="cstat-value">18</div>
+                </div>
+                <div>
+                  <div class="cstat-label">총 투표</div>
+                  <div class="cstat-value mint">641</div>
+                </div>
+                <div>
+                  <div class="cstat-label">참여자</div>
+                  <div class="cstat-value">234</div>
+                </div>
+                <div>
+                  <div class="cstat-label">VAYLA 소비</div>
+                  <div class="cstat-value">180</div>
+                </div>
+              </div>
+              <div class="challenge-footer">
+                <div class="challenge-genres">
+                  <span class="genre-tag">R&B</span>
+                  <span class="genre-tag">Soul</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm btn-outline">상세</button>
+                  <button class="btn btn-sm btn-outline">편집</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge 3: UPCOMING -->
+            <div class="challenge-card">
+              <div class="challenge-header">
+                <div>
+                  <div class="challenge-title">Summer Vibes 2026</div>
+                  <div class="challenge-period">2026.04.25 ~ 2026.05.09 (D+8 시작)</div>
+                </div>
+                <span class="status status-upcoming"><span class="status-dot"></span> 예정</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+              </div>
+              <div class="challenge-stats">
+                <div>
+                  <div class="cstat-label">제출 트랙</div>
+                  <div class="cstat-value">0</div>
+                </div>
+                <div>
+                  <div class="cstat-label">총 투표</div>
+                  <div class="cstat-value">0</div>
+                </div>
+                <div>
+                  <div class="cstat-label">목표 참여자</div>
+                  <div class="cstat-value" style="color: var(--blue);">1,000</div>
+                </div>
+                <div>
+                  <div class="cstat-label">예상 소비</div>
+                  <div class="cstat-value" style="color: var(--gray-400);">~500</div>
+                </div>
+              </div>
+              <div class="challenge-footer">
+                <div class="challenge-genres">
+                  <span class="genre-tag">Pop</span>
+                  <span class="genre-tag">Dance</span>
+                  <span class="genre-tag">Tropical</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-sm btn-outline">상세</button>
+                  <button class="btn btn-sm btn-outline">편집</button>
+                  <button class="btn btn-sm btn-danger">삭제</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Leaderboard + Quick Stats -->
+      <div>
+        <!-- Realtime Leaderboard -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">🏆 실시간 리더보드</div>
+            <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
+              <option>Neon Night Beat</option>
+              <option>Urban Flow Session</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="lb-item">
+              <div class="lb-rank gold">1</div>
+              <div class="lb-info">
+                <div class="lb-name">Midnight Groove</div>
+                <div class="lb-artist">DJ Hana · K-POP</div>
+              </div>
+              <div>
+                <div class="lb-votes">482 votes</div>
+                <div class="waveform" style="margin-top: 4px;">
+                  <div class="bar" style="animation-delay: 0s;"></div>
+                  <div class="bar" style="animation-delay: 0.1s;"></div>
+                  <div class="bar" style="animation-delay: 0.2s;"></div>
+                  <div class="bar" style="animation-delay: 0.3s;"></div>
+                  <div class="bar" style="animation-delay: 0.15s;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank silver">2</div>
+              <div class="lb-info">
+                <div class="lb-name">Electric Dreams</div>
+                <div class="lb-artist">NOVA · EDM</div>
+              </div>
+              <div>
+                <div class="lb-votes">347 votes</div>
+              </div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank bronze">3</div>
+              <div class="lb-info">
+                <div class="lb-name">Seoul Streets</div>
+                <div class="lb-artist">MC Park · Hip-Hop</div>
+              </div>
+              <div>
+                <div class="lb-votes">291 votes</div>
+              </div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank normal">4</div>
+              <div class="lb-info">
+                <div class="lb-name">Neon Pulse</div>
+                <div class="lb-artist">Luna · EDM</div>
+              </div>
+              <div>
+                <div class="lb-votes">268 votes</div>
+              </div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank normal">5</div>
+              <div class="lb-info">
+                <div class="lb-name">Cherry Blossom</div>
+                <div class="lb-artist">Sakura · K-POP</div>
+              </div>
+              <div>
+                <div class="lb-votes">224 votes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vote Cost Info -->
+        <div class="card mb-24">
+          <div class="card-header">
+            <div class="card-title">💡 현재 설정</div>
+          </div>
+          <div class="card-body">
+            <div class="reward-row">
+              <div class="reward-label">🎵 트랙 제출 비용</div>
+              <div class="reward-value">10 VAYLA</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">🗳️ 투표 비용</div>
+              <div class="reward-value">1 VAYLA</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">⛽ Network Fee</div>
+              <div class="reward-value">~0.001 BNB</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">🏆 NFT 발행 기준</div>
+              <div class="reward-value">5 Votes</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">📅 챌린지 기간</div>
+              <div class="reward-value">14일</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Genre Distribution -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 장르 분포</div>
+          </div>
+          <div class="card-body">
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 500;">K-POP</span>
+                <span style="font-size: 12px; color: var(--gray-400);">34%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 34%;"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 500;">EDM</span>
+                <span style="font-size: 12px; color: var(--gray-400);">22%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 22%; background: var(--blue);"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 500;">Hip-Hop</span>
+                <span style="font-size: 12px; color: var(--gray-400);">18%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 18%; background: var(--purple);"></div></div>
+            </div>
+            <div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 500;">R&B / Soul</span>
+                <span style="font-size: 12px; color: var(--gray-400);">14%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 14%; background: var(--orange);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 500;">Pop / Dance</span>
+                <span style="font-size: 12px; color: var(--gray-400);">12%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 12%; background: var(--yellow);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TRACK REVIEW QUEUE ===== -->
+    <div class="card mb-24">
+      <div class="card-header">
+        <div class="card-title">📋 트랙 심사 큐 <span style="font-size: 13px; font-weight: 500; color: var(--red); margin-left: 8px;">8건 대기</span></div>
+        <div style="display: flex; gap: 8px;">
+          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
+            <option>전체 챌린지</option>
+            <option>Neon Night Beat</option>
+            <option>Urban Flow Session</option>
+          </select>
+          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
+            <option>최신 순</option>
+            <option>오래된 순</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; padding:12px 24px; background:var(--gray-50); border-bottom:1px solid var(--gray-100);">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-500);"><input type="checkbox"> 전체 선택</label>
+        <button class="btn btn-sm btn-mint">✓ 선택 승인</button>
+        <button class="btn btn-sm btn-danger">✕ 선택 거절</button>
+      </div>
+      <div class="card-body">
+        <!-- Review Item 1 -->
+        <div class="review-item">
+          <input type="checkbox" style="width:18px;height:18px;accent-color:var(--mint);flex-shrink:0;">
+          <div class="review-thumb" style="background: linear-gradient(135deg, #FF6B8A, #FF8E53);">🎤</div>
+          <div class="review-info">
+            <div class="review-title">Starlight Express</div>
+            <div class="review-meta">
+              <span>by <strong>Yuna Park</strong></span>
+              <span>Neon Night Beat</span>
+              <span>K-POP</span>
+              <span>3:42</span>
+              <span style="color: var(--yellow);">⏳ 2h 전 제출</span>
+            </div>
+          </div>
+          <button class="play-btn">▶</button>
+          <div class="review-actions">
+            <button class="btn btn-sm btn-mint">✓ 승인</button>
+            <button class="btn btn-sm btn-yellow">⏸ 보류</button>
+            <button class="btn btn-sm btn-danger">✕ 거절</button>
+          </div>
+        </div>
+
+        <!-- Review Item 2 -->
+        <div class="review-item">
+          <input type="checkbox" style="width:18px;height:18px;accent-color:var(--mint);flex-shrink:0;">
+          <div class="review-thumb" style="background: linear-gradient(135deg, #667EEA, #764BA2);">🎹</div>
+          <div class="review-info">
+            <div class="review-title">Digital Paradise</div>
+            <div class="review-meta">
+              <span>by <strong>DJ Min</strong></span>
+              <span>Neon Night Beat</span>
+              <span>EDM</span>
+              <span>4:15</span>
+              <span style="color: var(--yellow);">⏳ 3h 전 제출</span>
+            </div>
+          </div>
+          <button class="play-btn">▶</button>
+          <div class="review-actions">
+            <button class="btn btn-sm btn-mint">✓ 승인</button>
+            <button class="btn btn-sm btn-yellow">⏸ 보류</button>
+            <button class="btn btn-sm btn-danger">✕ 거절</button>
+          </div>
+        </div>
+
+        <!-- Review Item 3 -->
+        <div class="review-item">
+          <input type="checkbox" style="width:18px;height:18px;accent-color:var(--mint);flex-shrink:0;">
+          <div class="review-thumb" style="background: linear-gradient(135deg, #11998E, #38EF7D);">🎧</div>
+          <div class="review-info">
+            <div class="review-title">Moonlit Serenade</div>
+            <div class="review-meta">
+              <span>by <strong>Chris Lee</strong></span>
+              <span>Urban Flow Session</span>
+              <span>R&B</span>
+              <span>3:58</span>
+              <span style="color: var(--orange);">⏳ 5h 전 제출</span>
+            </div>
+          </div>
+          <button class="play-btn">▶</button>
+          <div class="review-actions">
+            <button class="btn btn-sm btn-mint">✓ 승인</button>
+            <button class="btn btn-sm btn-yellow">⏸ 보류</button>
+            <button class="btn btn-sm btn-danger">✕ 거절</button>
+          </div>
+        </div>
+
+        <!-- Review Item 4 -->
+        <div class="review-item">
+          <input type="checkbox" style="width:18px;height:18px;accent-color:var(--mint);flex-shrink:0;">
+          <div class="review-thumb" style="background: linear-gradient(135deg, #F093FB, #F5576C);">🎸</div>
+          <div class="review-info">
+            <div class="review-title">Cyber Punk Dreams</div>
+            <div class="review-meta">
+              <span>by <strong>AXEL</strong></span>
+              <span>Neon Night Beat</span>
+              <span>EDM</span>
+              <span>5:02</span>
+              <span style="color: var(--red);">⏳ 8h 전 제출</span>
+            </div>
+          </div>
+          <button class="play-btn">▶</button>
+          <div class="review-actions">
+            <button class="btn btn-sm btn-mint">✓ 승인</button>
+            <button class="btn btn-sm btn-yellow">⏸ 보류</button>
+            <button class="btn btn-sm btn-danger">✕ 거절</button>
+          </div>
+        </div>
+
+        <!-- Review Item 5 -->
+        <div class="review-item">
+          <input type="checkbox" style="width:18px;height:18px;accent-color:var(--mint);flex-shrink:0;">
+          <div class="review-thumb" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">🎻</div>
+          <div class="review-info">
+            <div class="review-title">Ocean Breeze</div>
+            <div class="review-meta">
+              <span>by <strong>Marina K</strong></span>
+              <span>Urban Flow Session</span>
+              <span>Soul</span>
+              <span>4:32</span>
+              <span style="color: var(--red);">⏳ 12h 전 제출</span>
+            </div>
+          </div>
+          <button class="play-btn">▶</button>
+          <div class="review-actions">
+            <button class="btn btn-sm btn-mint">✓ 승인</button>
+            <button class="btn btn-sm btn-yellow">⏸ 보류</button>
+            <button class="btn btn-sm btn-danger">✕ 거절</button>
+          </div>
+        </div>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 5 / 8건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VOTE MONITORING & REWARD DISTRIBUTION ===== -->
+    <div class="grid-2">
+      <!-- Vote Monitoring -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🗳️ 투표 현황 (24h)</div>
+          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
+            <option>Neon Night Beat</option>
+            <option>Urban Flow Session</option>
+            <option>전체</option>
+          </select>
+        </div>
+        <div class="card-body">
+          <!-- Hourly Vote Chart (SVG) -->
+          <div style="position: relative; height: 180px; margin-bottom: 20px;">
+            <svg width="100%" height="180" viewBox="0 0 500 180" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line x1="0" y1="45" x2="500" y2="45" stroke="#F3F4F6" stroke-width="1"/>
+              <line x1="0" y1="90" x2="500" y2="90" stroke="#F3F4F6" stroke-width="1"/>
+              <line x1="0" y1="135" x2="500" y2="135" stroke="#F3F4F6" stroke-width="1"/>
+              <!-- Area fill -->
+              <path d="M0,160 L21,150 L42,145 L63,155 L83,160 L104,158 L125,150 L146,130 L167,110 L188,95 L208,80 L229,60 L250,45 L271,35 L292,30 L313,25 L333,28 L354,40 L375,50 L396,55 L417,48 L438,42 L458,38 L479,35 L500,30 L500,180 L0,180 Z" fill="url(#voteGradient)" opacity="0.3"/>
+              <!-- Line -->
+              <path d="M0,160 L21,150 L42,145 L63,155 L83,160 L104,158 L125,150 L146,130 L167,110 L188,95 L208,80 L229,60 L250,45 L271,35 L292,30 L313,25 L333,28 L354,40 L375,50 L396,55 L417,48 L438,42 L458,38 L479,35 L500,30" fill="none" stroke="#00C9A7" stroke-width="2.5" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="voteGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div style="position: absolute; bottom: -4px; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 10px; color: var(--gray-400);">
+              <span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>Now</span>
+            </div>
+          </div>
+
+          <!-- Vote Stats Summary -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            <div style="background: var(--mint-light); border-radius: 10px; padding: 14px; text-align: center;">
+              <div style="font-size: 11px; color: var(--gray-500); margin-bottom: 4px;">총 투표</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--mint-dark);">1,247</div>
+            </div>
+            <div style="background: var(--blue-light); border-radius: 10px; padding: 14px; text-align: center;">
+              <div style="font-size: 11px; color: var(--gray-500); margin-bottom: 4px;">고유 투표자</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--blue);">483</div>
+            </div>
+            <div style="background: var(--purple-light); border-radius: 10px; padding: 14px; text-align: center;">
+              <div style="font-size: 11px; color: var(--gray-500); margin-bottom: 4px;">평균 투표/인</div>
+              <div style="font-size: 20px; font-weight: 800; color: var(--purple);">2.58</div>
+            </div>
+          </div>
+
+          <!-- On-chain Vote Info -->
+          <div style="margin-top: 16px; padding: 14px; background: var(--gray-50); border-radius: 10px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">🔗 On-Chain 투표 검증</div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+              <span style="color: var(--gray-500);">검증 완료</span>
+              <span style="font-weight: 600; color: var(--mint);">1,241 / 1,247 (99.5%)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <span style="color: var(--gray-500);">검증 대기</span>
+              <span style="font-weight: 600; color: var(--yellow);">6건 (pending)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reward Distribution -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🎁 리워드 배분 현황</div>
+          <button class="btn btn-sm btn-mint">일괄 배분</button>
+        </div>
+        <div class="card-body">
+          <!-- Pending NFT Rewards -->
+          <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">NFT 발행 대기 (5표 이상)</div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>트랙</th>
+                  <th>아티스트</th>
+                  <th>투표 수</th>
+                  <th>NFT 유형</th>
+                  <th>상태</th>
+                  <th>액션</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color: var(--dark);">Midnight Groove</strong></td>
+                  <td style="color: var(--gray-500);">DJ Hana</td>
+                  <td><strong style="color: var(--mint);">482</strong></td>
+                  <td><span class="genre-tag" style="background: var(--purple-light); color: var(--purple);">Badge NFT</span></td>
+                  <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
+                  <td><button class="btn btn-sm btn-mint">발행</button></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Electric Dreams</strong></td>
+                  <td style="color: var(--gray-500);">NOVA</td>
+                  <td><strong style="color: var(--mint);">347</strong></td>
+                  <td><span class="genre-tag" style="background: var(--purple-light); color: var(--purple);">Badge NFT</span></td>
+                  <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
+                  <td><button class="btn btn-sm btn-mint">발행</button></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Seoul Streets</strong></td>
+                  <td style="color: var(--gray-500);">MC Park</td>
+                  <td><strong style="color: var(--mint);">291</strong></td>
+                  <td><span class="genre-tag" style="background: var(--purple-light); color: var(--purple);">Badge NFT</span></td>
+                  <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
+                  <td><button class="btn btn-sm btn-mint">발행</button></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Neon Pulse</strong></td>
+                  <td style="color: var(--gray-500);">Luna</td>
+                  <td><strong style="color: var(--mint);">268</strong></td>
+                  <td><span class="genre-tag" style="background: var(--mint-light); color: var(--mint-dark);">Reward NFT</span></td>
+                  <td><span class="status status-approved"><span class="status-dot"></span> 발행 완료</span></td>
+                  <td><button class="btn btn-sm btn-outline">TX 확인</button></td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--dark);">Cherry Blossom</strong></td>
+                  <td style="color: var(--gray-500);">Sakura</td>
+                  <td><strong style="color: var(--mint);">224</strong></td>
+                  <td><span class="genre-tag" style="background: var(--mint-light); color: var(--mint-dark);">Reward NFT</span></td>
+                  <td><span class="status status-approved"><span class="status-dot"></span> 발행 완료</span></td>
+                  <td><button class="btn btn-sm btn-outline">TX 확인</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Reward Summary -->
+          <div style="margin-top: 20px; padding: 16px; background: var(--gray-50); border-radius: 10px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 10px;">📊 리워드 요약</div>
+            <div class="reward-row">
+              <div class="reward-label">🎨 발행 완료 NFT</div>
+              <div class="reward-value" style="color: var(--mint);">9</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">⏳ 발행 대기 NFT</div>
+              <div class="reward-value" style="color: var(--yellow);">3</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">💰 소비된 VAYLA (제출)</div>
+              <div class="reward-value">650 VAYLA</div>
+            </div>
+            <div class="reward-row">
+              <div class="reward-label">🗳️ 소비된 VAYLA (투표)</div>
+              <div class="reward-value">3,925 VAYLA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RECENT REVIEW HISTORY TABLE ===== -->
+    <div class="card mb-24">
+      <div class="card-header">
+        <div class="card-title">📜 심사 이력</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <div class="toolbar" style="margin-bottom: 0;">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="트랙명, 아티스트 검색...">
+            </div>
+            <select class="filter-select">
+              <option>전체 상태</option>
+              <option>승인</option>
+              <option>거절</option>
+              <option>보류</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>트랙</th>
+              <th>아티스트</th>
+              <th>챌린지</th>
+              <th>장르</th>
+              <th>제출일시</th>
+              <th>심사 상태</th>
+              <th>심사자</th>
+              <th>사유</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #a8e6cf, #88d8a8);">🎵</div>
+                  <div>
+                    <div class="track-name">Future Bass 2026</div>
+                    <div class="track-artist">3:28</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 500; color: var(--dark);">Zion K</td>
+              <td>Neon Night Beat</td>
+              <td><span class="genre-tag">EDM</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">04.17 09:15</td>
+              <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+              <td style="color: var(--gray-500); font-size: 12px;">Admin Jay</td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #ffd3a5, #fd6585);">🎵</div>
+                  <div>
+                    <div class="track-name">Sunset Boulevard</div>
+                    <div class="track-artist">4:01</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 500; color: var(--dark);">Mia Choi</td>
+              <td>Urban Flow Session</td>
+              <td><span class="genre-tag">R&B</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">04.17 08:42</td>
+              <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+              <td style="color: var(--gray-500); font-size: 12px;">Admin Jay</td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #c2c2c2, #999);">🎵</div>
+                  <div>
+                    <div class="track-name">Copycat Remix</div>
+                    <div class="track-artist">2:55</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 500; color: var(--dark);">user_8472</td>
+              <td>Neon Night Beat</td>
+              <td><span class="genre-tag">Hip-Hop</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">04.16 22:10</td>
+              <td><span class="status status-rejected"><span class="status-dot"></span> 거절</span></td>
+              <td style="color: var(--gray-500); font-size: 12px;">Admin Kim</td>
+              <td style="color: var(--red); font-size: 12px;">저작권 의심</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);">🎵</div>
+                  <div>
+                    <div class="track-name">Lost In Tokyo</div>
+                    <div class="track-artist">3:44</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 500; color: var(--dark);">Haru</td>
+              <td>Neon Night Beat</td>
+              <td><span class="genre-tag">K-POP</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">04.16 19:35</td>
+              <td><span class="status status-hold"><span class="status-dot"></span> 보류</span></td>
+              <td style="color: var(--gray-500); font-size: 12px;">Admin Lee</td>
+              <td style="color: var(--purple); font-size: 12px;">음질 확인 필요</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="track-info">
+                  <div class="track-thumb" style="background: linear-gradient(135deg, #13547a, #80d0c7);">🎵</div>
+                  <div>
+                    <div class="track-name">Gravity Falls</div>
+                    <div class="track-artist">3:12</div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-weight: 500; color: var(--dark);">Ryan Seo</td>
+              <td>Urban Flow Session</td>
+              <td><span class="genre-tag">Soul</span></td>
+              <td style="color: var(--gray-400); font-size: 12px;">04.16 16:28</td>
+              <td><span class="status status-approved"><span class="status-dot"></span> 승인</span></td>
+              <td style="color: var(--gray-500); font-size: 12px;">Admin Jay</td>
+              <td style="color: var(--gray-400); font-size: 12px;">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info">1 - 5 / 47건</div>
+        <div class="page-btns">
+          <button class="page-btn">‹</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">...</button>
+          <button class="page-btn">10</button>
+          <button class="page-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GENRE MANAGEMENT ===== -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🏷️ 장르 관리</div>
+        <button class="btn btn-mint">+ 장르 추가</button>
+      </div>
+      <div class="card-body">
+        <div class="genre-list">
+          <div class="genre-item">
+            🎤 K-POP <span class="genre-count">97 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎛️ EDM <span class="genre-count">62 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎤 Hip-Hop <span class="genre-count">51 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎷 R&B <span class="genre-count">32 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎵 Soul <span class="genre-count">18 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            💃 Pop <span class="genre-count">15 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🌴 Dance <span class="genre-count">12 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🌊 Tropical <span class="genre-count">8 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎸 Rock <span class="genre-count">5 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+          <div class="genre-item">
+            🎻 Classical <span class="genre-count">2 트랙</span>
+            <button class="genre-remove" style="background:var(--blue-light);color:var(--blue);">✎</button>
+            <button class="genre-remove">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== NEW CHALLENGE MODAL ===== -->
+<div class="modal-overlay" id="challengeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">새 챌린지 생성</div>
+      <button class="modal-close" onclick="document.getElementById('challengeModal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">챌린지 이름</label>
+        <input type="text" class="form-input" placeholder="예: Summer Vibes 2026">
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <textarea class="form-input" rows="3" placeholder="챌린지에 대한 설명을 입력하세요..." style="resize: vertical;"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">시작일</label>
+          <input type="date" class="form-input" value="2026-04-25">
+        </div>
+        <div class="form-group">
+          <label class="form-label">종료일</label>
+          <input type="date" class="form-input" value="2026-05-09">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">허용 장르 (다중 선택)</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--mint-light); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox" checked> K-POP
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-50); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox"> EDM
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-50); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox"> Hip-Hop
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-50); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox"> R&B
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-50); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox"> Pop
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--gray-50); border-radius: 6px; font-size: 13px; cursor: pointer;">
+            <input type="checkbox"> Dance
+          </label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">트랙 제출 비용</label>
+          <input type="text" class="form-input" value="10 VAYLA">
+        </div>
+        <div class="form-group">
+          <label class="form-label">투표 비용</label>
+          <input type="text" class="form-input" value="1 VAYLA">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">NFT 발행 기준 (최소 투표)</label>
+          <input type="number" class="form-input" value="5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">최대 트랙 수</label>
+          <input type="number" class="form-input" value="100">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">커버 이미지</label>
+        <div style="border: 2px dashed var(--gray-200); border-radius: 10px; padding: 30px; text-align: center; cursor: pointer;">
+          <div style="font-size: 32px; margin-bottom: 8px;">📷</div>
+          <div style="font-size: 13px; color: var(--gray-400);">클릭하여 이미지 업로드 (1200x400 권장)</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('challengeModal').classList.remove('show')">취소</button>
+      <button class="btn btn-mint">챌린지 생성</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
