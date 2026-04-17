@@ -112,6 +112,33 @@
   .target-creator { background: var(--purple-light); color: var(--purple); }
   .target-common { background: var(--orange-light); color: var(--orange); }
 
+  /* ===== POLICY THUMBNAILS ===== */
+  .policy-thumb {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .policy-thumb-purple { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+  .policy-thumb-mint { background: linear-gradient(135deg, #00C9A7, #34D399); }
+  .policy-thumb-blue { background: linear-gradient(135deg, #3B82F6, #60A5FA); }
+  .policy-thumb-orange { background: linear-gradient(135deg, #F97316, #FB923C); }
+  .policy-thumb-green { background: linear-gradient(135deg, #10B981, #34D399); }
+  .policy-thumb-yellow { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+  .policy-name-cell { display: flex; align-items: center; gap: 12px; }
+
+  .policy-img-large {
+    width: 120px; height: 120px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; color: #fff; flex-shrink: 0;
+  }
+  .policy-detail-top {
+    display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px;
+    padding: 20px; background: var(--gray-50); border-radius: 14px; border: 1px solid var(--gray-100);
+  }
+  .policy-detail-top-info { flex: 1; }
+  .policy-detail-top-info h3 { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+  .policy-detail-top-info p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+
   .cat-badge { display: inline-flex; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
   .cat-badge-purple { background: var(--purple-light); color: var(--purple); }
   .cat-reward { background: var(--mint-light); color: var(--mint-dark); }
@@ -267,7 +294,7 @@
         <div class="card-title">📋 NFT 정책 목록</div>
         <div style="display: flex; gap: 8px;">
           <button class="btn btn-sm btn-outline">📥 내보내기</button>
-          <button class="btn btn-sm btn-mint">+ 새 정책 등록</button>
+          <a href="07-1_NFT_Policy_Create.html" class="btn btn-sm btn-mint">+ 새 정책 등록</a>
         </div>
       </div>
       <div class="card-body" style="padding-bottom: 0;">
@@ -321,7 +348,7 @@
             <tbody>
               <!-- Row 1 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Discovery Badge Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-purple">D</div><span style="font-weight: 700; color: var(--dark);">Discovery Badge Policy</span></div></td>
                 <td><span class="target-badge target-user">유저</span></td>
                 <td><span class="cat-badge cat-badge-purple">Badge</span></td>
                 <td><span class="transfer-badge transfer-no">불가</span></td>
@@ -334,13 +361,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 2 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Weekly Reward NFT Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-mint">W</div><span style="font-weight: 700; color: var(--dark);">Weekly Reward NFT Policy</span></div></td>
                 <td><span class="target-badge target-user">유저</span></td>
                 <td><span class="cat-badge cat-reward">Reward</span></td>
                 <td><span class="transfer-badge transfer-yes">가능</span></td>
@@ -353,13 +380,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 3 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Event Pass Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-blue">E</div><span style="font-weight: 700; color: var(--dark);">Event Pass Policy</span></div></td>
                 <td><span class="target-badge target-user">유저</span></td>
                 <td><span class="cat-badge cat-event">Event</span></td>
                 <td><span class="transfer-badge transfer-yes">가능</span></td>
@@ -372,13 +399,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 4 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Creator Achievement Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-orange">C</div><span style="font-weight: 700; color: var(--dark);">Creator Achievement Policy</span></div></td>
                 <td><span class="target-badge target-creator">크리에이터</span></td>
                 <td><span class="cat-badge cat-achievement">Achievement</span></td>
                 <td><span class="transfer-badge transfer-no">불가</span></td>
@@ -391,13 +418,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 5 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Verified Creator Badge Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-green">V</div><span style="font-weight: 700; color: var(--dark);">Verified Creator Badge Policy</span></div></td>
                 <td><span class="target-badge target-creator">크리에이터</span></td>
                 <td><span class="cat-badge cat-verified">Verified Creator</span></td>
                 <td><span class="transfer-badge transfer-no">불가</span></td>
@@ -410,13 +437,13 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
               <!-- Row 6 -->
               <tr onclick="openModal()">
-                <td style="font-weight: 700; color: var(--dark);">Alpha Supporter Policy</td>
+                <td><div class="policy-name-cell"><div class="policy-thumb policy-thumb-yellow">A</div><span style="font-weight: 700; color: var(--dark);">Alpha Supporter Policy</span></div></td>
                 <td><span class="target-badge target-common">공통</span></td>
                 <td><span class="cat-badge cat-participation">Participation</span></td>
                 <td><span class="transfer-badge transfer-no">불가</span></td>
@@ -429,7 +456,7 @@
                 <td onclick="event.stopPropagation()">
                   <div style="display: flex; gap: 4px;">
                     <button class="btn btn-sm btn-outline" onclick="openModal()">상세</button>
-                    <button class="btn btn-sm btn-outline">수정</button>
+                    <a href="07-2_NFT_Policy_Edit.html" class="btn btn-sm btn-outline">수정</a>
                   </div>
                 </td>
               </tr>
@@ -454,7 +481,7 @@
       <div class="card-header">
         <div class="card-title">🎁 유틸리티 규칙</div>
         <div style="display: flex; gap: 8px;">
-          <button class="btn btn-sm btn-mint">+ 새 규칙 등록</button>
+          <a href="07-3_NFT_Utility_Create.html" class="btn btn-sm btn-mint">+ 새 규칙 등록</a>
         </div>
       </div>
       <div style="padding: 0;">
@@ -541,6 +568,21 @@
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="modal-body">
+
+      <!-- Policy Image + Title -->
+      <div class="policy-detail-top">
+        <div class="policy-img-large policy-thumb-purple" style="background: linear-gradient(135deg, #8B5CF6, #A78BFA);">D</div>
+        <div class="policy-detail-top-info">
+          <h3>Discovery Badge Policy</h3>
+          <p>VAYLA Discovery 참여 유저에게 발행되는 Badge NFT에 적용되는 기본 정책입니다.</p>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <span class="target-badge target-user">유저</span>
+            <span class="cat-badge cat-badge-purple">Badge</span>
+            <span class="bool-badge bool-yes">Soulbound</span>
+            <span class="status status-active"><span class="status-dot"></span> 활성</span>
+          </div>
+        </div>
+      </div>
 
       <!-- Detail Info -->
       <div class="detail-grid">
