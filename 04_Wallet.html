@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VAYLA Arena Admin - 지갑 & 트랜잭션</title>
+<title>VAYLA Arena Admin - Wallet Detail</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,6 +15,7 @@
     --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
     --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
     --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
     --sidebar-w: 260px; --header-h: 64px;
   }
   body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
@@ -42,8 +43,8 @@
   .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
-  .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
-  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .header-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--gray-200); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 18px; transition: all 0.15s; }
   .header-btn:hover { border-color: var(--mint); color: var(--mint); }
   .header-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid #fff; }
@@ -53,33 +54,7 @@
 
   .content { padding: 28px 32px; flex: 1; }
 
-  .tab-nav { display: flex; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; }
-  .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; }
-  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
-  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
-  .tab-btn .count { background: rgba(255,255,255,0.25); padding: 1px 7px; border-radius: 6px; font-size: 11px; }
-  .tab-btn:not(.active) .count { background: var(--gray-100); color: var(--gray-500); }
-
-  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
-  .kpi-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-  .kpi-card.mint::before { background: var(--mint); }
-  .kpi-card.blue::before { background: var(--blue); }
-  .kpi-card.purple::before { background: var(--purple); }
-  .kpi-card.yellow::before { background: var(--yellow); }
-  .kpi-card.red::before { background: var(--red); }
-  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
-  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-  .kpi-sub .up { color: var(--mint); font-weight: 600; }
-  .kpi-sub .down { color: var(--red); font-weight: 600; }
-
-  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; }
-  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-  .card-body { padding: 24px; }
-
-  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
   .btn-mint { background: var(--mint); color: #fff; }
   .btn-mint:hover { background: var(--mint-dark); }
   .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
@@ -88,56 +63,116 @@
   .btn-danger { background: var(--red-light); color: var(--red); }
 
   .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .status-normal { background: var(--mint-light); color: var(--mint-dark); }
+  .status-safe { background: var(--blue-light); color: var(--blue); }
+  .status-warning { background: var(--yellow-light); color: var(--yellow); }
+  .status-critical { background: var(--red-light); color: var(--red); }
   .status-success { background: var(--mint-light); color: var(--mint-dark); }
-  .status-pending { background: var(--yellow-light); color: var(--yellow); }
   .status-failed { background: var(--red-light); color: var(--red); }
+  .status-reviewed { background: var(--blue-light); color: var(--blue); }
+  .status-open { background: var(--yellow-light); color: var(--yellow); }
   .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  .type-badge { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
-  .type-vote { background: var(--purple-light); color: var(--purple); }
-  .type-boost { background: var(--blue-light); color: var(--blue); }
-  .type-withdraw { background: var(--orange-light); color: var(--orange); }
-  .type-deposit { background: var(--mint-light); color: var(--mint-dark); }
-  .type-nft { background: #FDF2F8; color: #EC4899; }
-  .type-reward { background: var(--yellow-light); color: var(--yellow); }
-  .type-swap { background: #F0FDF4; color: #16A34A; }
+  /* ===== SUMMARY CARDS ===== */
+  .summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
 
+  .summary-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .summary-card::before { content:''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .summary-card.c-mint::before { background: var(--mint); }
+  .summary-card.c-orange::before { background: var(--orange); }
+  .summary-card.c-blue::before { background: var(--blue); }
+  .summary-card.c-yellow::before { background: var(--yellow); }
+
+  .sc-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .sc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-50); font-size: 13px; }
+  .sc-row:last-child { border-bottom: none; }
+  .sc-label { color: var(--gray-500); }
+  .sc-value { font-weight: 700; color: var(--dark); }
+
+  /* ===== TAB NAV ===== */
+  .tab-nav { display: flex; gap: 4px; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content; overflow-x: auto; }
+  .tab-btn { padding: 10px 18px; border-radius: 8px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { color: var(--gray-700); background: var(--gray-50); }
+  .tab-btn.active { background: var(--mint); color: #fff; box-shadow: 0 2px 8px rgba(0,201,167,0.3); }
+  .tab-btn .count { background: rgba(255,255,255,0.25); padding: 1px 7px; border-radius: 6px; font-size: 11px; }
+  .tab-btn:not(.active) .count { background: var(--gray-100); color: var(--gray-500); }
+
+  /* ===== TAB CONTENT ===== */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 24px; }
+
+  /* ===== TABLE ===== */
   table { width: 100%; border-collapse: collapse; }
   thead th { padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--gray-100); background: var(--gray-50); white-space: nowrap; }
   tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid var(--gray-50); vertical-align: middle; }
   tbody tr:hover { background: var(--gray-50); }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
-  .mb-24 { margin-bottom: 24px; }
+  /* ===== WALLET INFO BLOCK ===== */
+  .wallet-info { padding: 20px; background: var(--gray-50); border-radius: 12px; margin-bottom: 24px; }
+  .wallet-info-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .wi-item { padding: 12px 0; }
+  .wi-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .wi-value { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .wi-value.mono { font-family: monospace; font-size: 13px; color: var(--gray-600); }
 
-  .filter-select { padding: 9px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-600); background: #fff; outline: none; cursor: pointer; }
-  .search-box { position: relative; }
-  .search-box input { width: 100%; padding: 9px 14px 9px 38px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; color: var(--gray-700); background: #fff; outline: none; }
-  .search-box input:focus { border-color: var(--mint); }
-  .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+  /* ===== BALANCE ROW ===== */
+  .balance-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .balance-card { padding: 20px; border-radius: 12px; border: 1px solid var(--gray-200); background: #fff; }
+  .bc-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; margin-bottom: 12px; }
+  .bc-label { font-size: 12px; color: var(--gray-500); margin-bottom: 4px; }
+  .bc-value { font-size: 24px; font-weight: 800; color: var(--dark); }
+  .bc-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
 
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
-  .page-info { font-size: 13px; color: var(--gray-400); }
-  .page-btns { display: flex; gap: 4px; }
-  .page-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--gray-200); background: #fff; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .page-btn:hover { border-color: var(--mint); color: var(--mint); }
-  .page-btn.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+  /* ===== QUICK STATS ===== */
+  .quick-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .qs-item { padding: 16px; background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; text-align: center; }
+  .qs-value { font-size: 24px; font-weight: 800; color: var(--dark); }
+  .qs-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
 
-  .reward-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--gray-50); }
-  .reward-row:last-child { border-bottom: none; }
-  .reward-label { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 8px; }
-  .reward-value { font-size: 14px; font-weight: 700; color: var(--dark); }
+  /* ===== GAS DISPLAY ===== */
+  .gas-display { text-align: center; padding: 30px; }
+  .gas-big { font-size: 56px; font-weight: 800; color: var(--dark); }
+  .gas-unit { font-size: 18px; color: var(--gray-400); }
 
-  .wallet-card { background: linear-gradient(135deg, var(--dark), var(--dark-2)); border-radius: 16px; padding: 24px; color: #fff; }
-  .wallet-label { font-size: 12px; color: var(--gray-400); margin-bottom: 4px; }
-  .wallet-amount { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-  .wallet-sub { font-size: 13px; color: var(--gray-400); margin-top: 4px; }
-  .wallet-chain { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--gray-300); margin-top: 12px; }
+  .progress-bar { height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; }
 
-  .progress-bar { height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 3px; }
+  /* ===== ALERT CARD ===== */
+  .alert-item { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 12px; margin-bottom: 10px; }
+  .alert-item.warning { background: var(--yellow-light); }
+  .alert-item.critical { background: var(--red-light); }
+  .alert-item.info { background: var(--gray-50); }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-content { flex: 1; }
+  .alert-title { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .alert-desc { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ===== FILTER BAR ===== */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; }
+  .filter-chip:hover { border-color: var(--mint); color: var(--mint); }
+  .filter-chip.active { background: var(--mint); border-color: var(--mint); color: #fff; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* ===== INFLOW/OUTFLOW ===== */
+  .flow-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .flow-card { padding: 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .flow-card.inflow { background: var(--mint-light); }
+  .flow-card.outflow { background: var(--red-light); }
+  .flow-label { font-size: 12px; font-weight: 600; }
+  .flow-value { font-size: 16px; font-weight: 800; }
+
+  .severity-badge { padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .severity-warning { background: var(--yellow-light); color: var(--yellow); }
+  .severity-critical { background: var(--red-light); color: var(--red); }
+  .severity-info { background: var(--blue-light); color: var(--blue); }
 </style>
 </head>
 <body>
@@ -172,9 +207,15 @@
 <div class="main">
   <header class="header">
     <div class="header-left">
-      <div><div class="header-title">지갑 & 트랜잭션</div><div class="header-breadcrumb">서비스 관리 → 지갑 & 트랜잭션</div></div>
+      <div>
+        <div class="header-title">Wallet Detail</div>
+        <div class="header-sub">Monitor wallet balances, gas reserve, recent token activity, and risk alerts in one place.</div>
+      </div>
     </div>
     <div class="header-right">
+      <button class="btn btn-sm btn-outline" onclick="location.reload()">🔄 Refresh</button>
+      <button class="btn btn-sm btn-outline">📥 Export</button>
+      <a href="#" class="btn btn-sm btn-outline" style="text-decoration:none;">🔗 View on Explorer</a>
       <div class="network-badge"><div class="pulse"></div> BSC Mainnet</div>
       <button class="header-btn">🔔<div class="dot"></div></button>
       <button class="header-btn">⚙️</button>
@@ -183,715 +224,772 @@
 
   <div class="content">
 
-    <!-- TAB -->
-    <div class="tab-nav">
-      <button class="tab-btn active">💰 토큰 현황</button>
-      <button class="tab-btn">📜 트랜잭션 <span class="count">2.4K</span></button>
-      <button class="tab-btn">🏦 출금 요청 <span class="count">3</span></button>
-      <button class="tab-btn">🔄 전환 관리</button>
-      <button class="tab-btn">🔗 체인 모니터</button>
-    </div>
-
-    <!-- KPI -->
-    <div class="kpi-row">
-      <div class="kpi-card mint">
-        <div class="kpi-label">Total VAYLA</div>
-        <div class="kpi-value">15.12M</div>
-        <div class="kpi-sub">Hot 320K + Cold 14.5M</div>
-      </div>
-      <div class="kpi-card blue">
-        <div class="kpi-label">Total USDT</div>
-        <div class="kpi-value">$58,400</div>
-        <div class="kpi-sub">Hot $8,750 + Cold $47K</div>
-      </div>
-      <div class="kpi-card yellow">
-        <div class="kpi-label">Total BNB</div>
-        <div class="kpi-value">7.42</div>
-        <div class="kpi-sub">Gas Reserve: <span style="color: var(--yellow);">Warning</span></div>
-      </div>
-      <div class="kpi-card purple">
-        <div class="kpi-label">오늘 TX 수</div>
-        <div class="kpi-value">1,284</div>
-        <div class="kpi-sub"><span class="up">↑ 8%</span> vs 어제</div>
-      </div>
-      <div class="kpi-card red">
-        <div class="kpi-label">Alerts</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">Warning 1 · Critical 0</div>
-      </div>
-    </div>
-
-    <!-- ===== WALLET OVERVIEW: 6 CARDS ===== -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px;">
-
+    <!-- ===== SUMMARY CARDS (4) ===== -->
+    <div class="summary-row">
       <!-- Card 1: Total Balances -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">💎 Total Balances</div>
-          <span style="font-size: 11px; color: var(--gray-400);">Last Updated: 2026-04-17 14:30</span>
+      <div class="summary-card c-mint" id="card-total">
+        <div class="sc-title">💎 Total Balances</div>
+        <div class="sc-row">
+          <span class="sc-label">VAYLA Balance</span>
+          <span class="sc-value" style="color: var(--mint-dark);">15,120,000</span>
         </div>
-        <div class="card-body">
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--mint-light); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--mint); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">V</div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 700; color: var(--dark);">VAYLA</div>
-                  <div style="font-size: 11px; color: var(--gray-400);">BEP-20 · BSC Mainnet</div>
-                </div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 20px; font-weight: 800; color: var(--dark);">15,120,000</div>
-                <div style="font-size: 12px; color: var(--gray-400);">≈ $1,512,000</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--blue-light); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">U</div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 700; color: var(--dark);">USDT</div>
-                  <div style="font-size: 11px; color: var(--gray-400);">BEP-20 · BSC Mainnet</div>
-                </div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 20px; font-weight: 800; color: var(--dark);">58,400</div>
-                <div style="font-size: 12px; color: var(--gray-400);">≈ $58,400</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--yellow-light); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--yellow); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">B</div>
-                <div>
-                  <div style="font-size: 14px; font-weight: 700; color: var(--dark);">BNB</div>
-                  <div style="font-size: 11px; color: var(--gray-400);">Native · BSC Mainnet</div>
-                </div>
-              </div>
-              <div style="text-align: right;">
-                <div style="font-size: 20px; font-weight: 800; color: var(--dark);">7.42</div>
-                <div style="font-size: 12px; color: var(--gray-400);">≈ $4,452</div>
-              </div>
-            </div>
-          </div>
+        <div class="sc-row">
+          <span class="sc-label">USDT Balance</span>
+          <span class="sc-value" style="color: var(--blue);">58,400</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">BNB Balance</span>
+          <span class="sc-value" style="color: var(--yellow);">7.42</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Last Updated</span>
+          <span style="font-size: 12px; color: var(--gray-400);">2026-04-17 14:30</span>
         </div>
       </div>
 
       <!-- Card 2: Hot Wallet -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">🔥 Hot Wallet</div>
-          <span style="padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--mint-light); color: var(--mint-dark);">Normal</span>
+      <div class="summary-card c-orange" id="card-hot">
+        <div class="sc-title">🔥 Hot Wallet</div>
+        <div class="sc-row">
+          <span class="sc-label">Label</span>
+          <span class="sc-value" style="font-size: 12px;">VAYLA-HOT-01</span>
         </div>
-        <div class="card-body">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px;">
-            <span style="font-size: 13px; font-family: monospace; color: var(--gray-500); flex: 1;">0x7aB2...91Fd</span>
-            <button style="background: none; border: 1px solid var(--gray-200); border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px; color: var(--gray-500);">📋 복사</button>
-            <a href="#" style="font-size: 11px; color: var(--mint); text-decoration: none; font-weight: 600;">BscScan ↗</a>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 14px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--gray-100);">
-              <span style="font-size: 13px; color: var(--gray-500);">VAYLA</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">320,000</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $32,000</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--gray-100);">
-              <span style="font-size: 13px; color: var(--gray-500);">USDT</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">8,750</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $8,750</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 13px; color: var(--gray-500);">BNB</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">1.26</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $756</div>
-              </div>
-            </div>
-          </div>
-          <div style="margin-top: 16px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px; display: flex; justify-content: space-between; font-size: 12px;">
-            <span style="color: var(--gray-400);">오늘 입금</span>
-            <span style="font-weight: 600; color: var(--mint);">+5,000 VAYLA</span>
-          </div>
+        <div class="sc-row">
+          <span class="sc-label">VAYLA</span>
+          <span class="sc-value">320,000</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">USDT</span>
+          <span class="sc-value">8,750</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">BNB</span>
+          <span class="sc-value">1.26</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Status</span>
+          <span class="status status-normal"><span class="status-dot"></span> Normal</span>
         </div>
       </div>
 
       <!-- Card 3: Cold Wallet -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">🏦 Cold Wallet</div>
-          <span style="padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--blue-light); color: var(--blue);">Safe</span>
+      <div class="summary-card c-blue" id="card-cold">
+        <div class="sc-title">🏦 Cold Wallet</div>
+        <div class="sc-row">
+          <span class="sc-label">Label</span>
+          <span class="sc-value" style="font-size: 12px;">VAYLA-COLD-01</span>
         </div>
-        <div class="card-body">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px;">
-            <span style="font-size: 13px; font-family: monospace; color: var(--gray-500); flex: 1;">0x4fC8...2Ae1</span>
-            <button style="background: none; border: 1px solid var(--gray-200); border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 11px; color: var(--gray-500);">📋 복사</button>
-            <a href="#" style="font-size: 11px; color: var(--mint); text-decoration: none; font-weight: 600;">BscScan ↗</a>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 14px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--gray-100);">
-              <span style="font-size: 13px; color: var(--gray-500);">VAYLA</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">14,500,000</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $1,450,000</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--gray-100);">
-              <span style="font-size: 13px; color: var(--gray-500);">USDT</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">47,000</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $47,000</div>
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 13px; color: var(--gray-500);">BNB</span>
-              <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 700; color: var(--dark);">4.80</div>
-                <div style="font-size: 11px; color: var(--gray-400);">≈ $2,880</div>
-              </div>
-            </div>
-          </div>
-          <div style="margin-top: 16px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px; display: flex; justify-content: space-between; font-size: 12px;">
-            <span style="color: var(--gray-400);">마지막 이동</span>
-            <span style="font-weight: 600; color: var(--dark);">2026-04-17 11:10</span>
-          </div>
+        <div class="sc-row">
+          <span class="sc-label">VAYLA</span>
+          <span class="sc-value">14,500,000</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">USDT</span>
+          <span class="sc-value">47,000</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">BNB</span>
+          <span class="sc-value">4.80</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Status</span>
+          <span class="status status-safe"><span class="status-dot"></span> Safe</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Gas Reserve -->
+      <div class="summary-card c-yellow" id="card-gas">
+        <div class="sc-title">⛽ Gas Reserve</div>
+        <div class="sc-row">
+          <span class="sc-label">Current BNB</span>
+          <span class="sc-value" style="color: var(--yellow);">1.36</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Daily Avg Usage</span>
+          <span class="sc-value">0.14 BNB</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Alert Threshold</span>
+          <span class="sc-value">1.00 BNB</span>
+        </div>
+        <div class="sc-row">
+          <span class="sc-label">Status</span>
+          <span class="status status-warning"><span class="status-dot"></span> Warning</span>
         </div>
       </div>
     </div>
 
-    <!-- ===== ROW 2: GAS + MOVEMENTS + ALERTS ===== -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-
-      <!-- Card 4: BNB Gas Reserve -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">⛽ BNB Gas Reserve</div>
-          <span style="padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: var(--yellow-light); color: var(--yellow);">⚠ Warning</span>
-        </div>
-        <div class="card-body">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 48px; font-weight: 800; color: var(--dark);">1.36</div>
-            <div style="font-size: 14px; color: var(--gray-400);">BNB available</div>
-          </div>
-          <div style="margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-              <span style="color: var(--gray-400);">Threshold: 1.00 BNB</span>
-              <span style="color: var(--yellow); font-weight: 600;">36%</span>
-            </div>
-            <div style="height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden;">
-              <div style="width: 36%; height: 100%; background: linear-gradient(90deg, var(--yellow), var(--orange)); border-radius: 4px;"></div>
-            </div>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px;">
-              <span style="color: var(--gray-500);">Daily Avg Usage</span>
-              <span style="font-weight: 600; color: var(--dark);">0.14 BNB</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px;">
-              <span style="color: var(--gray-500);">Est. Remaining</span>
-              <span style="font-weight: 600; color: var(--yellow);">~9 days</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px 14px; background: var(--gray-50); border-radius: 8px;">
-              <span style="color: var(--gray-500);">Threshold</span>
-              <span style="font-weight: 600; color: var(--dark);">1.00 BNB</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 10px 14px; background: var(--yellow-light); border-radius: 8px;">
-              <span style="color: var(--yellow);">⚠ 충전 권장</span>
-              <span style="font-weight: 600; color: var(--yellow);">잔여 9일</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 5: Recent Token Movements -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">🔄 Recent Token Movements</div>
-          <button class="btn btn-sm btn-outline">📥 Export</button>
-        </div>
-        <div class="card-body" style="padding: 0;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <thead>
-              <tr style="background: var(--gray-50);">
-                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-500);">Time</th>
-                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-500);">Wallet</th>
-                <th style="padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--gray-500);">Token</th>
-                <th style="padding: 10px 16px; text-align: right; font-size: 11px; font-weight: 600; color: var(--gray-500);">Amount</th>
-                <th style="padding: 10px 16px; text-align: center; font-size: 11px; font-weight: 600; color: var(--gray-500);">Dir</th>
-                <th style="padding: 10px 16px; text-align: center; font-size: 11px; font-weight: 600; color: var(--gray-500);">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom: 1px solid var(--gray-100);">
-                <td style="padding: 12px 16px; color: var(--gray-400);">14:22</td>
-                <td style="padding: 12px 16px; font-weight: 600; color: var(--dark);">Hot Wallet</td>
-                <td style="padding: 12px 16px;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600;">USDT</span></td>
-                <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: var(--dark);">1,000</td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">Success</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid var(--gray-100);">
-                <td style="padding: 12px 16px; color: var(--gray-400);">13:58</td>
-                <td style="padding: 12px 16px; font-weight: 600; color: var(--dark);">Gas Wallet</td>
-                <td style="padding: 12px 16px;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--yellow-light); color: var(--yellow); font-size: 11px; font-weight: 600;">BNB</span></td>
-                <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: var(--dark);">0.03</td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">Success</span></td>
-              </tr>
-              <tr style="border-bottom: 1px solid var(--gray-100);">
-                <td style="padding: 12px 16px; color: var(--gray-400);">11:10</td>
-                <td style="padding: 12px 16px; font-weight: 600; color: var(--dark);">Cold Wallet</td>
-                <td style="padding: 12px 16px;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
-                <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: var(--dark);">50,000</td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">Success</span></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 16px; color: var(--gray-400);">10:42</td>
-                <td style="padding: 12px 16px; font-weight: 600; color: var(--dark);">Hot Wallet</td>
-                <td style="padding: 12px 16px;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
-                <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: var(--dark);">5,000</td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="color: var(--mint-dark); font-weight: 600; font-size: 12px;">↓ In</span></td>
-                <td style="padding: 12px 16px; text-align: center;"><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">Success</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Card 6: Alerts / Risk Monitoring -->
-      <div class="card" style="margin-bottom: 0;">
-        <div class="card-header">
-          <div class="card-title">🚨 Alerts / Risk Monitoring</div>
-          <div style="display: flex; gap: 6px;">
-            <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--yellow-light); color: var(--yellow); font-weight: 600;">1 Warning</span>
-            <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--gray-100); color: var(--gray-400); font-weight: 600;">0 Critical</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div style="display: flex; flex-direction: column; gap: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--yellow-light); border-radius: 10px; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 18px;">⚠️</span>
-                <div>
-                  <div style="font-size: 13px; font-weight: 600; color: var(--dark);">Low BNB Gas Balance</div>
-                  <div style="font-size: 11px; color: var(--gray-500);">Gas 잔액이 Threshold 근접</div>
-                </div>
-              </div>
-              <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--yellow); color: #fff; font-weight: 600;">Warning</span>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--gray-50); border-radius: 10px; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 18px;">🔍</span>
-                <div>
-                  <div style="font-size: 13px; font-weight: 600; color: var(--dark);">Unusual USDT Outflow Detected</div>
-                  <div style="font-size: 11px; color: var(--gray-500);">비정상 출금 패턴 감지 → 검토 완료</div>
-                </div>
-              </div>
-              <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--blue-light); color: var(--blue); font-weight: 600;">Reviewed</span>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--gray-50); border-radius: 10px; margin-bottom: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 18px;">📦</span>
-                <div>
-                  <div style="font-size: 13px; font-weight: 600; color: var(--dark);">Cold Wallet Movement Detected</div>
-                  <div style="font-size: 11px; color: var(--gray-500);">Cold → Hot 정상 이체</div>
-                </div>
-              </div>
-              <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--mint-light); color: var(--mint-dark); font-weight: 600;">Normal</span>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--gray-50); border-radius: 10px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 18px;">❌</span>
-                <div>
-                  <div style="font-size: 13px; font-weight: 600; color: var(--dark);">Failed Token Transfer</div>
-                  <div style="font-size: 11px; color: var(--gray-500);">최근 24h 실패 TX 없음</div>
-                </div>
-              </div>
-              <span style="font-size: 11px; padding: 3px 8px; border-radius: 5px; background: var(--gray-100); color: var(--gray-400); font-weight: 600;">None</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- ===== TAB NAV ===== -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('overview')">📋 Overview</button>
+      <button class="tab-btn" onclick="switchTab('hot')">🔥 Hot Wallet</button>
+      <button class="tab-btn" onclick="switchTab('cold')">🏦 Cold Wallet</button>
+      <button class="tab-btn" onclick="switchTab('gas')">⛽ Gas Reserve</button>
+      <button class="tab-btn" onclick="switchTab('movements')">🔄 Recent Movements</button>
+      <button class="tab-btn" onclick="switchTab('alerts')">🚨 Alerts <span class="count">3</span></button>
     </div>
 
-    <!-- TX TABLE -->
-    <div class="card mb-24">
-      <div class="card-header">
-        <div class="card-title">📜 트랜잭션 내역</div>
-        <div style="display: flex; gap: 8px;">
-          <div class="search-box" style="width: 260px;">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="TX Hash, 주소, 유저 검색...">
-          </div>
-          <input type="date" class="filter-select" style="padding:6px 10px;font-size:12px;" value="2026-04-17">
-          <span style="font-size:12px;color:var(--gray-400);margin:0 4px;">~</span>
-          <input type="date" class="filter-select" style="padding:6px 10px;font-size:12px;">
-          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
-            <option>전체 유형</option>
-            <option>Vote</option>
-            <option>Boost</option>
-            <option>Withdraw</option>
-            <option>Deposit</option>
-            <option>NFT Mint</option>
-            <option>Reward</option>
-            <option>Swap</option>
-          </select>
-          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
-            <option>전체 상태</option>
-            <option>성공</option>
-            <option>대기</option>
-            <option>실패</option>
-          </select>
-          <select class="filter-select" style="padding: 6px 10px; font-size: 12px;">
-            <option>전체 체인</option>
-            <option>BSC</option>
-            <option>Ethereum</option>
-            <option>Solana</option>
-          </select>
-          <button class="btn btn-sm btn-outline" style="color:var(--red);">🔄 실패 TX 재시도</button>
-          <button class="btn btn-sm btn-outline">📥 Export</button>
-        </div>
-      </div>
-      <div style="overflow-x: auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>TX Hash</th>
-              <th>유형</th>
-              <th>보낸 사람</th>
-              <th>받는 사람</th>
-              <th>금액</th>
-              <th>체인</th>
-              <th>Gas Fee</th>
-              <th>시간</th>
-              <th>상태</th>
-              <th>액션</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xf8e2...4a1b</td>
-              <td><span class="type-badge type-boost">Boost</span></td>
-              <td style="font-size: 12px;">0x7a3b...f21d</td>
-              <td style="font-size: 12px;">Escrow Contract</td>
-              <td><strong>$500 USDT</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0012 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">14:32</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xa3d1...9c2e</td>
-              <td><span class="type-badge type-vote">Vote</span></td>
-              <td style="font-size: 12px;">0x2c8d...e47a</td>
-              <td style="font-size: 12px;">Vote Contract</td>
-              <td><strong>3 VAYLA</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0008 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">14:28</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--yellow);">0xb7c4...8d3a</td>
-              <td><span class="type-badge type-withdraw">Withdraw</span></td>
-              <td style="font-size: 12px;">Hot Wallet</td>
-              <td style="font-size: 12px;">0x91ab...3c7f</td>
-              <td><strong>$2,500 USDT</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">-</td>
-              <td style="font-size: 12px; color: var(--gray-400);">14:15</td>
-              <td><span class="status status-pending"><span class="status-dot"></span> 대기</span></td>
-              <td><button class="btn btn-sm btn-mint">승인</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xd5e8...1b4f</td>
-              <td><span class="type-badge type-nft">NFT Mint</span></td>
-              <td style="font-size: 12px;">Minting Contract</td>
-              <td style="font-size: 12px;">0x4e2f...a91c</td>
-              <td><strong>Badge #1842</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0025 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">13:52</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xe9f3...7c2d</td>
-              <td><span class="type-badge type-reward">Reward</span></td>
-              <td style="font-size: 12px;">Reward Pool</td>
-              <td style="font-size: 12px;">0x6d1a...b5e2</td>
-              <td><strong>50 VAYLA</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0006 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">13:40</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0xc1a7...2e9b</td>
-              <td><span class="type-badge type-swap">Swap</span></td>
-              <td style="font-size: 12px;">0x8f4c...d3a2</td>
-              <td style="font-size: 12px;">DEX Router</td>
-              <td><strong>100 VAYLA → 9.8 USDT</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0015 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">13:22</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--red);">0x7b3e...f48c</td>
-              <td><span class="type-badge type-deposit">Deposit</span></td>
-              <td style="font-size: 12px;">0xa2b9...4e1f</td>
-              <td style="font-size: 12px;">Hot Wallet</td>
-              <td><strong>$1,000 USDT</strong></td>
-              <td><span style="font-size: 12px;">🔷 ETH</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.003 ETH</td>
-              <td style="font-size: 12px; color: var(--gray-400);">12:58</td>
-              <td><span class="status status-failed"><span class="status-dot"></span> 실패</span></td>
-              <td><button class="btn btn-sm btn-danger">재시도</button></td>
-            </tr>
-            <tr>
-              <td style="font-family: monospace; font-size: 11px; color: var(--mint);">0x2d9a...c7f1</td>
-              <td><span class="type-badge type-vote">Vote</span></td>
-              <td style="font-size: 12px;">0x5e3a...b8c4</td>
-              <td style="font-size: 12px;">Vote Contract</td>
-              <td><strong>1 VAYLA</strong></td>
-              <td><span style="font-size: 12px;">🟡 BSC</span></td>
-              <td style="font-size: 12px; color: var(--gray-400);">0.0008 BNB</td>
-              <td style="font-size: 12px; color: var(--gray-400);">12:45</td>
-              <td><span class="status status-success"><span class="status-dot"></span> 성공</span></td>
-              <td><button class="btn btn-sm btn-outline">상세</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination">
-        <div class="page-info">1 - 8 / 2,417건</div>
-        <div class="page-btns">
-          <button class="page-btn">‹</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <button class="page-btn">...</button>
-          <button class="page-btn">303</button>
-          <button class="page-btn">›</button>
-        </div>
-      </div>
-    </div>
+    <!-- ==================== TAB: OVERVIEW ==================== -->
+    <div class="tab-content active" id="tab-overview">
 
-    <!-- WITHDRAWAL QUEUE & GAS MONITOR -->
-    <div class="grid-2">
-      <!-- Withdrawal Queue -->
+      <!-- Wallet Summary Table -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title">🏦 출금 대기 큐 <span style="color: var(--red); font-size: 13px; margin-left: 8px;">3건</span></div>
-          <button class="btn btn-sm btn-mint">일괄 승인</button>
+          <div class="card-title">📊 Wallet Summary</div>
         </div>
         <div style="overflow-x: auto;">
           <table>
             <thead>
               <tr>
-                <th>유저</th>
-                <th>금액</th>
-                <th>요청 시간</th>
-                <th>지갑 주소</th>
-                <th>액션</th>
+                <th>Wallet Type</th>
+                <th>Address</th>
+                <th>Main Purpose</th>
+                <th>VAYLA</th>
+                <th>USDT</th>
+                <th>BNB</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong style="color: var(--dark);">user_hana_k</strong></td>
-                <td><strong>$2,500</strong></td>
-                <td style="font-size: 12px; color: var(--gray-400);">04.17 14:15</td>
-                <td style="font-family: monospace; font-size: 11px;">0x91ab...3c7f</td>
-                <td>
-                  <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-sm btn-mint">승인</button>
-                    <button class="btn btn-sm btn-danger" title="거절 사유 입력">거절</button>
-                  </div>
-                </td>
+                <td style="font-weight: 600; color: var(--dark);">🔥 Hot Wallet</td>
+                <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x7aB2...91Fd</td>
+                <td style="font-size: 12px; color: var(--gray-600);">Operations</td>
+                <td style="font-weight: 600;">120,000</td>
+                <td style="font-weight: 600;">8,500</td>
+                <td style="font-weight: 600;">4.21</td>
+                <td><span class="status status-normal"><span class="status-dot"></span> Normal</span></td>
               </tr>
               <tr>
-                <td><strong style="color: var(--dark);">user_nova_dj</strong></td>
-                <td><strong>$4,800</strong></td>
-                <td style="font-size: 12px; color: var(--gray-400);">04.17 11:30</td>
-                <td style="font-family: monospace; font-size: 11px;">0x4e2f...a91c</td>
-                <td>
-                  <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-sm btn-mint">승인</button>
-                    <button class="btn btn-sm btn-danger" title="거절 사유 입력">거절</button>
-                  </div>
-                </td>
+                <td style="font-weight: 600; color: var(--dark);">🏦 Cold Wallet</td>
+                <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x4fC8...2Ae1</td>
+                <td style="font-size: 12px; color: var(--gray-600);">Storage</td>
+                <td style="font-weight: 600;">15,000,000</td>
+                <td style="font-weight: 600;">50,000</td>
+                <td style="font-weight: 600;">1.10</td>
+                <td><span class="status status-safe"><span class="status-dot"></span> Safe</span></td>
               </tr>
               <tr>
-                <td><strong style="color: var(--dark);">user_sakura</strong></td>
-                <td><strong>$5,100</strong></td>
-                <td style="font-size: 12px; color: var(--gray-400);">04.17 09:42</td>
-                <td style="font-family: monospace; font-size: 11px;">0x6d1a...b5e2</td>
-                <td>
-                  <div style="display: flex; gap: 6px;">
-                    <button class="btn btn-sm btn-mint">승인</button>
-                    <button class="btn btn-sm btn-danger" title="거절 사유 입력">거절</button>
-                  </div>
-                </td>
+                <td style="font-weight: 600; color: var(--dark);">⛽ Gas Wallet</td>
+                <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x4567...mnop</td>
+                <td style="font-size: 12px; color: var(--gray-600);">Gas Fee Use</td>
+                <td style="color: var(--gray-400);">0</td>
+                <td style="color: var(--gray-400);">0</td>
+                <td style="font-weight: 600; color: var(--yellow);">2.85</td>
+                <td><span class="status status-warning"><span class="status-dot"></span> Warning</span></td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Gas & Network -->
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        <div class="qs-item">
+          <div class="qs-value">3</div>
+          <div class="qs-label">Total Wallets</div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-value" style="color: var(--mint-dark);">2</div>
+          <div class="qs-label">Active Wallets</div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-value" style="color: var(--yellow);">1</div>
+          <div class="qs-label">Warning Wallets</div>
+        </div>
+        <div class="qs-item">
+          <div class="qs-value" style="color: var(--gray-400);">0</div>
+          <div class="qs-label">Critical Alerts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: HOT WALLET ==================== -->
+    <div class="tab-content" id="tab-hot">
+
+      <!-- Wallet Info -->
+      <div class="wallet-info">
+        <div class="wallet-info-row">
+          <div class="wi-item">
+            <div class="wi-label">Wallet Label</div>
+            <div class="wi-value">VAYLA-HOT-01</div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">Wallet Address</div>
+            <div class="wi-value mono">0x7aB2...91Fd <a href="#" style="font-size: 11px; color: var(--mint); margin-left: 8px;">BscScan ↗</a></div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">Linked Network</div>
+            <div class="wi-value">BSC Mainnet (BEP-20)</div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">Status</div>
+            <div><span class="status status-normal"><span class="status-dot"></span> Normal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Cards -->
+      <div class="balance-row">
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--mint);">V</div>
+          <div class="bc-label">Current VAYLA Balance</div>
+          <div class="bc-value">320,000</div>
+          <div class="bc-sub">≈ $32,000</div>
+        </div>
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--blue);">U</div>
+          <div class="bc-label">Current USDT Balance</div>
+          <div class="bc-value">8,750</div>
+          <div class="bc-sub">≈ $8,750</div>
+        </div>
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--yellow);">B</div>
+          <div class="bc-label">Current BNB Balance</div>
+          <div class="bc-value">1.26</div>
+          <div class="bc-sub">≈ $756</div>
+        </div>
+      </div>
+
+      <!-- Inflow / Outflow -->
+      <div class="flow-row">
+        <div class="flow-card inflow">
+          <div>
+            <div class="flow-label" style="color: var(--mint-dark);">Today Inflow</div>
+            <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">+5,000 VAYLA</div>
+          </div>
+          <div class="flow-value" style="color: var(--mint-dark);">↓ In</div>
+        </div>
+        <div class="flow-card outflow">
+          <div>
+            <div class="flow-label" style="color: var(--red);">Today Outflow</div>
+            <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">-1,000 USDT / -0.02 BNB</div>
+          </div>
+          <div class="flow-value" style="color: var(--red);">↑ Out</div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--gray-400); margin-bottom: 20px;">Last Transaction: 2026-04-17 14:22</div>
+
+      <!-- Recent Activity -->
       <div class="card">
         <div class="card-header">
-          <div class="card-title">⛽ 네트워크 & Gas 모니터</div>
+          <div class="card-title">📜 Recent Activity</div>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Token</th>
+                <th>Amount</th>
+                <th>Direction</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Tx Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--gray-400);">14:22</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600;">USDT</span></td>
+                <td style="font-weight: 600;">1,000</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Reward Distribution</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xabc...def</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">13:58</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--yellow-light); color: var(--yellow); font-size: 11px; font-weight: 600;">BNB</span></td>
+                <td style="font-weight: 600;">0.02</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Gas Fee</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xdef...ghi</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">11:10</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
+                <td style="font-weight: 600;">5,000</td>
+                <td><span style="color: var(--mint-dark); font-weight: 600; font-size: 12px;">↓ In</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Treasury Refill</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xghi...jkl</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: COLD WALLET ==================== -->
+    <div class="tab-content" id="tab-cold">
+
+      <!-- Wallet Info -->
+      <div class="wallet-info">
+        <div class="wallet-info-row">
+          <div class="wi-item">
+            <div class="wi-label">Wallet Label</div>
+            <div class="wi-value">VAYLA-COLD-01</div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">Wallet Address</div>
+            <div class="wi-value mono">0x4fC8...2Ae1 <a href="#" style="font-size: 11px; color: var(--mint); margin-left: 8px;">BscScan ↗</a></div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">Status</div>
+            <div><span class="status status-safe"><span class="status-dot"></span> Safe</span></div>
+          </div>
+          <div class="wi-item">
+            <div class="wi-label">% of Treasury</div>
+            <div class="wi-value" style="color: var(--blue);">96.2%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Cards -->
+      <div class="balance-row">
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--mint);">V</div>
+          <div class="bc-label">Current VAYLA Balance</div>
+          <div class="bc-value">14,500,000</div>
+          <div class="bc-sub">≈ $1,450,000</div>
+        </div>
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--blue);">U</div>
+          <div class="bc-label">Current USDT Balance</div>
+          <div class="bc-value">47,000</div>
+          <div class="bc-sub">≈ $47,000</div>
+        </div>
+        <div class="balance-card">
+          <div class="bc-icon" style="background: var(--yellow);">B</div>
+          <div class="bc-label">Current BNB Balance</div>
+          <div class="bc-value">4.80</div>
+          <div class="bc-sub">≈ $2,880</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+        <div style="padding: 14px; background: var(--gray-50); border-radius: 10px;">
+          <span style="font-size: 12px; color: var(--gray-500);">Last Movement Time</span>
+          <div style="font-size: 14px; font-weight: 600; color: var(--dark); margin-top: 4px;">2026-04-15 09:20</div>
+        </div>
+        <div style="padding: 14px; background: var(--gray-50); border-radius: 10px;">
+          <span style="font-size: 12px; color: var(--gray-500);">Last Checked Time</span>
+          <div style="font-size: 14px; font-weight: 600; color: var(--dark); margin-top: 4px;">2026-04-17 14:30</div>
+        </div>
+      </div>
+
+      <!-- Recent Movements (view only) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📜 Recent Movements (View Only)</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Token</th>
+                <th>Amount</th>
+                <th>Direction</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Tx Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--gray-400);">2026-04-15 09:20</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
+                <td style="font-weight: 600;">100,000</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Refill to Hot Wallet</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xaaa...bbb</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">2026-04-10 16:44</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600;">USDT</span></td>
+                <td style="font-weight: 600;">5,000</td>
+                <td><span style="color: var(--mint-dark); font-weight: 600; font-size: 12px;">↓ In</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Reserve Deposit</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xbbb...ccc</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="padding: 14px 16px; background: var(--blue-light); border-radius: 10px; font-size: 13px; color: var(--blue); display: flex; align-items: center; gap: 8px;">
+        <span>ℹ️</span> Cold Wallet은 조회 중심으로만 구성됩니다. 이동이 필요한 경우 별도 승인 절차를 거칩니다.
+      </div>
+    </div>
+
+    <!-- ==================== TAB: GAS RESERVE ==================== -->
+    <div class="tab-content" id="tab-gas">
+
+      <!-- Gas Big Display -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⛽ BNB Gas Reserve Status</div>
+          <span class="status status-warning"><span class="status-dot"></span> Warning</span>
         </div>
         <div class="card-body">
-          <!-- BSC -->
-          <div style="margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 14px; font-weight: 600; color: var(--dark);">🟡 BSC Mainnet</span>
-              <span style="font-size: 12px; font-weight: 600; color: var(--mint);">정상</span>
+          <div class="gas-display">
+            <div class="gas-big">1.36</div>
+            <div class="gas-unit">BNB available</div>
+          </div>
+
+          <div style="max-width: 400px; margin: 0 auto 24px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+              <span style="color: var(--gray-400);">Threshold: 1.00 BNB</span>
+              <span style="color: var(--yellow); font-weight: 600;">36%</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Gas Price</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">5 Gwei</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Block</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">38.2M</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">TX/Block</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">~120</div>
-              </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 36%; background: linear-gradient(90deg, var(--yellow), var(--orange));"></div>
             </div>
           </div>
 
-          <!-- ETH -->
-          <div style="margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 14px; font-weight: 600; color: var(--dark);">🔷 Ethereum</span>
-              <span style="font-size: 12px; font-weight: 600; color: var(--mint);">정상</span>
+          <div class="quick-stats" style="margin-bottom: 0;">
+            <div class="qs-item">
+              <div class="qs-value" style="font-size: 20px;">1.00 BNB</div>
+              <div class="qs-label">Min Safe Threshold</div>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Gas Price</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--yellow);">32 Gwei</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Block</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">19.8M</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Avg Fee</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">$2.40</div>
-              </div>
+            <div class="qs-item">
+              <div class="qs-value" style="font-size: 20px;">0.14 BNB</div>
+              <div class="qs-label">Daily Avg Gas Usage</div>
+            </div>
+            <div class="qs-item">
+              <div class="qs-value" style="font-size: 20px; color: var(--yellow);">~9 days</div>
+              <div class="qs-label">Estimated Remaining</div>
+            </div>
+            <div class="qs-item">
+              <div class="qs-value" style="font-size: 20px; color: var(--red);">Yes</div>
+              <div class="qs-label">Refill Recommended</div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Solana -->
-          <div>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 14px; font-weight: 600; color: var(--dark);">🟣 Solana</span>
-              <span style="font-size: 12px; font-weight: 600; color: var(--mint);">정상</span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Fee</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--mint);">$0.001</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">Slot</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">248M</div>
-              </div>
-              <div style="background: var(--gray-50); padding: 10px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 10px; color: var(--gray-400);">TPS</div>
-                <div style="font-size: 16px; font-weight: 700; color: var(--dark);">2,800</div>
-              </div>
-            </div>
-          </div>
+      <!-- Warning Banner -->
+      <div style="padding: 16px; background: var(--yellow-light); border: 1px solid var(--yellow); border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 20px;">⚠️</span>
+        <div>
+          <div style="font-size: 14px; font-weight: 600; color: var(--dark);">BNB gas reserve is below the recommended threshold.</div>
+          <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">현재 잔량으로 약 9일간 운영 가능합니다. 조기 충전을 권장합니다.</div>
+        </div>
+      </div>
 
-          <!-- Hot Wallet Gas Reserve -->
-          <div style="margin-top: 20px; padding: 14px; background: var(--gray-50); border-radius: 10px;">
-            <div style="font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">🔋 Gas 예비금</div>
-            <div class="reward-row">
-              <div class="reward-label">BNB</div>
-              <div class="reward-value" style="color: var(--mint);">12.4 BNB</div>
-            </div>
-            <div class="reward-row">
-              <div class="reward-label">ETH</div>
-              <div class="reward-value">2.1 ETH</div>
-            </div>
-            <div class="reward-row">
-              <div class="reward-label">SOL</div>
-              <div class="reward-value">45.2 SOL</div>
-            </div>
+      <!-- Gas Usage History -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 Daily Gas Usage History</div>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Gas Used (BNB)</th>
+                <th>Main Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600; color: var(--dark);">Apr 17</td>
+                <td style="font-weight: 600;">0.14</td>
+                <td style="color: var(--gray-600);">Reward Distribution</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--dark);">Apr 16</td>
+                <td style="font-weight: 600;">0.08</td>
+                <td style="color: var(--gray-600);">NFT Minting</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--dark);">Apr 15</td>
+                <td style="font-weight: 600;">0.11</td>
+                <td style="color: var(--gray-600);">Boost-related Transactions</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--dark);">Apr 14</td>
+                <td style="font-weight: 600;">0.19</td>
+                <td style="color: var(--gray-600);">Vote + Reward Distribution</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--dark);">Apr 13</td>
+                <td style="font-weight: 600;">0.12</td>
+                <td style="color: var(--gray-600);">General Operations</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB: RECENT MOVEMENTS ==================== -->
+    <div class="tab-content" id="tab-movements">
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <span class="filter-chip active">All</span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">VAYLA</span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">USDT</span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">BNB</span>
+        <span style="width: 1px; background: var(--gray-200); margin: 0 4px;"></span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">↓ In</span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">↑ Out</span>
+        <span style="width: 1px; background: var(--gray-200); margin: 0 4px;"></span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">Success</span>
+        <span class="filter-chip" onclick="this.classList.toggle('active')">Failed</span>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔄 All Wallet Movements</div>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Wallet Type</th>
+                <th>Token</th>
+                <th>Amount</th>
+                <th>Direction</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Tx Hash</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--gray-400);">14:22</td>
+                <td style="font-weight: 600; color: var(--dark);">🔥 Hot Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600;">USDT</span></td>
+                <td style="font-weight: 600;">1,000</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Reward Distribution</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xabc...def</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">13:58</td>
+                <td style="font-weight: 600; color: var(--dark);">⛽ Gas Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--yellow-light); color: var(--yellow); font-size: 11px; font-weight: 600;">BNB</span></td>
+                <td style="font-weight: 600;">0.02</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Gas Fee</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xdef...ghi</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">11:10</td>
+                <td style="font-weight: 600; color: var(--dark);">🏦 Cold Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
+                <td style="font-weight: 600;">5,000</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Refill to Hot Wallet</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xghi...jkl</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">10:42</td>
+                <td style="font-weight: 600; color: var(--dark);">🔥 Hot Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600;">VAYLA</span></td>
+                <td style="font-weight: 600;">5,000</td>
+                <td><span style="color: var(--mint-dark); font-weight: 600; font-size: 12px;">↓ In</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Treasury Refill</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xjkl...mno</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">09:15</td>
+                <td style="font-weight: 600; color: var(--dark);">🔥 Hot Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--blue-light); color: var(--blue); font-size: 11px; font-weight: 600;">USDT</span></td>
+                <td style="font-weight: 600;">2,500</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Boost Escrow Deposit</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xmno...pqr</a></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">08:30</td>
+                <td style="font-weight: 600; color: var(--dark);">⛽ Gas Wallet</td>
+                <td><span style="padding: 2px 8px; border-radius: 4px; background: var(--yellow-light); color: var(--yellow); font-size: 11px; font-weight: 600;">BNB</span></td>
+                <td style="font-weight: 600;">0.05</td>
+                <td><span style="color: var(--red); font-weight: 600; font-size: 12px;">↑ Out</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">NFT Minting Gas</td>
+                <td><span class="status status-success"><span class="status-dot"></span> Success</span></td>
+                <td><a href="#" style="font-family: monospace; font-size: 11px; color: var(--mint);">0xpqr...stu</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div style="padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-100);">
+          <div style="font-size: 13px; color: var(--gray-400);">1 - 6 / 1,284건</div>
+          <div style="display: flex; gap: 4px;">
+            <button class="btn btn-sm btn-outline" disabled style="opacity: 0.5;">← 이전</button>
+            <button class="btn btn-sm btn-mint">1</button>
+            <button class="btn btn-sm btn-outline">2</button>
+            <button class="btn btn-sm btn-outline">3</button>
+            <button class="btn btn-sm btn-outline">...</button>
+            <button class="btn btn-sm btn-outline">다음 →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TX TYPE BREAKDOWN -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">📊 트랜잭션 유형 분석 (24h)</div>
+    <!-- ==================== TAB: ALERTS ==================== -->
+    <div class="tab-content" id="tab-alerts">
+
+      <!-- Alert Cards -->
+      <div style="margin-bottom: 24px;">
+        <div class="alert-item warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Low BNB Gas Balance</div>
+            <div class="alert-desc">BNB balance is below threshold. Current: 1.36 BNB / Threshold: 1.00 BNB</div>
+          </div>
+          <span class="severity-badge severity-warning">Warning</span>
+        </div>
+        <div class="alert-item warning">
+          <span class="alert-icon">📤</span>
+          <div class="alert-content">
+            <div class="alert-title">Unusual Outflow Detected</div>
+            <div class="alert-desc">Large USDT outflow detected from Hot Wallet. Amount: 2,500 USDT in single TX.</div>
+          </div>
+          <span class="severity-badge severity-warning">Warning</span>
+        </div>
+        <div class="alert-item critical">
+          <span class="alert-icon">🏦</span>
+          <div class="alert-content">
+            <div class="alert-title">Cold Wallet Movement Detected</div>
+            <div class="alert-desc">Unexpected outgoing transfer detected from Cold Wallet. Amount: 100,000 VAYLA</div>
+          </div>
+          <span class="severity-badge severity-critical">Critical</span>
+        </div>
+        <div class="alert-item info">
+          <span class="alert-icon">❌</span>
+          <div class="alert-content">
+            <div class="alert-title">Failed Token Transfer</div>
+            <div class="alert-desc">최근 24h 내 실패 TX 없음</div>
+          </div>
+          <span class="severity-badge severity-info">Info</span>
+        </div>
+        <div class="alert-item info">
+          <span class="alert-icon">🔥</span>
+          <div class="alert-content">
+            <div class="alert-title">Hot Wallet Balance Below Threshold</div>
+            <div class="alert-desc">Hot Wallet USDT 잔액 정상 범위 내</div>
+          </div>
+          <span class="severity-badge severity-info">Info</span>
+        </div>
       </div>
-      <div class="card-body">
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px;">
-          <div style="text-align: center; padding: 16px; background: var(--purple-light); border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🗳️</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--purple);">847</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Vote</div>
-            <div style="font-size: 11px; color: var(--gray-400);">66%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: var(--blue-light); border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🚀</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--blue);">142</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Boost</div>
-            <div style="font-size: 11px; color: var(--gray-400);">11%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: var(--mint-light); border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">📥</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--mint-dark);">98</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Deposit</div>
-            <div style="font-size: 11px; color: var(--gray-400);">8%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: var(--orange-light); border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">📤</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--orange);">76</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Withdraw</div>
-            <div style="font-size: 11px; color: var(--gray-400);">6%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: #FDF2F8; border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🎨</div>
-            <div style="font-size: 20px; font-weight: 800; color: #EC4899;">54</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">NFT Mint</div>
-            <div style="font-size: 11px; color: var(--gray-400);">4%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: var(--yellow-light); border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🎁</div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--yellow);">38</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Reward</div>
-            <div style="font-size: 11px; color: var(--gray-400);">3%</div>
-          </div>
-          <div style="text-align: center; padding: 16px; background: #F0FDF4; border-radius: 12px;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🔄</div>
-            <div style="font-size: 20px; font-weight: 800; color: #16A34A;">29</div>
-            <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Swap</div>
-            <div style="font-size: 11px; color: var(--gray-400);">2%</div>
-          </div>
+
+      <!-- Alert History Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Alert History</div>
+          <button class="btn btn-sm btn-outline">📥 Export</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Alert Type</th>
+                <th>Wallet</th>
+                <th>Severity</th>
+                <th>Message</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--gray-400);">14:30</td>
+                <td style="font-weight: 600; color: var(--dark);">Low Gas</td>
+                <td>⛽ Gas Wallet</td>
+                <td><span class="severity-badge severity-warning">Warning</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">BNB balance is below threshold</td>
+                <td><span class="status status-open"><span class="status-dot"></span> Open</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">12:15</td>
+                <td style="font-weight: 600; color: var(--dark);">Unusual Outflow</td>
+                <td>🔥 Hot Wallet</td>
+                <td><span class="severity-badge severity-warning">Warning</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Large USDT outflow detected</td>
+                <td><span class="status status-reviewed"><span class="status-dot"></span> Reviewed</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--gray-400);">09:40</td>
+                <td style="font-weight: 600; color: var(--dark);">Cold Wallet Movement</td>
+                <td>🏦 Cold Wallet</td>
+                <td><span class="severity-badge severity-critical">Critical</span></td>
+                <td style="font-size: 12px; color: var(--gray-600);">Unexpected outgoing transfer detected</td>
+                <td><span class="status status-open"><span class="status-dot"></span> Open</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
   </div>
 </div>
+
+<script>
+function switchTab(tabId) {
+  // Remove active from all tabs and contents
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+  // Activate the clicked tab
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+}
+
+// Summary card click → tab switch
+document.getElementById('card-total').addEventListener('click', () => {
+  switchTabByName('overview');
+});
+document.getElementById('card-hot').addEventListener('click', () => {
+  switchTabByName('hot');
+});
+document.getElementById('card-cold').addEventListener('click', () => {
+  switchTabByName('cold');
+});
+document.getElementById('card-gas').addEventListener('click', () => {
+  switchTabByName('gas');
+});
+
+function switchTabByName(name) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+
+  // Find and activate the matching tab button
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + name + "'")) {
+      btn.classList.add('active');
+    }
+  });
+}
+
+// URL hash support for deep linking from Dashboard
+window.addEventListener('load', function() {
+  const hash = window.location.hash.replace('#', '');
+  if(hash && document.getElementById('tab-' + hash)) {
+    switchTabByName(hash);
+  }
+});
+</script>
 
 </body>
 </html>
