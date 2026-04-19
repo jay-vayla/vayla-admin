@@ -6,651 +6,184 @@
 <title>VAYLA Arena Admin - 투표 모니터링</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --mint: #00C9A7;
-    --mint-light: #E6FAF5;
-    --mint-dark: #00A88A;
-    --dark: #1A2332;
-    --dark-2: #243044;
-    --dark-3: #2D3B50;
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --gray-400: #9CA3AF;
-    --gray-500: #6B7280;
-    --gray-600: #4B5563;
-    --gray-700: #374151;
-    --gray-800: #1F2937;
-    --red: #EF4444;
-    --red-light: #FEF2F2;
-    --yellow: #F59E0B;
-    --yellow-light: #FFFBEB;
-    --blue: #3B82F6;
-    --blue-light: #EFF6FF;
-    --purple: #8B5CF6;
-    --purple-light: #F5F3FF;
-    --orange: #F97316;
-    --orange-light: #FFF7ED;
-    --sidebar-w: 260px;
-    --header-h: 64px;
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
+    --sidebar-w: 260px; --header-h: 64px;
   }
-
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--gray-50);
-    color: var(--gray-700);
-    display: flex;
-    min-height: 100vh;
-  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
 
   /* ===== SIDEBAR ===== */
-  .sidebar {
-    width: var(--sidebar-w);
-    background: var(--dark);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-    overflow-y: auto;
-  }
-
-  .sidebar-logo {
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--dark-3);
-  }
-
-  .sidebar-logo .logo-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--mint), var(--mint-dark));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 16px; color: #fff;
-  }
-
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
   .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
   .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
-
   .sidebar-nav { padding: 16px 0; flex: 1; }
-
-  .nav-section {
-    padding: 8px 24px 4px;
-    font-size: 10px; font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase; letter-spacing: 1.2px;
-    margin-top: 8px;
-  }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 24px;
-    color: var(--gray-300); text-decoration: none;
-    font-size: 14px; font-weight: 500;
-    transition: all 0.15s; cursor: pointer;
-    position: relative;
-  }
-
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
   .nav-item:hover { color: #fff; background: var(--dark-2); }
-
-  .nav-item.active {
-    color: var(--mint);
-    background: rgba(0, 201, 167, 0.08);
-  }
-
-  .nav-item.active::before {
-    content: '';
-    position: absolute; left: 0; top: 4px; bottom: 4px;
-    width: 3px;
-    background: var(--mint);
-    border-radius: 0 3px 3px 0;
-  }
-
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
   .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-
-  .sidebar-footer {
-    padding: 16px 24px;
-    border-top: 1px solid var(--dark-3);
-    display: flex; align-items: center; gap: 12px;
-  }
-
-  .sidebar-footer .avatar {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--mint), var(--blue));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px;
-  }
-
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
   .sidebar-footer .user-info { flex: 1; }
   .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
   .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
 
   /* ===== MAIN ===== */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
-
-  /* ===== HEADER ===== */
-  .header {
-    height: var(--header-h);
-    background: #fff;
-    border-bottom: 1px solid var(--gray-200);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-    position: sticky; top: 0; z-index: 50;
-  }
-
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
   .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
-  .header-btn {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--gray-200);
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; position: relative;
-    font-size: 18px; transition: all 0.15s;
-  }
-
-  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
-
-  .header-btn .dot {
-    position: absolute; top: 8px; right: 8px;
-    width: 8px; height: 8px;
-    background: var(--red); border-radius: 50%;
-    border: 2px solid #fff;
-  }
-
-  .back-btn {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    border: none;
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 18px; transition: all 0.15s;
-  }
-
-  .back-btn:hover { border-color: var(--mint); color: var(--mint); }
-
-  .network-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 14px;
-    background: var(--mint-light);
-    border-radius: 8px;
-    font-size: 12px; font-weight: 600;
-    color: var(--mint-dark);
-  }
-
-  .network-badge .pulse {
-    width: 8px; height: 8px;
-    background: var(--mint); border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-  /* ===== CONTENT ===== */
   .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
 
-  /* ===== KPI CARDS ===== */
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .kpi-card {
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    border-radius: 14px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .kpi-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-
-  .kpi-card.mint::before { background: var(--mint); }
-  .kpi-card.blue::before { background: var(--blue); }
-  .kpi-card.purple::before { background: var(--purple); }
-  .kpi-card.yellow::before { background: var(--yellow); }
-  .kpi-card.red::before { background: var(--red); }
-  .kpi-card.orange::before { background: var(--orange); }
-
-  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-
-  /* ===== CARD ===== */
-  .card {
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-
-  .card-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-  .card-body { padding: 24px; }
-
   /* ===== BUTTONS ===== */
-  .btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.15s;
-  }
-
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
   .btn-mint { background: var(--mint); color: #fff; }
   .btn-mint:hover { background: var(--mint-dark); }
   .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
   .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
   .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
-  .btn-danger { background: var(--red-light); color: var(--red); }
-  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-green { background: var(--green-light); color: var(--green); }
+  .btn-green:hover { background: var(--green); color: #fff; }
   .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
   .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
   .btn-purple { background: var(--purple-light); color: var(--purple); }
   .btn-purple:hover { background: var(--purple); color: #fff; }
+  .btn-orange { background: var(--orange-light); color: var(--orange); }
+  .btn-orange:hover { background: var(--orange); color: #fff; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
 
-  /* ===== STATUS BADGES ===== */
-  .status {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px; font-weight: 600;
-  }
+  /* ===== KPI CARDS ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-label { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
-  .status-normal { background: var(--mint-light); color: var(--mint-dark); }
-  .status-review { background: var(--yellow-light); color: var(--yellow); }
-  .status-checking { background: var(--orange-light); color: var(--orange); }
-  .status-suspect { background: var(--red-light); color: var(--red); }
-  .status-hold { background: var(--purple-light); color: var(--purple); }
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 0; }
 
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
+  /* ===== LEADERBOARD ===== */
+  .leaderboard { background: linear-gradient(135deg, var(--dark), var(--dark-2)); border-radius: 14px; padding: 24px; margin-bottom: 24px; }
+  .leaderboard-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+  .leader-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 10px; transition: background 0.15s; }
+  .leader-item:hover { background: rgba(255,255,255,0.08); }
+  .rank-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .rank-gold { background: linear-gradient(135deg, #FFD700, #FFA500); }
+  .rank-silver { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); }
+  .rank-bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); }
+  .rank-default { background: var(--dark-3); color: var(--gray-400); }
+  .leader-info { flex: 1; }
+  .leader-name { font-size: 14px; font-weight: 600; color: #fff; }
+  .leader-track { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .leader-votes { font-size: 18px; font-weight: 800; color: var(--mint); }
+  .leader-change { font-size: 12px; font-weight: 600; margin-left: 6px; }
+  .change-up { color: var(--green); }
+  .change-down { color: var(--red); }
+  .change-same { color: var(--gray-400); }
 
-  /* ===== ALERT BANNER ===== */
-  .alert-banner {
-    background: var(--yellow-light);
-    border: 1px solid var(--yellow);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--gray-700);
-  }
+  /* ===== FILTER BAR ===== */
+  .filter-bar { display: flex; align-items: center; gap: 10px; padding: 16px 24px; border-bottom: 1px solid var(--gray-100); flex-wrap: wrap; }
+  .filter-bar select { padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; background: #fff; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .status-filter { display: flex; gap: 4px; }
+  .status-filter button { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+  .status-filter button.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+  .status-filter button:hover:not(.active) { border-color: var(--mint); color: var(--mint); }
+  .search-input { padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; width: 200px; font-family: 'Inter', sans-serif; }
+  .search-input:focus { border-color: var(--mint); }
 
   /* ===== TABLE ===== */
-  .table-wrapper { overflow-x: auto; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--gray-50); }
+  th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  td { padding: 14px; border-top: 1px solid var(--gray-100); vertical-align: middle; }
+  tr:hover { background: var(--gray-50); }
 
-  table { width: 100%; border-collapse: collapse; }
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-normal { background: var(--green-light); color: var(--green); }
+  .status-review { background: var(--yellow-light); color: var(--yellow); }
+  .status-reviewing { background: var(--blue-light); color: var(--blue); }
+  .status-hold { background: var(--orange-light); color: var(--orange); }
+  .status-blocked { background: var(--red-light); color: var(--red); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  thead th {
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 11px; font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--gray-100);
-    background: var(--gray-50);
-    white-space: nowrap;
-  }
-
-  tbody td {
-    padding: 14px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--gray-50);
-    vertical-align: middle;
-  }
-
-  tbody tr:hover { background: var(--gray-50); }
-
-  tbody tr.highlight-high {
-    border-left: 3px solid var(--orange);
-  }
-
-  tbody tr.highlight-critical {
-    border-left: 3px solid var(--red);
-  }
-
-  /* ===== RISK SCORE BADGE ===== */
-  .risk-score {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .risk-score.low { background: var(--mint-light); color: var(--mint-dark); }
-  .risk-score.caution { background: var(--yellow-light); color: var(--yellow); }
-  .risk-score.high { background: var(--orange-light); color: var(--orange); }
-  .risk-score.critical { background: var(--red-light); color: var(--red); }
-
-  /* ===== SEARCH & FILTER ===== */
-  .toolbar {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .search-box {
-    flex: 1; max-width: 300px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 9px 14px 9px 38px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--gray-700);
-    background: #fff;
-    outline: none;
-    transition: border 0.15s;
-  }
-
-  .search-box input:focus { border-color: var(--mint); }
-
-  .search-box .search-icon {
-    position: absolute; left: 12px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-400);
-    font-size: 14px;
-  }
-
-  .filter-select {
-    padding: 9px 14px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--gray-600);
-    background: #fff;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .filter-select:focus { border-color: var(--mint); }
-
-  /* ===== TIME RANGE BUTTONS ===== */
-  .time-range-group {
-    display: flex;
-    gap: 6px;
-    background: var(--gray-100);
-    border-radius: 8px;
-    padding: 3px;
-  }
-
-  .time-range-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .time-range-btn.active {
-    background: #fff;
-    color: var(--mint);
-  }
+  /* ===== RISK BADGE ===== */
+  .risk-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; }
+  .risk-low { background: var(--green-light); color: var(--green); }
+  .risk-mid { background: var(--yellow-light); color: var(--yellow); }
+  .risk-high { background: var(--red-light); color: var(--red); }
 
   /* ===== MODAL ===== */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 200;
-    align-items: center; justify-content: center;
-  }
-
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.show { display: flex; }
+  .modal { background: #fff; border-radius: 16px; width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-lg { width: 780px; }
+  .modal-header { padding: 24px 24px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); line-height: 1; }
+  .modal-body { padding: 0 24px 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 8px; }
 
-  .modal {
-    background: #fff;
-    border-radius: 16px;
-    width: 780px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .detail-item { padding: 12px; background: var(--gray-50); border-radius: 8px; }
+  .detail-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; margin-bottom: 4px; }
+  .detail-value { font-size: 14px; font-weight: 600; color: var(--dark); }
 
-  .modal-header {
-    padding: 24px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex; align-items: flex-start; justify-content: space-between;
-  }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .memo-area { width: 100%; padding: 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; resize: vertical; outline: none; }
+  .memo-area:focus { border-color: var(--mint); }
 
-  .modal-close {
-    width: 32px; height: 32px;
-    border-radius: 8px; border: none;
-    background: var(--gray-100);
-    font-size: 18px; color: var(--gray-500);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  /* ===== VOTE CHART ===== */
+  .vote-chart { display: flex; align-items: flex-end; gap: 3px; height: 100px; padding: 12px 0; }
+  .vote-bar { flex: 1; background: var(--mint); border-radius: 3px 3px 0 0; min-width: 6px; transition: background 0.2s; position: relative; }
+  .vote-bar.alert { background: var(--red); }
+  .vote-bar:hover { opacity: 0.8; }
+  .chart-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--gray-400); padding-top: 4px; }
 
-  .modal-close:hover { background: var(--gray-200); }
+  /* ===== DETECTION CARD ===== */
+  .detection-card { background: var(--red-light); border: 1px solid #FECACA; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .detection-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .detection-list { list-style: none; padding: 0; }
+  .detection-list li { font-size: 13px; color: var(--gray-700); padding: 4px 0; padding-left: 16px; position: relative; }
+  .detection-list li::before { content: '!'; position: absolute; left: 0; font-weight: 800; color: var(--red); font-size: 12px; }
 
-  .modal-body { padding: 24px; }
-
-  .modal-footer {
-    padding: 20px 24px;
-    border-top: 1px solid var(--gray-100);
-    display: flex; justify-content: flex-end; gap: 12px;
-  }
-
-  .form-group { margin-bottom: 20px; }
-  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
-
-  .form-input, .form-textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 14px; color: var(--gray-700);
-    outline: none;
-    transition: border 0.15s;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .form-input:focus, .form-textarea:focus { border-color: var(--mint); }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-  /* ===== DETAIL MODAL STYLES ===== */
-  .detail-header {
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--gray-100);
-  }
-
-  .detail-track-title { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-  .detail-challenge { font-size: 13px; color: var(--gray-500); margin-bottom: 16px; }
-
-  .detail-score-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .detail-score-label { font-size: 12px; color: var(--gray-500); font-weight: 600; }
-  .detail-score-value { font-size: 36px; font-weight: 800; }
-  .detail-score-critical { color: var(--red); }
-  .detail-score-high { color: var(--orange); }
-  .detail-score-caution { color: var(--yellow); }
-
-  .detail-gauge {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid;
-    position: relative;
-  }
-
-  .detail-gauge.critical { border-color: var(--red-light); background: var(--red-light); }
-  .detail-gauge.high { border-color: var(--orange-light); background: var(--orange-light); }
-  .detail-gauge.caution { border-color: var(--yellow-light); background: var(--yellow-light); }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .stat-item {
-    padding: 16px;
-    background: var(--gray-50);
-    border-radius: 10px;
-    border: 1px solid var(--gray-100);
-  }
-
-  .stat-label { font-size: 11px; color: var(--gray-500); margin-bottom: 6px; font-weight: 600; }
-  .stat-value { font-size: 20px; font-weight: 800; color: var(--dark); }
-  .stat-value.warning { color: var(--red); }
-  .stat-value.alert { color: var(--orange); }
-
-  .reason-list {
-    margin-bottom: 24px;
-  }
-
-  .reason-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: var(--gray-50);
-    border-radius: 10px;
-    border-left: 3px solid;
-  }
-
-  .reason-item.critical { border-left-color: var(--red); }
-  .reason-item.warning { border-left-color: var(--yellow); }
-
-  .reason-icon { font-size: 16px; flex-shrink: 0; }
-  .reason-content { flex: 1; }
-  .reason-text { font-size: 13px; color: var(--dark); margin-bottom: 4px; }
-  .reason-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-
-  .reason-badge.critical { background: var(--red-light); color: var(--red); }
-  .reason-badge.warning { background: var(--yellow-light); color: var(--yellow); }
-
-  .chart-container { margin: 24px 0; }
-  .chart-title { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px; }
-
-  .history-timeline { margin: 24px 0; }
-  .history-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--gray-100);
-  }
-
-  .history-item:last-child { border-bottom: none; }
-
-  .history-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--mint);
-    margin-top: 2px;
-    flex-shrink: 0;
-  }
-
-  .history-content {
-    font-size: 13px;
-    color: var(--gray-700);
-  }
-
-  .history-time { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
-
-  .memo-label { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
-
-  /* ===== LAYOUT ===== */
-  .grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
-
-  /* ===== ALERT CARD ===== */
-  .alert-list {
-    max-height: 300px;
-    overflow-y: auto;
-  }
-
-  .alert-item {
-    padding: 12px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex;
-    gap: 12px;
-  }
-
-  .alert-item:last-child { border-bottom: none; }
-
-  .alert-icon { font-size: 16px; flex-shrink: 0; }
-  .alert-content {
-    flex: 1;
-    font-size: 13px;
-    color: var(--gray-700);
-  }
-
-  .alert-time {
-    font-size: 11px;
-    color: var(--gray-400);
-    white-space: nowrap;
-    margin-left: 8px;
-  }
+  /* ===== HISTORY TABLE ===== */
+  .history-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .history-table th { padding: 8px 10px; background: var(--gray-50); font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; }
+  .history-table td { padding: 8px 10px; border-top: 1px solid var(--gray-100); font-size: 12px; }
 </style>
 </head>
 <body>
@@ -664,499 +197,539 @@
       <div class="logo-sub">Admin Console</div>
     </div>
   </div>
-
   <nav class="sidebar-nav">
-    <div class="nav-section">Overview</div>
-    <a class="nav-item" href="01_Dashboard.html">
-      <span class="icon">📊</span> Dashboard
-    </a>
+    <div class="nav-section">Main</div>
+    <a href="01_Dashboard.html" class="nav-item"><span class="icon">📊</span> 대시보드</a>
 
-    <div class="nav-section">서비스 관리</div>
-    <a class="nav-item active" href="02_Discovery.html">
-      <span class="icon">🎵</span> Discovery
-      <span class="badge">8</span>
-    </a>
-    <a class="nav-item" href="03_Boost.html">
-      <span class="icon">🚀</span> Boost
-    </a>
-    <a class="nav-item" href="04_Wallet.html">
-      <span class="icon">💰</span> 지갑 & 트랜잭션
-    </a>
+    <div class="nav-section">Service</div>
+    <a href="02_Discovery.html" class="nav-item active"><span class="icon">🎵</span> 디스커버리 관리 <span class="badge">5</span></a>
+    <a href="03_Boost.html" class="nav-item"><span class="icon">🚀</span> Boost 관리</a>
 
-    <div class="nav-section">NFT</div>
-    <a class="nav-item" href="05_NFT_User.html">
-      <span class="icon">🎨</span> User NFT
-    </a>
-    <a class="nav-item" href="06_NFT_Creator.html">
-      <span class="icon">⭐</span> Creator NFT
-    </a>
-    <a class="nav-item" href="07_NFT_Policy.html">
-      <span class="icon">📋</span> NFT 정책 & 마켓
-    </a>
+    <div class="nav-section">Assets</div>
+    <a href="04_Wallet.html" class="nav-item"><span class="icon">💰</span> 지갑/토큰</a>
+    <a href="05_NFT_User.html" class="nav-item"><span class="icon">🎨</span> NFT 사용자</a>
+    <a href="06_NFT_Creator.html" class="nav-item"><span class="icon">🏗️</span> NFT 크리에이터</a>
+    <a href="07_NFT_Policy.html" class="nav-item"><span class="icon">📋</span> NFT 정책</a>
 
-    <div class="nav-section">운영</div>
-    <a class="nav-item" href="08_Users.html">
-      <span class="icon">👥</span> 회원 관리
-    </a>
-    <a class="nav-item" href="09_Rewards.html">
-      <span class="icon">💎</span> 리워드 & 정산
-    </a>
-    <a class="nav-item" href="10_CMS.html">
-      <span class="icon">📝</span> 서비스 가이드
-    </a>
+    <div class="nav-section">Users</div>
+    <a href="08_Users.html" class="nav-item"><span class="icon">👥</span> 사용자 관리</a>
+
+    <div class="nav-section">Operations</div>
+    <a href="09_Rewards.html" class="nav-item"><span class="icon">🎁</span> 리워드 정산</a>
+    <a href="10_CMS.html" class="nav-item"><span class="icon">📝</span> CMS 관리</a>
   </nav>
-
   <div class="sidebar-footer">
     <div class="avatar">JK</div>
     <div class="user-info">
       <div class="user-name">Jay Kim</div>
-      <div class="user-role">Super Admin</div>
+      <div class="user-role">CSO / CMO</div>
     </div>
   </div>
 </aside>
 
 <!-- ===== MAIN ===== -->
 <div class="main">
-
-  <!-- HEADER -->
   <header class="header">
     <div class="header-left">
-      <button class="back-btn" onclick="window.location.href='02_Discovery.html'">←</button>
-      <div style="margin-left: 8px;">
-        <div class="header-title">투표 모니터링</div>
-        <div class="header-breadcrumb">서비스 관리 → Discovery → 투표 모니터링</div>
-      </div>
+      <h1 class="header-title">투표 모니터링</h1>
+      <span class="header-breadcrumb">디스커버리 관리 &gt; 투표 모니터링</span>
     </div>
     <div class="header-right">
-      <div class="network-badge">
-        <div class="pulse"></div>
-        BSC Mainnet
-      </div>
-      <button class="header-btn">🔔<div class="dot"></div></button>
-      <button class="header-btn">⚙️</button>
+      <div class="network-badge"><span class="pulse"></span> BSC Mainnet</div>
+      <a href="02_Discovery.html" class="btn btn-outline btn-sm">← 디스커버리 메인</a>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- KPI CARDS -->
+    <!-- KPI ROW -->
     <div class="kpi-row">
       <div class="kpi-card mint">
         <div class="kpi-label">총 투표 수</div>
         <div class="kpi-value">18,240</div>
+        <div class="kpi-sub">전체 누적 투표</div>
       </div>
       <div class="kpi-card blue">
-        <div class="kpi-label">고유 투표자 수</div>
+        <div class="kpi-label">고유 투표자</div>
         <div class="kpi-value">9,830</div>
+        <div class="kpi-sub">지갑 기준 투표자</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">평균 투표/인</div>
+        <div class="kpi-value">1.86</div>
+        <div class="kpi-sub">1인당 평균 투표 수</div>
       </div>
       <div class="kpi-card red">
-        <div class="kpi-label">의심 투표 수</div>
-        <div class="kpi-value">164</div>
-        <div class="kpi-sub" style="color: var(--red);">⚠ 의심</div>
+        <div class="kpi-label">이상 패턴 감지</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-sub">자동 감지 건수</div>
       </div>
       <div class="kpi-card yellow">
-        <div class="kpi-label">검토 중 케이스</div>
-        <div class="kpi-value">7</div>
-      </div>
-      <div class="kpi-card orange">
-        <div class="kpi-label">중복 IP 감지</div>
+        <div class="kpi-label">검토 필요</div>
         <div class="kpi-value">12</div>
+        <div class="kpi-sub">운영자 확인 대기</div>
       </div>
       <div class="kpi-card purple">
-        <div class="kpi-label">신규 지갑 급증</div>
-        <div class="kpi-value">3</div>
+        <div class="kpi-label">온체인 검증률</div>
+        <div class="kpi-value">98.7%</div>
+        <div class="kpi-sub">BSC 검증 비율</div>
       </div>
     </div>
 
-    <!-- VOTE CHART CARD -->
+    <!-- LEADERBOARD -->
+    <div class="leaderboard">
+      <div class="leaderboard-title">🏆 실시간 투표 리더보드 — Neon Night Beat 챌린지</div>
+      <div class="leaderboard-list">
+        <div class="leader-item">
+          <div class="rank-badge rank-gold">1</div>
+          <div class="leader-info">
+            <div class="leader-name">DJ Hana</div>
+            <div class="leader-track">Neon Pulse — K-Pop / Electronic</div>
+          </div>
+          <div class="leader-votes">2,847<span class="leader-change change-up">▲ 142</span></div>
+        </div>
+        <div class="leader-item">
+          <div class="rank-badge rank-silver">2</div>
+          <div class="leader-info">
+            <div class="leader-name">BeatMaker_K</div>
+            <div class="leader-track">Night Glow — Hip-Hop / Trap</div>
+          </div>
+          <div class="leader-votes">2,503<span class="leader-change change-up">▲ 89</span></div>
+        </div>
+        <div class="leader-item">
+          <div class="rank-badge rank-bronze">3</div>
+          <div class="leader-info">
+            <div class="leader-name">SynthWave_J</div>
+            <div class="leader-track">Midnight Drive — Synthwave / Retro</div>
+          </div>
+          <div class="leader-votes">2,198<span class="leader-change change-down">▼ 23</span></div>
+        </div>
+        <div class="leader-item">
+          <div class="rank-badge rank-default">4</div>
+          <div class="leader-info">
+            <div class="leader-name">Melody_Ace</div>
+            <div class="leader-track">City Lights — Pop / Acoustic</div>
+          </div>
+          <div class="leader-votes">1,847<span class="leader-change change-same">— 0</span></div>
+        </div>
+        <div class="leader-item">
+          <div class="rank-badge rank-default">5</div>
+          <div class="leader-info">
+            <div class="leader-name">LoFi_Dreamer</div>
+            <div class="leader-track">Rain on Window — Lo-Fi / Chill</div>
+          </div>
+          <div class="leader-votes">1,624<span class="leader-change change-up">▲ 56</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOTE CASE TABLE -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">📊 실시간 투표 추이 (24h)</div>
+        <div class="card-title">🔍 투표 케이스 관리</div>
+        <button class="btn btn-outline btn-sm" onclick="alert('CSV 내보내기')">📥 CSV 내보내기</button>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="status-filter">
+          <button class="active">전체</button>
+          <button>정상</button>
+          <button>검토필요</button>
+          <button>검토중</button>
+          <button>집계보류</button>
+        </div>
+        <select>
+          <option>챌린지: 전체</option>
+          <option>Neon Night Beat</option>
+          <option>Lo-Fi Summer</option>
+          <option>K-Pop Rising</option>
+        </select>
+        <select>
+          <option>기간: 전체</option>
+          <option>최근 24시간</option>
+          <option>최근 7일</option>
+          <option>최근 30일</option>
+        </select>
+        <input type="text" class="search-input" placeholder="지갑 / 트랙 ID 검색...">
+      </div>
+
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>케이스 ID</th>
+                <th>투표자 (지갑)</th>
+                <th>대상 트랙</th>
+                <th>챌린지</th>
+                <th>투표 시간</th>
+                <th>투표 수</th>
+                <th>리스크</th>
+                <th>감지 유형</th>
+                <th>상태</th>
+                <th>액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">VC-1001</td>
+                <td><span style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x8a4F…3eD1</span></td>
+                <td>Neon Pulse</td>
+                <td>Neon Night Beat</td>
+                <td>2026.04.19 14:32</td>
+                <td style="font-weight:700;">48</td>
+                <td><span class="risk-badge risk-low">● Low</span></td>
+                <td><span style="font-size:12px; color:var(--gray-500);">—</span></td>
+                <td><span class="status status-normal"><span class="status-dot"></span>정상</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('VC-1001')">상세</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">VC-1002</td>
+                <td><span style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x3bC7…9fA2</span></td>
+                <td>Night Glow</td>
+                <td>Neon Night Beat</td>
+                <td>2026.04.19 13:18</td>
+                <td style="font-weight:700; color:var(--red);">312</td>
+                <td><span class="risk-badge risk-high">● High</span></td>
+                <td><span style="font-size:12px; color:var(--red); font-weight:600;">다중지갑 의심</span></td>
+                <td><span class="status status-review"><span class="status-dot"></span>검토필요</span></td>
+                <td>
+                  <button class="btn btn-sm btn-green" onclick="openAction('normal')">정상</button>
+                  <button class="btn btn-sm btn-orange" onclick="openAction('hold')">보류</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('VC-1002')">상세</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">VC-1003</td>
+                <td><span style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0xF12D…7cB5</span></td>
+                <td>Midnight Drive</td>
+                <td>Neon Night Beat</td>
+                <td>2026.04.19 12:45</td>
+                <td style="font-weight:700; color:var(--orange);">187</td>
+                <td><span class="risk-badge risk-mid">● Mid</span></td>
+                <td><span style="font-size:12px; color:var(--orange); font-weight:600;">단시간 집중투표</span></td>
+                <td><span class="status status-reviewing"><span class="status-dot"></span>검토중</span></td>
+                <td>
+                  <button class="btn btn-sm btn-green" onclick="openAction('normal')">정상</button>
+                  <button class="btn btn-sm btn-orange" onclick="openAction('hold')">보류</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('VC-1003')">상세</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">VC-1004</td>
+                <td><span style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x92eA…1dF8</span></td>
+                <td>City Lights</td>
+                <td>Neon Night Beat</td>
+                <td>2026.04.19 11:09</td>
+                <td style="font-weight:700;">23</td>
+                <td><span class="risk-badge risk-low">● Low</span></td>
+                <td><span style="font-size:12px; color:var(--gray-500);">—</span></td>
+                <td><span class="status status-normal"><span class="status-dot"></span>정상</span></td>
+                <td>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('VC-1004')">상세</button>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">VC-1005</td>
+                <td><span style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x5Ae3…8bC0</span></td>
+                <td>Rain on Window</td>
+                <td>Lo-Fi Summer</td>
+                <td>2026.04.19 09:52</td>
+                <td style="font-weight:700; color:var(--red);">265</td>
+                <td><span class="risk-badge risk-high">● High</span></td>
+                <td><span style="font-size:12px; color:var(--red); font-weight:600;">봇 패턴 감지</span></td>
+                <td><span class="status status-hold"><span class="status-dot"></span>집계보류</span></td>
+                <td>
+                  <button class="btn btn-sm btn-green" onclick="openAction('normal')">정상</button>
+                  <button class="btn btn-sm btn-yellow" onclick="openAction('review')">검토</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('VC-1005')">상세</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT REVIEW HISTORY -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 최근 검토 이력</div>
       </div>
       <div class="card-body">
-        <!-- Chart SVG -->
-        <div style="position: relative; height: 220px; margin-bottom: 20px;">
-          <svg width="100%" height="220" viewBox="0 0 600 220" preserveAspectRatio="none">
-            <!-- Grid lines -->
-            <line x1="0" y1="55" x2="600" y2="55" stroke="#F3F4F6" stroke-width="1"/>
-            <line x1="0" y1="110" x2="600" y2="110" stroke="#F3F4F6" stroke-width="1"/>
-            <line x1="0" y1="165" x2="600" y2="165" stroke="#F3F4F6" stroke-width="1"/>
-            <!-- Area fill with spike -->
-            <path d="M0,190 L30,180 L60,170 L90,160 L120,150 L150,145 L180,155 L210,140 L240,130 L270,100 L300,80 L330,50 L360,45 L390,40 L400,20 L410,18 L420,22 L430,50 L440,100 L450,130 L480,140 L510,145 L540,150 L570,160 L600,170 L600,220 L0,220 Z" fill="url(#chartGradient)" opacity="0.3"/>
-            <!-- Line -->
-            <path d="M0,190 L30,180 L60,170 L90,160 L120,150 L150,145 L180,155 L210,140 L240,130 L270,100 L300,80 L330,50 L360,45 L390,40 L400,20 L410,18 L420,22 L430,50 L440,100 L450,130 L480,140 L510,145 L540,150 L570,160 L600,170" fill="none" stroke="#00C9A7" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Red anomaly zone -->
-            <rect x="390" y="0" width="60" height="220" fill="#EF4444" opacity="0.08"/>
-            <defs>
-              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#00C9A7" stop-opacity="0.4"/>
-                <stop offset="100%" stop-color="#00C9A7" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div style="position: absolute; bottom: -12px; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400);">
-            <span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>Now</span>
-          </div>
-        </div>
-
-        <!-- Time range buttons -->
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px;">
-          <div class="time-range-group">
-            <button class="time-range-btn">1시간</button>
-            <button class="time-range-btn">6시간</button>
-            <button class="time-range-btn active">24시간</button>
-            <button class="time-range-btn">7일</button>
-          </div>
-        </div>
-
-        <!-- Alert banner -->
-        <div class="alert-banner" style="margin-top: 16px;">
-          <span>⚠</span>
-          <span><strong>13:00~13:15 구간</strong> Neon Flame 트랙 비정상 급증 감지 (15분 내 +420표)</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- FILTER & SEARCH TOOLBAR + TABLE -->
-    <div class="grid-23">
-      <!-- Main table -->
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">🗳️ 투표 모니터링</div>
-            <button class="btn btn-sm btn-outline">📥 Export</button>
-          </div>
-
-          <!-- Toolbar -->
-          <div style="padding: 16px 24px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100); display: flex; gap: 12px; flex-wrap: wrap;">
-            <div class="search-box" style="flex: 1; max-width: 250px;">
-              <span class="search-icon">🔍</span>
-              <input type="text" placeholder="트랙명, 크리에이터 검색...">
-            </div>
-            <select class="filter-select">
-              <option>챌린지 선택</option>
-              <option>Spring Discovery Vol.1</option>
-              <option>Ballad Creator Challenge</option>
-            </select>
-            <select class="filter-select">
-              <option>상태 (전체)</option>
-              <option>정상</option>
-              <option>검토 필요</option>
-              <option>검토 중</option>
-              <option>의심 투표 제외</option>
-              <option>집계 보류</option>
-            </select>
-            <select class="filter-select">
-              <option>이상 점수 (전체)</option>
-              <option>50점 이상</option>
-              <option>70점 이상</option>
-              <option>90점 이상</option>
-            </select>
-          </div>
-
-          <!-- Table -->
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>챌린지명</th>
-                  <th>트랙명</th>
-                  <th>총 투표 수</th>
-                  <th>고유 지갑 수</th>
-                  <th>고유 IP 수</th>
-                  <th>이상 패턴 점수</th>
-                  <th>상태</th>
-                  <th>액션</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Row 1 -->
-                <tr>
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">Midnight Echo</td>
-                  <td>2,140</td>
-                  <td>1,920</td>
-                  <td>1,804</td>
-                  <td><span class="risk-score low">12 낮음</span></td>
-                  <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 2 - HIGH RISK -->
-                <tr class="highlight-critical">
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">Neon Flame</td>
-                  <td>3,480</td>
-                  <td>1,220</td>
-                  <td>640</td>
-                  <td><span class="risk-score critical">86 위험</span></td>
-                  <td><span class="status status-review"><span class="status-dot"></span> 검토 필요</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 3 -->
-                <tr>
-                  <td style="color: var(--gray-600); font-size: 12px;">Ballad Creator Challenge</td>
-                  <td style="font-weight: 600; color: var(--dark);">Falling Again</td>
-                  <td>1,870</td>
-                  <td>1,650</td>
-                  <td>1,540</td>
-                  <td><span class="risk-score low">18 낮음</span></td>
-                  <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 4 - HIGH RISK -->
-                <tr class="highlight-critical">
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">Runaway Light</td>
-                  <td>4,210</td>
-                  <td>1,340</td>
-                  <td>720</td>
-                  <td><span class="risk-score critical">91 위험</span></td>
-                  <td><span class="status status-checking"><span class="status-dot"></span> 검토 중</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 5 -->
-                <tr>
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">City Pulse</td>
-                  <td>1,560</td>
-                  <td>1,480</td>
-                  <td>1,390</td>
-                  <td><span class="risk-score low">8 낮음</span></td>
-                  <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 6 - MEDIUM RISK -->
-                <tr class="highlight-high">
-                  <td style="color: var(--gray-600); font-size: 12px;">Ballad Creator Challenge</td>
-                  <td style="font-weight: 600; color: var(--dark);">Blue Hour</td>
-                  <td>2,890</td>
-                  <td>980</td>
-                  <td>510</td>
-                  <td><span class="risk-score high">78 높음</span></td>
-                  <td><span class="status status-review"><span class="status-dot"></span> 검토 필요</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 7 -->
-                <tr>
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">Electric Dreams</td>
-                  <td>1,240</td>
-                  <td>1,180</td>
-                  <td>1,120</td>
-                  <td><span class="risk-score low">5 낮음</span></td>
-                  <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-                <!-- Row 8 -->
-                <tr>
-                  <td style="color: var(--gray-600); font-size: 12px;">Spring Discovery Vol.1</td>
-                  <td style="font-weight: 600; color: var(--dark);">Starfall</td>
-                  <td>780</td>
-                  <td>760</td>
-                  <td>740</td>
-                  <td><span class="risk-score low">3 낮음</span></td>
-                  <td><span class="status status-normal"><span class="status-dot"></span> 정상</span></td>
-                  <td><button class="btn btn-sm btn-outline" onclick="openDetailModal()">상세</button></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right sidebar - Alerts -->
-      <div>
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">🚨 주요 알림</div>
-          </div>
-          <div class="card-body" style="padding: 0;">
-            <div class="alert-list">
-              <div class="alert-item">
-                <span style="font-size: 14px;">🔴</span>
-                <div style="flex: 1;">
-                  <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Neon Flame</div>
-                  <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">15분 내 +420표 급증</div>
-                </div>
-                <span style="font-size: 11px; color: var(--gray-400);">30분 전</span>
-              </div>
-              <div class="alert-item">
-                <span style="font-size: 14px;">🟠</span>
-                <div style="flex: 1;">
-                  <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Runaway Light</div>
-                  <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">동일 IP 48건 감지</div>
-                </div>
-                <span style="font-size: 11px; color: var(--gray-400);">1시간 전</span>
-              </div>
-              <div class="alert-item">
-                <span style="font-size: 14px;">🟡</span>
-                <div style="flex: 1;">
-                  <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Blue Hour</div>
-                  <div style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">신규 지갑 42% 비율</div>
-                </div>
-                <span style="font-size: 11px; color: var(--gray-400);">2시간 전</span>
-              </div>
-            </div>
-          </div>
+        <div class="table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>케이스 ID</th>
+                <th>투표자</th>
+                <th>변경 전</th>
+                <th>변경 후</th>
+                <th>처리자</th>
+                <th>처리 시간</th>
+                <th>메모</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;">VC-0998</td>
+                <td style="font-family:monospace; font-size:11px;">0x71bA…2eC4</td>
+                <td><span class="status status-review" style="font-size:11px;"><span class="status-dot"></span>검토필요</span></td>
+                <td><span class="status status-normal" style="font-size:11px;"><span class="status-dot"></span>정상</span></td>
+                <td>Jay Kim</td>
+                <td>2026.04.18 16:42</td>
+                <td style="color:var(--gray-500); font-size:11px;">IP 확인 결과 정상 사용자</td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">VC-0995</td>
+                <td style="font-family:monospace; font-size:11px;">0xAc3F…5dB7</td>
+                <td><span class="status status-review" style="font-size:11px;"><span class="status-dot"></span>검토필요</span></td>
+                <td><span class="status status-hold" style="font-size:11px;"><span class="status-dot"></span>집계보류</span></td>
+                <td>Kai Lee</td>
+                <td>2026.04.18 14:20</td>
+                <td style="color:var(--gray-500); font-size:11px;">다중 지갑 연동 확인, 보류 처리</td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">VC-0991</td>
+                <td style="font-family:monospace; font-size:11px;">0xD82E…9aF1</td>
+                <td><span class="status status-reviewing" style="font-size:11px;"><span class="status-dot"></span>검토중</span></td>
+                <td><span class="status status-normal" style="font-size:11px;"><span class="status-dot"></span>정상</span></td>
+                <td>Jay Kim</td>
+                <td>2026.04.18 11:05</td>
+                <td style="color:var(--gray-500); font-size:11px;">단시간 집중투표이나 정상 패턴 확인</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ===== ACTION MODAL ===== -->
+<div class="modal-overlay" id="actionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div id="actionIcon" style="font-size:28px; margin-bottom:8px;">✅</div>
+        <h3 id="actionTitle" style="font-size:18px; font-weight:700; color:var(--dark);">상태 변경</h3>
+        <p id="actionDesc" style="font-size:13px; color:var(--gray-500); margin-top:4px;">해당 투표 케이스의 상태를 변경합니다.</p>
+      </div>
+      <button class="modal-close" onclick="closeAction()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">운영자 메모</div>
+      <textarea class="memo-area" rows="3" placeholder="상태 변경 사유를 입력하세요..." id="actionMemo"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeAction()">취소</button>
+      <button class="btn" id="actionBtn" onclick="submitAction()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACTION DONE MODAL ===== -->
+<div class="modal-overlay" id="actionDoneModal">
+  <div class="modal" style="width:440px; text-align:center;">
+    <div class="modal-body" style="padding:40px 24px;">
+      <div style="font-size:48px; margin-bottom:16px;">✅</div>
+      <h3 style="font-size:18px; font-weight:700; color:var(--dark); margin-bottom:8px;">상태가 변경되었습니다</h3>
+      <p style="font-size:13px; color:var(--gray-500); margin-bottom:24px;">투표 케이스 상태가 성공적으로 업데이트되었습니다.</p>
+      <button class="btn btn-mint" onclick="closeDone()">확인</button>
+    </div>
   </div>
 </div>
 
 <!-- ===== DETAIL MODAL ===== -->
 <div class="modal-overlay" id="detailModal">
-  <div class="modal">
+  <div class="modal modal-lg">
     <div class="modal-header">
       <div>
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div>
-            <div class="detail-track-title">Neon Flame</div>
-            <div class="detail-challenge">Spring Discovery Vol.1</div>
-          </div>
-        </div>
-
-        <!-- Score Display -->
-        <div class="detail-score-container" style="margin-top: 16px;">
-          <div>
-            <div class="detail-score-label">이상 패턴 점수</div>
-            <div class="detail-score-value detail-score-critical">86점</div>
-          </div>
-          <div class="detail-gauge critical">
-            <div style="font-size: 18px; font-weight: 800; color: var(--red);">86</div>
-          </div>
-        </div>
+        <h3 style="font-size:18px; font-weight:700; color:var(--dark);">🔍 투표 상세 — VC-1002</h3>
+        <p style="font-size:13px; color:var(--gray-500); margin-top:4px;">이상 패턴 감지 건 상세 정보</p>
       </div>
-      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+      <button class="modal-close" onclick="closeDetail()">&times;</button>
     </div>
-
     <div class="modal-body">
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-label">총 투표 수</div>
-          <div class="stat-value">3,480</div>
+      <!-- INFO GRID -->
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">케이스 ID</div>
+          <div class="detail-value">VC-1002</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">고유 지갑 수</div>
-          <div class="stat-value">1,220</div>
+        <div class="detail-item">
+          <div class="detail-label">투표자 지갑</div>
+          <div class="detail-value" style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x3bC7…9fA2</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">고유 IP 수</div>
-          <div class="stat-value">640</div>
+        <div class="detail-item">
+          <div class="detail-label">대상 트랙</div>
+          <div class="detail-value">Night Glow</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">지갑 대비 IP 비율</div>
-          <div class="stat-value warning">52.5%</div>
+        <div class="detail-item">
+          <div class="detail-label">챌린지</div>
+          <div class="detail-value">Neon Night Beat</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">신규 지갑 비율</div>
-          <div class="stat-value alert">38.2%</div>
+        <div class="detail-item">
+          <div class="detail-label">투표 수</div>
+          <div class="detail-value" style="color:var(--red); font-size:18px;">312</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">평균 투표 간격</div>
-          <div class="stat-value warning">4.2초</div>
+        <div class="detail-item">
+          <div class="detail-label">리스크 점수</div>
+          <div class="detail-value"><span class="risk-badge risk-high">● High (92)</span></div>
         </div>
-      </div>
-
-      <!-- Hourly Chart -->
-      <div class="chart-container">
-        <div class="chart-title">시간대별 투표 추이</div>
-        <svg width="100%" height="140" viewBox="0 0 600 140" preserveAspectRatio="none" style="margin-bottom: 10px;">
-          <line x1="0" y1="35" x2="600" y2="35" stroke="#F3F4F6" stroke-width="1"/>
-          <line x1="0" y1="70" x2="600" y2="70" stroke="#F3F4F6" stroke-width="1"/>
-          <line x1="0" y1="105" x2="600" y2="105" stroke="#F3F4F6" stroke-width="1"/>
-          <path d="M0,110 L40,100 L80,90 L120,75 L160,55 L200,40 L240,28 L280,20 L320,18 L360,20 L380,25 L400,35 L420,55 L440,85 L460,105 L480,115 L520,110 L560,100 L600,95" fill="none" stroke="#00C9A7" stroke-width="2.5"/>
-          <rect x="380" y="0" width="80" height="140" fill="#EF4444" opacity="0.08"/>
-        </svg>
-        <div style="font-size: 11px; color: var(--gray-400); text-align: center;">비정상 급증 구간 (13:00~13:15)</div>
-      </div>
-
-      <!-- Reasons for Suspicion -->
-      <div class="reason-list">
-        <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">의심 사유 목록</div>
-
-        <div class="reason-item critical">
-          <div class="reason-icon">🔴</div>
-          <div class="reason-content">
-            <div class="reason-text">동일 IP 반복 투표 다수 감지</div>
-            <span class="reason-badge critical">Critical</span>
-          </div>
+        <div class="detail-item">
+          <div class="detail-label">감지 유형</div>
+          <div class="detail-value" style="color:var(--red);">다중지갑 의심</div>
         </div>
-
-        <div class="reason-item warning">
-          <div class="reason-icon">🟡</div>
-          <div class="reason-content">
-            <div class="reason-text">신규 생성 지갑 비율 급증 (38.2%)</div>
-            <span class="reason-badge warning">Warning</span>
-          </div>
+        <div class="detail-item">
+          <div class="detail-label">첫 투표</div>
+          <div class="detail-value">2026.04.19 13:00</div>
         </div>
-
-        <div class="reason-item critical">
-          <div class="reason-icon">🔴</div>
-          <div class="reason-content">
-            <div class="reason-text">특정 시간대 15분 내 급격한 투표 증가 (+420표)</div>
-            <span class="reason-badge critical">Critical</span>
-          </div>
-        </div>
-
-        <div class="reason-item warning">
-          <div class="reason-icon">🟡</div>
-          <div class="reason-content">
-            <div class="reason-text">동일 기기 환경 반복 감지</div>
-            <span class="reason-badge warning">Warning</span>
-          </div>
+        <div class="detail-item">
+          <div class="detail-label">마지막 투표</div>
+          <div class="detail-value">2026.04.19 13:18</div>
         </div>
       </div>
 
-      <!-- Review History -->
-      <div class="history-timeline">
-        <div style="font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 12px;">이전 검토 이력</div>
-        <div class="history-item">
-          <div class="history-dot"></div>
-          <div>
-            <div class="history-content">초기 검토 시작</div>
-            <div class="history-time">2시간 전</div>
-          </div>
+      <!-- VOTE DISTRIBUTION CHART -->
+      <div class="section-title">📊 시간대별 투표 분포</div>
+      <div style="background:var(--gray-50); border-radius:10px; padding:16px; margin-bottom:16px;">
+        <div class="vote-chart">
+          <div class="vote-bar" style="height:12%;"></div>
+          <div class="vote-bar" style="height:8%;"></div>
+          <div class="vote-bar" style="height:15%;"></div>
+          <div class="vote-bar" style="height:10%;"></div>
+          <div class="vote-bar" style="height:5%;"></div>
+          <div class="vote-bar" style="height:7%;"></div>
+          <div class="vote-bar" style="height:3%;"></div>
+          <div class="vote-bar" style="height:4%;"></div>
+          <div class="vote-bar" style="height:6%;"></div>
+          <div class="vote-bar" style="height:8%;"></div>
+          <div class="vote-bar" style="height:12%;"></div>
+          <div class="vote-bar" style="height:18%;"></div>
+          <div class="vote-bar alert" style="height:85%;"></div>
+          <div class="vote-bar alert" style="height:92%;"></div>
+          <div class="vote-bar alert" style="height:78%;"></div>
+          <div class="vote-bar alert" style="height:65%;"></div>
+          <div class="vote-bar" style="height:15%;"></div>
+          <div class="vote-bar" style="height:10%;"></div>
+          <div class="vote-bar" style="height:8%;"></div>
+          <div class="vote-bar" style="height:5%;"></div>
+          <div class="vote-bar" style="height:3%;"></div>
+          <div class="vote-bar" style="height:6%;"></div>
+          <div class="vote-bar" style="height:4%;"></div>
+          <div class="vote-bar" style="height:2%;"></div>
+        </div>
+        <div class="chart-labels">
+          <span>00:00</span><span>06:00</span><span>12:00</span><span>13:00 ⚠️</span><span>18:00</span><span>24:00</span>
         </div>
       </div>
 
-      <!-- Operator Notes -->
-      <div class="form-group">
-        <label class="memo-label">운영자 메모</label>
-        <textarea class="form-textarea" rows="4" placeholder="짧은 시간 동안 표가 급증함. 정상 유입인지 추가 확인 필요." style="resize: vertical;"></textarea>
+      <!-- DETECTION REASONS -->
+      <div class="detection-card">
+        <div class="detection-title">⚠️ 이상 탐지 사유</div>
+        <ul class="detection-list">
+          <li>13:00~13:18 사이 312건 집중 투표 (평균 대비 17.3배)</li>
+          <li>동일 IP 대역(203.104.xx.xx)에서 3개 지갑 동시 투표 확인</li>
+          <li>해당 지갑 최초 투표 활동 — 신규 지갑으로 대량 투표 패턴</li>
+          <li>투표 간격 평균 3.4초 — 봇 의심 수준의 빈도</li>
+        </ul>
       </div>
+
+      <!-- OPERATOR MEMO -->
+      <div class="section-title">📝 운영자 메모</div>
+      <div style="background:var(--yellow-light); border-radius:8px; padding:14px; margin-bottom:16px;">
+        <textarea class="memo-area" rows="2" placeholder="이 케이스에 대한 메모를 입력하세요..." style="background:transparent; border:none;">IP 대역 추가 조사 필요 — Kai 확인 요청</textarea>
+      </div>
+
+      <!-- STATUS CHANGE HISTORY -->
+      <div class="section-title">🕐 상태 변경 이력</div>
+      <table class="history-table" style="margin-bottom:0;">
+        <thead>
+          <tr>
+            <th>변경 시간</th>
+            <th>변경 전</th>
+            <th>변경 후</th>
+            <th>처리자</th>
+            <th>사유</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026.04.19 13:25</td>
+            <td><span class="status status-normal" style="font-size:11px;"><span class="status-dot"></span>정상</span></td>
+            <td><span class="status status-review" style="font-size:11px;"><span class="status-dot"></span>검토필요</span></td>
+            <td>System</td>
+            <td style="font-size:11px; color:var(--gray-500);">자동 감지: 다중지갑 의심 패턴</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeDetailModal()">취소</button>
-      <button class="btn btn-mint">정상 처리</button>
-      <button class="btn btn-yellow">검토 필요</button>
-      <button class="btn btn-danger">의심 투표 제외</button>
-      <button class="btn btn-purple">집계 보류</button>
-      <button class="btn btn-outline">메모 저장</button>
+      <button class="btn btn-green btn-sm" onclick="closeDetail();openAction('normal');">정상처리</button>
+      <button class="btn btn-yellow btn-sm" onclick="closeDetail();openAction('review');">검토필요</button>
+      <button class="btn btn-orange btn-sm" onclick="closeDetail();openAction('hold');">집계보류</button>
+      <button class="btn btn-outline btn-sm" onclick="closeDetail()">닫기</button>
     </div>
   </div>
 </div>
 
 <script>
-  function openDetailModal() {
+  // ===== ACTION MODAL CONFIG =====
+  const actionConfig = {
+    normal: { icon: '✅', title: '정상 처리', desc: '이 투표 케이스를 정상으로 처리합니다. 집계에 포함됩니다.', btn: '정상 처리', cls: 'btn-green' },
+    review: { icon: '🔍', title: '검토 필요', desc: '이 투표 케이스를 검토 필요 상태로 변경합니다.', btn: '검토 요청', cls: 'btn-yellow' },
+    hold:   { icon: '⏸️', title: '집계 보류', desc: '이 투표 케이스를 보류합니다. 집계에서 제외됩니다.', btn: '집계 보류', cls: 'btn-orange' }
+  };
+
+  let currentActionType = '';
+
+  function openAction(type) {
+    const cfg = actionConfig[type];
+    if (!cfg) return;
+    currentActionType = type;
+    document.getElementById('actionIcon').textContent = cfg.icon;
+    document.getElementById('actionTitle').textContent = cfg.title;
+    document.getElementById('actionDesc').textContent = cfg.desc;
+    const btn = document.getElementById('actionBtn');
+    btn.textContent = cfg.btn;
+    btn.className = 'btn ' + cfg.cls;
+    document.getElementById('actionMemo').value = '';
+    document.getElementById('actionModal').classList.add('show');
+  }
+
+  function closeAction() {
+    document.getElementById('actionModal').classList.remove('show');
+  }
+
+  function submitAction() {
+    closeAction();
+    document.getElementById('actionDoneModal').classList.add('show');
+  }
+
+  function closeDone() {
+    document.getElementById('actionDoneModal').classList.remove('show');
+  }
+
+  function openDetail(id) {
     document.getElementById('detailModal').classList.add('show');
   }
 
-  function closeDetailModal() {
+  function closeDetail() {
     document.getElementById('detailModal').classList.remove('show');
   }
 
-  // Close modal when clicking overlay
-  document.getElementById('detailModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-      closeDetailModal();
-    }
+  // ===== STATUS FILTER =====
+  document.querySelectorAll('.status-filter button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
   });
 </script>
-
 </body>
 </html>

@@ -6,602 +6,174 @@
 <title>VAYLA Arena Admin - 리워드 배분</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --mint: #00C9A7;
-    --mint-light: #E6FAF5;
-    --mint-dark: #00A88A;
-    --dark: #1A2332;
-    --dark-2: #243044;
-    --dark-3: #2D3B50;
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --gray-400: #9CA3AF;
-    --gray-500: #6B7280;
-    --gray-600: #4B5563;
-    --gray-700: #374151;
-    --gray-800: #1F2937;
-    --red: #EF4444;
-    --red-light: #FEF2F2;
-    --yellow: #F59E0B;
-    --yellow-light: #FFFBEB;
-    --blue: #3B82F6;
-    --blue-light: #EFF6FF;
-    --purple: #8B5CF6;
-    --purple-light: #F5F3FF;
-    --orange: #F97316;
-    --orange-light: #FFF7ED;
-    --green: #10B981;
-    --green-light: #ECFDF5;
-    --sidebar-w: 260px;
-    --header-h: 64px;
+    --mint: #00C9A7; --mint-light: #E6FAF5; --mint-dark: #00A88A;
+    --dark: #1A2332; --dark-2: #243044; --dark-3: #2D3B50;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB; --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF; --gray-500: #6B7280; --gray-600: #4B5563; --gray-700: #374151; --gray-800: #1F2937;
+    --red: #EF4444; --red-light: #FEF2F2; --yellow: #F59E0B; --yellow-light: #FFFBEB;
+    --blue: #3B82F6; --blue-light: #EFF6FF; --purple: #8B5CF6; --purple-light: #F5F3FF;
+    --orange: #F97316; --orange-light: #FFF7ED;
+    --green: #10B981; --green-light: #ECFDF5;
+    --sidebar-w: 260px; --header-h: 64px;
   }
-
-  body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--gray-50);
-    color: var(--gray-700);
-    display: flex;
-    min-height: 100vh;
-  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-700); display: flex; min-height: 100vh; }
 
   /* ===== SIDEBAR ===== */
-  .sidebar {
-    width: var(--sidebar-w);
-    background: var(--dark);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    z-index: 100;
-    overflow-y: auto;
-  }
-
-  .sidebar-logo {
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--dark-3);
-  }
-
-  .sidebar-logo .logo-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--mint), var(--mint-dark));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 16px; color: #fff;
-  }
-
+  .sidebar { width: var(--sidebar-w); background: var(--dark); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--dark-3); }
+  .sidebar-logo .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--mint-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; }
   .sidebar-logo .logo-text { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
   .sidebar-logo .logo-sub { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1px; }
-
   .sidebar-nav { padding: 16px 0; flex: 1; }
-
-  .nav-section {
-    padding: 8px 24px 4px;
-    font-size: 10px; font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase; letter-spacing: 1.2px;
-    margin-top: 8px;
-  }
-
-  .nav-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 24px;
-    color: var(--gray-300); text-decoration: none;
-    font-size: 14px; font-weight: 500;
-    transition: all 0.15s; cursor: pointer;
-    position: relative;
-  }
-
+  .nav-section { padding: 8px 24px 4px; font-size: 10px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 24px; color: var(--gray-300); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.15s; cursor: pointer; position: relative; }
   .nav-item:hover { color: #fff; background: var(--dark-2); }
-
-  .nav-item.active {
-    color: var(--mint);
-    background: rgba(0, 201, 167, 0.08);
-  }
-
-  .nav-item.active::before {
-    content: '';
-    position: absolute; left: 0; top: 4px; bottom: 4px;
-    width: 3px;
-    background: var(--mint);
-    border-radius: 0 3px 3px 0;
-  }
-
+  .nav-item.active { color: var(--mint); background: rgba(0,201,167,0.08); }
+  .nav-item.active::before { content:''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--mint); border-radius: 0 3px 3px 0; }
   .nav-item .icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
   .nav-item .badge { margin-left: auto; background: var(--red); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-
-  .sidebar-footer {
-    padding: 16px 24px;
-    border-top: 1px solid var(--dark-3);
-    display: flex; align-items: center; gap: 12px;
-  }
-
-  .sidebar-footer .avatar {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--mint), var(--blue));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px;
-  }
-
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--dark-3); display: flex; align-items: center; gap: 12px; }
+  .sidebar-footer .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, var(--mint), var(--blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
   .sidebar-footer .user-info { flex: 1; }
   .sidebar-footer .user-name { font-size: 13px; font-weight: 600; }
   .sidebar-footer .user-role { font-size: 11px; color: var(--gray-400); }
 
   /* ===== MAIN ===== */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
-
-  /* ===== HEADER ===== */
-  .header {
-    height: var(--header-h);
-    background: #fff;
-    border-bottom: 1px solid var(--gray-200);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px;
-    position: sticky; top: 0; z-index: 50;
-  }
-
+  .header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 16px; }
   .header-title { font-size: 20px; font-weight: 700; color: var(--dark); }
   .header-breadcrumb { font-size: 13px; color: var(--gray-400); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .network-badge { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--mint-light); border-radius: 8px; font-size: 12px; font-weight: 600; color: var(--mint-dark); }
+  .network-badge .pulse { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
-  .header-btn {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--gray-200);
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; position: relative;
-    font-size: 18px; transition: all 0.15s;
-  }
-
-  .header-btn:hover { border-color: var(--mint); color: var(--mint); }
-
-  .header-btn .dot {
-    position: absolute; top: 8px; right: 8px;
-    width: 8px; height: 8px;
-    background: var(--red); border-radius: 50%;
-    border: 2px solid #fff;
-  }
-
-  .back-btn {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    border: 1px solid var(--gray-200);
-    background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 18px; transition: all 0.15s;
-  }
-
-  .back-btn:hover { border-color: var(--mint); color: var(--mint); }
-
-  .network-badge {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 14px;
-    background: var(--mint-light);
-    border-radius: 8px;
-    font-size: 12px; font-weight: 600;
-    color: var(--mint-dark);
-  }
-
-  .network-badge .pulse {
-    width: 8px; height: 8px;
-    background: var(--mint); border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-  /* ===== CONTENT ===== */
   .content { padding: 28px 32px; flex: 1; overflow-y: auto; }
 
-  /* ===== KPI CARDS ===== */
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .kpi-card {
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    border-radius: 14px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .kpi-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-
-  .kpi-card.mint::before { background: var(--mint); }
-  .kpi-card.blue::before { background: var(--blue); }
-  .kpi-card.purple::before { background: var(--purple); }
-  .kpi-card.yellow::before { background: var(--yellow); }
-  .kpi-card.red::before { background: var(--red); }
-  .kpi-card.orange::before { background: var(--orange); }
-  .kpi-card.green::before { background: var(--green); }
-
-  .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
-  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--gray-400); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
-
-  /* ===== CARD ===== */
-  .card {
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-
-  .card-header {
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-  .card-body { padding: 24px; }
-
   /* ===== BUTTONS ===== */
-  .btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.15s;
-  }
-
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; text-decoration: none; }
   .btn-mint { background: var(--mint); color: #fff; }
   .btn-mint:hover { background: var(--mint-dark); }
   .btn-outline { background: #fff; border: 1px solid var(--gray-200); color: var(--gray-600); }
   .btn-outline:hover { border-color: var(--mint); color: var(--mint); }
   .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
-  .btn-danger { background: var(--red-light); color: var(--red); }
-  .btn-danger:hover { background: var(--red); color: #fff; }
-  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
-  .btn-yellow:hover { background: var(--yellow); color: #fff; }
-  .btn-purple { background: var(--purple-light); color: var(--purple); }
-  .btn-purple:hover { background: var(--purple); color: #fff; }
-  .btn-blue { background: var(--blue-light); color: var(--blue); }
-  .btn-blue:hover { background: var(--blue); color: #fff; }
   .btn-green { background: var(--green-light); color: var(--green); }
   .btn-green:hover { background: var(--green); color: #fff; }
+  .btn-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .btn-yellow:hover { background: var(--yellow); color: #fff; }
+  .btn-danger { background: var(--red-light); color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-purple { background: var(--purple-light); color: var(--purple); }
+  .btn-purple:hover { background: var(--purple); color: #fff; }
+  .btn-orange { background: var(--orange-light); color: var(--orange); }
+  .btn-orange:hover { background: var(--orange); color: #fff; }
+  .btn-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-blue:hover { background: var(--blue); color: #fff; }
 
-  /* ===== STATUS BADGES ===== */
-  .status {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px; font-weight: 600;
-  }
+  /* ===== KPI CARDS ===== */
+  .kpi-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi-card.mint::before { background: var(--mint); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.purple::before { background: var(--purple); }
+  .kpi-card.orange::before { background: var(--orange); }
+  .kpi-label { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); letter-spacing: -1px; }
+  .kpi-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
 
-  .status-pending { background: var(--yellow-light); color: var(--yellow); }
-  .status-complete { background: var(--mint-light); color: var(--mint-dark); }
-  .status-review { background: var(--orange-light); color: var(--orange); }
-  .status-failed { background: var(--red-light); color: var(--red); }
-  .status-running { background: var(--blue-light); color: var(--blue); }
+  /* ===== CARD ===== */
+  .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 14px; overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 20px 24px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 0; }
 
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
+  /* ===== FILTER BAR ===== */
+  .filter-bar { display: flex; align-items: center; gap: 10px; padding: 16px 24px; border-bottom: 1px solid var(--gray-100); flex-wrap: wrap; }
+  .filter-bar select { padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; background: #fff; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .status-filter { display: flex; gap: 4px; }
+  .status-filter button { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--gray-200); background: #fff; font-size: 12px; font-weight: 600; color: var(--gray-500); cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+  .status-filter button.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+  .status-filter button:hover:not(.active) { border-color: var(--mint); color: var(--mint); }
+  .search-input { padding: 8px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; width: 200px; font-family: 'Inter', sans-serif; }
+  .search-input:focus { border-color: var(--mint); }
 
   /* ===== TABLE ===== */
-  .table-wrapper { overflow-x: auto; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--gray-50); }
+  th { padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  td { padding: 14px; border-top: 1px solid var(--gray-100); vertical-align: middle; }
+  tr:hover { background: var(--gray-50); }
 
-  table { width: 100%; border-collapse: collapse; }
+  /* ===== STATUS BADGES ===== */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .status-pending { background: var(--yellow-light); color: var(--yellow); }
+  .status-complete { background: var(--green-light); color: var(--green); }
+  .status-failed { background: var(--red-light); color: var(--red); }
+  .status-reviewing { background: var(--orange-light); color: var(--orange); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  thead th {
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 11px; font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--gray-100);
-    background: var(--gray-50);
-    white-space: nowrap;
-  }
+  /* ===== NFT STATUS ===== */
+  .nft-status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .nft-na { background: var(--gray-100); color: var(--gray-400); }
+  .nft-pending { background: var(--yellow-light); color: var(--yellow); }
+  .nft-complete { background: var(--green-light); color: var(--green); }
+  .nft-failed { background: var(--red-light); color: var(--red); }
 
-  tbody td {
-    padding: 14px 16px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--gray-50);
-    vertical-align: middle;
-  }
+  /* ===== REWARD TYPE TAG ===== */
+  .rw-type { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; }
+  .rw-vayla { background: var(--mint-light); color: var(--mint-dark); }
+  .rw-nft { background: var(--purple-light); color: var(--purple); }
+  .rw-mixed { background: linear-gradient(135deg, var(--mint-light), var(--purple-light)); color: var(--dark); }
+  .rw-badge { background: var(--blue-light); color: var(--blue); }
 
-  tbody tr:hover { background: var(--gray-50); }
-
-  tbody tr.highlight-review {
-    border-left: 3px solid var(--orange);
-  }
-
-  tbody tr.highlight-failed {
-    border-left: 3px solid var(--red);
-  }
-
-  /* ===== SEARCH & FILTER ===== */
-  .toolbar {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    flex: 1; max-width: 300px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 9px 14px 9px 38px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--gray-700);
-    background: #fff;
-    outline: none;
-    transition: border 0.15s;
-  }
-
-  .search-box input:focus { border-color: var(--mint); }
-
-  .search-box .search-icon {
-    position: absolute; left: 12px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-400);
-    font-size: 14px;
-  }
-
-  .filter-select {
-    padding: 9px 14px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--gray-600);
-    background: #fff;
-    outline: none;
-    cursor: pointer;
-  }
-
-  .filter-select:focus { border-color: var(--mint); }
+  /* ===== TX HASH ===== */
+  .tx-hash { font-family: monospace; font-size: 11px; color: var(--mint-dark); background: var(--mint-light); padding: 2px 8px; border-radius: 4px; }
 
   /* ===== MODAL ===== */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 200;
-    align-items: center; justify-content: center;
-  }
-
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.show { display: flex; }
+  .modal { background: #fff; border-radius: 16px; width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-lg { width: 780px; }
+  .modal-header { padding: 24px 24px 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); line-height: 1; }
+  .modal-body { padding: 0 24px 24px; }
+  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 8px; }
 
-  .modal {
-    background: #fff;
-    border-radius: 16px;
-    width: 820px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .detail-item { padding: 12px; background: var(--gray-50); border-radius: 8px; }
+  .detail-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; margin-bottom: 4px; }
+  .detail-value { font-size: 14px; font-weight: 600; color: var(--dark); }
 
-  .modal-header {
-    padding: 24px;
-    border-bottom: 1px solid var(--gray-100);
-    display: flex; align-items: flex-start; justify-content: space-between;
-  }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .memo-area { width: 100%; padding: 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; resize: vertical; outline: none; }
+  .memo-area:focus { border-color: var(--mint); }
 
-  .modal-close {
-    width: 32px; height: 32px;
-    border-radius: 8px; border: none;
-    background: var(--gray-100);
-    font-size: 18px; color: var(--gray-500);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
+  /* ===== HISTORY TABLE ===== */
+  .history-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .history-table th { padding: 8px 10px; background: var(--gray-50); font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; }
+  .history-table td { padding: 8px 10px; border-top: 1px solid var(--gray-100); font-size: 12px; }
 
-  .modal-close:hover { background: var(--gray-200); }
+  /* ===== MANUAL REWARD FORM ===== */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+  .form-input { padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; }
+  .form-input:focus { border-color: var(--mint); }
+  .form-select { padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; outline: none; background: #fff; cursor: pointer; }
+  .form-select:focus { border-color: var(--mint); }
 
-  .modal-body { padding: 24px; }
-
-  .modal-footer {
-    padding: 20px 24px;
-    border-top: 1px solid var(--gray-100);
-    display: flex; justify-content: space-between; gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .form-group { margin-bottom: 20px; }
-  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
-
-  .form-input, .form-textarea {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--gray-200);
-    border-radius: 8px;
-    font-size: 14px; color: var(--gray-700);
-    outline: none;
-    transition: border 0.15s;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .form-input:focus, .form-textarea:focus { border-color: var(--mint); }
-
-  /* ===== DETAIL MODAL STYLES ===== */
-  .detail-header {
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--gray-100);
-  }
-
-  .detail-title { font-size: 20px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-  .detail-sub { font-size: 13px; color: var(--gray-500); margin-bottom: 12px; }
-
-  .detail-info-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .detail-info-item {
-    padding: 14px;
-    background: var(--gray-50);
-    border-radius: 10px;
-    border: 1px solid var(--gray-100);
-  }
-
-  .detail-info-label { font-size: 11px; color: var(--gray-500); font-weight: 600; margin-bottom: 4px; }
-  .detail-info-value { font-size: 16px; font-weight: 700; color: var(--dark); }
-
-  /* ===== RANK TABLE ===== */
-  .rank-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-
-  .rank-table thead th {
-    padding: 10px 12px;
-    text-align: left;
-    font-size: 11px; font-weight: 600;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--gray-100);
-    background: var(--gray-50);
-    white-space: nowrap;
-  }
-
-  .rank-table tbody td {
-    padding: 10px 12px;
-    font-size: 13px;
-    border-bottom: 1px solid var(--gray-50);
-    vertical-align: middle;
-  }
-
-  .rank-table tbody tr:hover { background: var(--gray-50); }
-
-  .rank-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    font-size: 13px; font-weight: 700;
-  }
-
-  .rank-badge.gold { background: #FEF3C7; color: #D97706; }
-  .rank-badge.silver { background: var(--gray-100); color: var(--gray-600); }
-  .rank-badge.bronze { background: #FED7AA; color: #C2410C; }
-  .rank-badge.normal { background: var(--gray-50); color: var(--gray-500); }
-
-  .nft-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 11px; font-weight: 600;
-    background: var(--purple-light); color: var(--purple);
-  }
-
-  .tx-status {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px;
-    border-radius: 5px;
-    font-size: 11px; font-weight: 600;
-  }
-
-  .tx-status.success { background: var(--mint-light); color: var(--mint-dark); }
-  .tx-status.pending { background: var(--yellow-light); color: var(--yellow); }
-  .tx-status.failed { background: var(--red-light); color: var(--red); }
-
-  /* ===== REWARD POOL SUMMARY ===== */
-  .pool-summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .pool-card {
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid var(--gray-200);
-    background: #fff;
-  }
-
-  .pool-card-label { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; font-weight: 500; }
-  .pool-card-value { font-size: 24px; font-weight: 800; color: var(--dark); }
-  .pool-card-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
-
-  /* ===== PROGRESS BAR ===== */
-  .progress-bar {
-    height: 8px;
-    background: var(--gray-100);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 12px;
-  }
-
-  .progress-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.3s;
-  }
-
-  /* ===== SECTION TITLE ===== */
-  .section-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--dark);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .memo-label { font-size: 13px; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
-
-  /* ===== ALERT BANNER ===== */
-  .alert-banner {
-    background: var(--yellow-light);
-    border: 1px solid var(--yellow);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--gray-700);
-  }
-
-  .alert-banner.danger {
-    background: var(--red-light);
-    border-color: var(--red);
-  }
-
-  .alert-banner.info {
-    background: var(--blue-light);
-    border-color: var(--blue);
-  }
+  /* ===== FAILED ROW HIGHLIGHT ===== */
+  tr.row-failed { background: var(--red-light); }
+  tr.row-failed:hover { background: #FEE2E2; }
 </style>
 </head>
 <body>
@@ -615,514 +187,595 @@
       <div class="logo-sub">Admin Console</div>
     </div>
   </div>
-
   <nav class="sidebar-nav">
-    <div class="nav-section">Overview</div>
-    <a class="nav-item" href="01_Dashboard.html">
-      <span class="icon">📊</span> Dashboard
-    </a>
+    <div class="nav-section">Main</div>
+    <a href="01_Dashboard.html" class="nav-item"><span class="icon">📊</span> 대시보드</a>
 
-    <div class="nav-section">서비스 관리</div>
-    <a class="nav-item active" href="02_Discovery.html">
-      <span class="icon">🎵</span> Discovery
-      <span class="badge">8</span>
-    </a>
-    <a class="nav-item" href="03_Boost.html">
-      <span class="icon">🚀</span> Boost
-    </a>
-    <a class="nav-item" href="04_Wallet.html">
-      <span class="icon">💰</span> 지갑 & 트랜잭션
-    </a>
+    <div class="nav-section">Service</div>
+    <a href="02_Discovery.html" class="nav-item active"><span class="icon">🎵</span> 디스커버리 관리 <span class="badge">5</span></a>
+    <a href="03_Boost.html" class="nav-item"><span class="icon">🚀</span> Boost 관리</a>
 
-    <div class="nav-section">NFT</div>
-    <a class="nav-item" href="05_NFT_User.html">
-      <span class="icon">🎨</span> User NFT
-    </a>
-    <a class="nav-item" href="06_NFT_Creator.html">
-      <span class="icon">⭐</span> Creator NFT
-    </a>
-    <a class="nav-item" href="07_NFT_Policy.html">
-      <span class="icon">📋</span> NFT 정책 & 마켓
-    </a>
+    <div class="nav-section">Assets</div>
+    <a href="04_Wallet.html" class="nav-item"><span class="icon">💰</span> 지갑/토큰</a>
+    <a href="05_NFT_User.html" class="nav-item"><span class="icon">🎨</span> NFT 사용자</a>
+    <a href="06_NFT_Creator.html" class="nav-item"><span class="icon">🏗️</span> NFT 크리에이터</a>
+    <a href="07_NFT_Policy.html" class="nav-item"><span class="icon">📋</span> NFT 정책</a>
 
-    <div class="nav-section">운영</div>
-    <a class="nav-item" href="08_Users.html">
-      <span class="icon">👥</span> 회원 관리
-    </a>
-    <a class="nav-item" href="09_Rewards.html">
-      <span class="icon">💎</span> 리워드 & 정산
-    </a>
-    <a class="nav-item" href="10_CMS.html">
-      <span class="icon">📝</span> 서비스 가이드
-    </a>
+    <div class="nav-section">Users</div>
+    <a href="08_Users.html" class="nav-item"><span class="icon">👥</span> 사용자 관리</a>
+
+    <div class="nav-section">Operations</div>
+    <a href="09_Rewards.html" class="nav-item"><span class="icon">🎁</span> 리워드 정산</a>
+    <a href="10_CMS.html" class="nav-item"><span class="icon">📝</span> CMS 관리</a>
   </nav>
-
   <div class="sidebar-footer">
     <div class="avatar">JK</div>
     <div class="user-info">
       <div class="user-name">Jay Kim</div>
-      <div class="user-role">Super Admin</div>
+      <div class="user-role">CSO / CMO</div>
     </div>
   </div>
 </aside>
 
 <!-- ===== MAIN ===== -->
 <div class="main">
-
-  <!-- HEADER -->
   <header class="header">
     <div class="header-left">
-      <button class="back-btn" onclick="window.location.href='02_Discovery.html'">←</button>
-      <div style="margin-left: 8px;">
-        <div class="header-title">리워드 배분</div>
-        <div class="header-breadcrumb">서비스 관리 → Discovery → 리워드 배분</div>
-      </div>
+      <h1 class="header-title">리워드 배분</h1>
+      <span class="header-breadcrumb">디스커버리 관리 &gt; 리워드 배분</span>
     </div>
     <div class="header-right">
-      <div class="network-badge">
-        <div class="pulse"></div>
-        BSC Mainnet
-      </div>
-      <button class="header-btn">🔔<div class="dot"></div></button>
-      <button class="header-btn">⚙️</button>
+      <div class="network-badge"><span class="pulse"></span> BSC Mainnet</div>
+      <a href="02_Discovery.html" class="btn btn-outline btn-sm">← 디스커버리 메인</a>
     </div>
   </header>
 
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- KPI CARDS -->
+    <!-- KPI ROW -->
     <div class="kpi-row">
-      <div class="kpi-card mint">
-        <div class="kpi-label">총 리워드 풀</div>
-        <div class="kpi-value" style="font-size: 24px;">12,000</div>
-        <div class="kpi-sub">USDT</div>
-      </div>
       <div class="kpi-card yellow">
         <div class="kpi-label">배분 대기</div>
-        <div class="kpi-value">3</div>
-        <div class="kpi-sub">건</div>
+        <div class="kpi-value">14</div>
+        <div class="kpi-sub">지급 대기 건수</div>
       </div>
       <div class="kpi-card green">
         <div class="kpi-label">배분 완료</div>
-        <div class="kpi-value">18</div>
-        <div class="kpi-sub">건</div>
+        <div class="kpi-value">126</div>
+        <div class="kpi-sub">지급 완료 건수</div>
       </div>
-      <div class="kpi-card orange">
-        <div class="kpi-label">검토 필요</div>
-        <div class="kpi-value">2</div>
-        <div class="kpi-sub">건</div>
+      <div class="kpi-card purple">
+        <div class="kpi-label">NFT 발행 대기</div>
+        <div class="kpi-value">8</div>
+        <div class="kpi-sub">민팅 대기 중</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">NFT 발행 완료</div>
+        <div class="kpi-value">118</div>
+        <div class="kpi-sub">민팅 완료</div>
       </div>
       <div class="kpi-card red">
-        <div class="kpi-label">실패</div>
-        <div class="kpi-value">1</div>
-        <div class="kpi-sub">건</div>
+        <div class="kpi-label">실패 건수</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">재처리 필요</div>
+      </div>
+      <div class="kpi-card mint">
+        <div class="kpi-label">총 배분 예정 VAYLA</div>
+        <div class="kpi-value">18,450</div>
+        <div class="kpi-sub">VAYLA 토큰</div>
       </div>
     </div>
 
-    <!-- REWARD POOL SUMMARY -->
-    <div class="pool-summary">
-      <div class="pool-card">
-        <div class="pool-card-label">배분 진행률</div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="pool-card-value">85%</div>
-          <span style="font-size: 13px; color: var(--gray-500);">10,200 / 12,000 USDT</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 85%; background: linear-gradient(90deg, var(--mint), var(--mint-dark));"></div>
-        </div>
-        <div class="pool-card-sub">잔여 풀: 1,800 USDT</div>
-      </div>
-      <div class="pool-card">
-        <div class="pool-card-label">NFT 발행 현황</div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="pool-card-value">142</div>
-          <span style="font-size: 13px; color: var(--gray-500);">/ 180 예정</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" style="width: 79%; background: linear-gradient(90deg, var(--purple), #7C3AED);"></div>
-        </div>
-        <div class="pool-card-sub">Badge 52 | Reward 68 | Event 22</div>
-      </div>
-    </div>
-
-    <!-- DISTRIBUTION LIST TABLE -->
+    <!-- MAIN TABLE CARD -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">🎁 리워드 배분 목록</div>
-        <div style="display: flex; gap: 8px;">
-          <button class="btn btn-sm btn-outline">📥 Export</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="alert('CSV 내보내기')">📥 Export</button>
+          <button class="btn btn-mint btn-sm" onclick="openManual()">+ 수동 배분 생성</button>
         </div>
       </div>
 
-      <!-- Toolbar -->
-      <div style="padding: 16px 24px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100); display: flex; gap: 12px; flex-wrap: wrap;">
-        <div class="search-box" style="flex: 1; max-width: 250px;">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="챌린지명, 크리에이터 검색...">
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="status-filter">
+          <button class="active">전체</button>
+          <button>대기</button>
+          <button>완료</button>
+          <button>실패</button>
+          <button>검토중</button>
         </div>
-        <select class="filter-select">
-          <option>상태 (전체)</option>
-          <option>배분 대기</option>
-          <option>배분 완료</option>
-          <option>검토 필요</option>
-          <option>실패</option>
-          <option>진행 중</option>
+        <select>
+          <option>챌린지: 전체</option>
+          <option>Neon Night Beat</option>
+          <option>Urban Flow Session</option>
+          <option>Spring Vocal Pick</option>
         </select>
-        <select class="filter-select">
-          <option>리워드 유형 (전체)</option>
-          <option>USDT + NFT</option>
-          <option>USDT Only</option>
-          <option>NFT Only</option>
-          <option>USDT + Badge</option>
+        <select>
+          <option>유형: 전체</option>
+          <option>Vote Reward</option>
+          <option>Challenge Winner</option>
+          <option>Participation Reward</option>
+          <option>NFT Reward</option>
+          <option>Bonus Reward</option>
         </select>
-        <select class="filter-select">
-          <option>기간 (전체)</option>
-          <option>최근 7일</option>
-          <option>최근 30일</option>
-          <option>최근 90일</option>
-        </select>
+        <input type="text" class="search-input" placeholder="챌린지 / 대상 / Reward ID 검색...">
       </div>
 
-      <!-- Table -->
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>챌린지명</th>
-              <th>리워드 유형</th>
-              <th>총 배분액</th>
-              <th>수혜자 수</th>
-              <th>NFT 포함</th>
-              <th>배분일</th>
-              <th>상태</th>
-              <th>액션</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Row 1 - Pending -->
-            <tr>
-              <td style="font-weight: 600; color: var(--dark);">Spring Discovery Vol.1</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">USDT + NFT</span></td>
-              <td style="font-weight: 600;">3,000 USDT</td>
-              <td>Top 30</td>
-              <td><span class="nft-badge">🎨 Reward NFT</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-20 (예정)</td>
-              <td><span class="status status-pending"><span class="status-dot"></span> 배분 대기</span></td>
-              <td>
-                <button class="btn btn-sm btn-mint" onclick="openDetailModal('spring')">상세</button>
-              </td>
-            </tr>
-            <!-- Row 2 - Pending -->
-            <tr>
-              <td style="font-weight: 600; color: var(--dark);">Ballad Creator Challenge</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">USDT Only</span></td>
-              <td style="font-weight: 600;">1,500 USDT</td>
-              <td>Top 15</td>
-              <td><span style="font-size: 12px; color: var(--gray-400);">없음</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-22 (예정)</td>
-              <td><span class="status status-pending"><span class="status-dot"></span> 배분 대기</span></td>
-              <td>
-                <button class="btn btn-sm btn-mint" onclick="openDetailModal('ballad')">상세</button>
-              </td>
-            </tr>
-            <!-- Row 3 - Review needed -->
-            <tr class="highlight-review">
-              <td style="font-weight: 600; color: var(--dark);">Weekly Fan Vote</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">NFT Only</span></td>
-              <td style="font-weight: 600; color: var(--gray-400);">-</td>
-              <td>Top 10</td>
-              <td><span class="nft-badge">🏆 Event NFT</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-18 (예정)</td>
-              <td><span class="status status-review"><span class="status-dot"></span> 검토 필요</span></td>
-              <td>
-                <button class="btn btn-sm btn-mint" onclick="openDetailModal('weekly')">상세</button>
-              </td>
-            </tr>
-            <!-- Row 4 - Failed -->
-            <tr class="highlight-failed">
-              <td style="font-weight: 600; color: var(--dark);">Creator Spotlight</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">USDT + Badge</span></td>
-              <td style="font-weight: 600;">2,000 USDT</td>
-              <td>Top 20</td>
-              <td><span class="nft-badge">🎖️ Badge NFT</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-15</td>
-              <td><span class="status status-failed"><span class="status-dot"></span> 실패</span></td>
-              <td>
-                <button class="btn btn-sm btn-mint" onclick="openDetailModal('spotlight')">상세</button>
-              </td>
-            </tr>
-            <!-- Row 5 - Completed -->
-            <tr>
-              <td style="font-weight: 600; color: var(--dark);">Dance Creator Week</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">USDT + NFT</span></td>
-              <td style="font-weight: 600;">2,500 USDT</td>
-              <td>Top 25</td>
-              <td><span class="nft-badge">🎨 Reward NFT</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-10</td>
-              <td><span class="status status-complete"><span class="status-dot"></span> 배분 완료</span></td>
-              <td>
-                <button class="btn btn-sm btn-outline" onclick="openDetailModal('dance')">상세</button>
-              </td>
-            </tr>
-            <!-- Row 6 - Completed -->
-            <tr>
-              <td style="font-weight: 600; color: var(--dark);">Indie Music Fest</td>
-              <td><span style="font-size: 12px; color: var(--gray-600);">USDT Only</span></td>
-              <td style="font-weight: 600;">1,200 USDT</td>
-              <td>Top 10</td>
-              <td><span style="font-size: 12px; color: var(--gray-400);">없음</span></td>
-              <td style="color: var(--gray-500); font-size: 12px;">2026-04-05</td>
-              <td><span class="status status-complete"><span class="status-dot"></span> 배분 완료</span></td>
-              <td>
-                <button class="btn btn-sm btn-outline" onclick="openDetailModal('indie')">상세</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div style="padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-100);">
-        <div style="font-size: 13px; color: var(--gray-500);">총 24건 중 1-6 표시</div>
-        <div style="display: flex; gap: 4px;">
-          <button class="btn btn-sm btn-outline" disabled style="opacity: 0.5;">← 이전</button>
-          <button class="btn btn-sm btn-mint">1</button>
-          <button class="btn btn-sm btn-outline">2</button>
-          <button class="btn btn-sm btn-outline">3</button>
-          <button class="btn btn-sm btn-outline">4</button>
-          <button class="btn btn-sm btn-outline">다음 →</button>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Reward ID</th>
+                <th>챌린지명</th>
+                <th>지급 대상</th>
+                <th>순위/기준</th>
+                <th>리워드 유형</th>
+                <th>금액/수량</th>
+                <th>지급 상태</th>
+                <th>NFT 상태</th>
+                <th>지급일</th>
+                <th>TX Hash</th>
+                <th>운영 메모</th>
+                <th>액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- RW-1001 완료 -->
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">RW-1001</td>
+                <td>Neon Night Beat</td>
+                <td style="font-weight:600;">DJ Hana</td>
+                <td><span style="font-weight:700; color:var(--yellow);">🥇 1위</span></td>
+                <td><span class="rw-type rw-mixed">VAYLA + NFT</span></td>
+                <td style="font-weight:700;">1,250 VAYLA<br><span style="font-size:11px; color:var(--purple);">+ NFT 1개</span></td>
+                <td><span class="status status-complete"><span class="status-dot"></span>완료</span></td>
+                <td><span class="nft-status nft-complete"><span class="status-dot"></span>완료</span></td>
+                <td style="font-size:12px;">2026.04.19<br>09:40</td>
+                <td><span class="tx-hash">0x7a3b…f21d</span></td>
+                <td style="font-size:12px; color:var(--gray-500);">우승자 배분 완료</td>
+                <td>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1001')">상세</button>
+                </td>
+              </tr>
+              <!-- RW-1002 완료 -->
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">RW-1002</td>
+                <td>Neon Night Beat</td>
+                <td style="font-weight:600;">NOVA</td>
+                <td><span style="font-weight:700; color:var(--gray-500);">🥈 2위</span></td>
+                <td><span class="rw-type rw-vayla">VAYLA</span></td>
+                <td style="font-weight:700;">800 VAYLA</td>
+                <td><span class="status status-complete"><span class="status-dot"></span>완료</span></td>
+                <td><span class="nft-status nft-na">미해당</span></td>
+                <td style="font-size:12px;">2026.04.19<br>09:45</td>
+                <td><span class="tx-hash">0x2c8d…e47a</span></td>
+                <td style="font-size:12px; color:var(--gray-500);">—</td>
+                <td>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1002')">상세</button>
+                </td>
+              </tr>
+              <!-- RW-1003 대기 -->
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">RW-1003</td>
+                <td>Neon Night Beat</td>
+                <td style="font-weight:600;">MC Park</td>
+                <td>Top 10</td>
+                <td><span class="rw-type rw-vayla">VAYLA</span></td>
+                <td style="font-weight:700;">450 VAYLA</td>
+                <td><span class="status status-pending"><span class="status-dot"></span>대기</span></td>
+                <td><span class="nft-status nft-na">미해당</span></td>
+                <td style="font-size:12px;">2026.04.19<br>11:00</td>
+                <td style="color:var(--gray-400); font-size:12px;">—</td>
+                <td style="font-size:12px; color:var(--gray-500);">최종 확인 대기</td>
+                <td>
+                  <button class="btn btn-sm btn-green" onclick="openAction('complete','RW-1003')">완료</button>
+                  <button class="btn btn-sm btn-orange" onclick="openAction('hold','RW-1003')">보류</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1003')">상세</button>
+                </td>
+              </tr>
+              <!-- RW-1004 완료 NFT -->
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">RW-1004</td>
+                <td>Urban Flow Session</td>
+                <td style="font-weight:600;">Aira</td>
+                <td>Participation</td>
+                <td><span class="rw-type rw-nft">NFT</span></td>
+                <td style="font-weight:700; color:var(--purple);">NFT 1개</td>
+                <td><span class="status status-complete"><span class="status-dot"></span>완료</span></td>
+                <td><span class="nft-status nft-complete"><span class="status-dot"></span>완료</span></td>
+                <td style="font-size:12px;">2026.04.18<br>18:20</td>
+                <td><span class="tx-hash">0xa2b9…4e1f</span></td>
+                <td style="font-size:12px; color:var(--gray-500);">참여 NFT 지급 완료</td>
+                <td>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1004')">상세</button>
+                </td>
+              </tr>
+              <!-- RW-1005 실패 (강조) -->
+              <tr class="row-failed">
+                <td style="font-weight:600; color:var(--dark);">RW-1005</td>
+                <td>Spring Vocal Pick</td>
+                <td style="font-weight:600;">Lina Moon</td>
+                <td>Vote Milestone</td>
+                <td><span class="rw-type rw-vayla">VAYLA</span></td>
+                <td style="font-weight:700;">300 VAYLA</td>
+                <td><span class="status status-failed"><span class="status-dot"></span>실패</span></td>
+                <td><span class="nft-status nft-na">미해당</span></td>
+                <td style="font-size:12px;">2026.04.19<br>10:10</td>
+                <td style="color:var(--gray-400); font-size:12px;">—</td>
+                <td style="font-size:12px; color:var(--red); font-weight:600;">지갑 연결 오류</td>
+                <td>
+                  <button class="btn btn-sm btn-danger" onclick="openAction('retry','RW-1005')">재처리</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1005')">상세</button>
+                </td>
+              </tr>
+              <!-- RW-1006 검토중 -->
+              <tr>
+                <td style="font-weight:600; color:var(--dark);">RW-1006</td>
+                <td>Neon Night Beat</td>
+                <td style="font-weight:600;">KJ Beat</td>
+                <td><span style="font-weight:700; color:var(--gray-500);">🥉 3위</span></td>
+                <td><span class="rw-type rw-mixed">VAYLA + NFT</span></td>
+                <td style="font-weight:700;">600 VAYLA<br><span style="font-size:11px; color:var(--purple);">+ NFT 1개</span></td>
+                <td><span class="status status-reviewing"><span class="status-dot"></span>검토중</span></td>
+                <td><span class="nft-status nft-pending"><span class="status-dot"></span>대기</span></td>
+                <td style="font-size:12px;">2026.04.19<br>10:55</td>
+                <td style="color:var(--gray-400); font-size:12px;">—</td>
+                <td style="font-size:12px; color:var(--gray-500);">NFT 발행 확인 필요</td>
+                <td>
+                  <button class="btn btn-sm btn-green" onclick="openAction('complete','RW-1006')">완료</button>
+                  <button class="btn btn-sm btn-orange" onclick="openAction('hold','RW-1006')">보류</button>
+                  <button class="btn btn-sm btn-outline" onclick="openDetail('RW-1006')">상세</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- RECENT ACTIVITY LOG -->
+    <!-- RECENT HISTORY -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">📋 최근 배분 활동 로그</div>
+        <div class="card-title">📋 최근 배분 처리 이력</div>
       </div>
-      <div class="card-body" style="padding: 0;">
-        <div style="padding: 14px 24px; border-bottom: 1px solid var(--gray-50); display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 14px;">✅</span>
-          <div style="flex: 1;">
-            <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Dance Creator Week 배분 완료 — 25명, 2,500 USDT + Reward NFT 25개</div>
-            <div style="font-size: 11px; color: var(--gray-400); margin-top: 2px;">2026-04-10 14:30 | 운영자: Jay Kim</div>
-          </div>
-        </div>
-        <div style="padding: 14px 24px; border-bottom: 1px solid var(--gray-50); display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 14px;">❌</span>
-          <div style="flex: 1;">
-            <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Creator Spotlight 배분 실패 — Gas 부족으로 TX 3건 실패</div>
-            <div style="font-size: 11px; color: var(--gray-400); margin-top: 2px;">2026-04-15 09:12 | 자동 실행</div>
-          </div>
-        </div>
-        <div style="padding: 14px 24px; border-bottom: 1px solid var(--gray-50); display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 14px;">✅</span>
-          <div style="flex: 1;">
-            <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Indie Music Fest 배분 완료 — 10명, 1,200 USDT</div>
-            <div style="font-size: 11px; color: var(--gray-400); margin-top: 2px;">2026-04-05 16:45 | 운영자: Jay Kim</div>
-          </div>
-        </div>
-        <div style="padding: 14px 24px; display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 14px;">⚠️</span>
-          <div style="flex: 1;">
-            <div style="font-size: 13px; color: var(--dark); font-weight: 500;">Weekly Fan Vote 검토 요청 — 투표 이상 패턴 감지 (3명 중복 투표 의심)</div>
-            <div style="font-size: 11px; color: var(--gray-400); margin-top: 2px;">2026-04-17 11:00 | 시스템 자동 감지</div>
-          </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>날짜</th>
+                <th>지급 대상</th>
+                <th>챌린지명</th>
+                <th>상태</th>
+                <th>담당자</th>
+                <th>비고</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026.04.19 09:45</td>
+                <td style="font-weight:600;">NOVA</td>
+                <td>Neon Night Beat</td>
+                <td><span class="status status-complete" style="font-size:11px;"><span class="status-dot"></span>완료</span></td>
+                <td>Kai</td>
+                <td style="color:var(--gray-500); font-size:11px;">2위 리워드 지급 완료</td>
+              </tr>
+              <tr>
+                <td>2026.04.19 09:40</td>
+                <td style="font-weight:600;">DJ Hana</td>
+                <td>Neon Night Beat</td>
+                <td><span class="status status-complete" style="font-size:11px;"><span class="status-dot"></span>완료</span></td>
+                <td>Jay</td>
+                <td style="color:var(--gray-500); font-size:11px;">우승자 리워드 + NFT 완료</td>
+              </tr>
+              <tr>
+                <td>2026.04.19 10:10</td>
+                <td style="font-weight:600;">Lina Moon</td>
+                <td>Spring Vocal Pick</td>
+                <td><span class="status status-failed" style="font-size:11px;"><span class="status-dot"></span>실패</span></td>
+                <td>Tony</td>
+                <td style="color:var(--red); font-size:11px; font-weight:600;">지갑 연결 오류</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ===== ACTION MODAL ===== -->
+<div class="modal-overlay" id="actionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div id="actionIcon" style="font-size:28px; margin-bottom:8px;">✅</div>
+        <h3 id="actionTitle" style="font-size:18px; font-weight:700; color:var(--dark);">상태 변경</h3>
+        <p id="actionDesc" style="font-size:13px; color:var(--gray-500); margin-top:4px;"></p>
+      </div>
+      <button class="modal-close" onclick="closeAction()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">운영자 메모</div>
+      <textarea class="memo-area" rows="3" placeholder="처리 사유를 입력하세요..." id="actionMemo"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeAction()">취소</button>
+      <button class="btn" id="actionBtn" onclick="submitAction()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACTION DONE MODAL ===== -->
+<div class="modal-overlay" id="actionDoneModal">
+  <div class="modal" style="width:440px; text-align:center;">
+    <div class="modal-body" style="padding:40px 24px;">
+      <div style="font-size:48px; margin-bottom:16px;">✅</div>
+      <h3 style="font-size:18px; font-weight:700; color:var(--dark); margin-bottom:8px;" id="doneTitle">처리가 완료되었습니다</h3>
+      <p style="font-size:13px; color:var(--gray-500); margin-bottom:24px;" id="doneDesc">리워드 배분 상태가 성공적으로 업데이트되었습니다.</p>
+      <button class="btn btn-mint" onclick="closeDone()">확인</button>
+    </div>
   </div>
 </div>
 
 <!-- ===== DETAIL MODAL ===== -->
 <div class="modal-overlay" id="detailModal">
-  <div class="modal">
+  <div class="modal modal-lg">
     <div class="modal-header">
       <div>
-        <div class="detail-title">Spring Discovery Vol.1</div>
-        <div class="detail-sub">리워드 배분 상세 | USDT + NFT | 배분 대기</div>
+        <h3 style="font-size:18px; font-weight:700; color:var(--dark);">🎁 리워드 배분 상세 — RW-1006</h3>
+        <p style="font-size:13px; color:var(--gray-500); margin-top:4px;">배분 세부 정보 및 상태 이력</p>
       </div>
-      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+      <button class="modal-close" onclick="closeDetail()">&times;</button>
     </div>
-
     <div class="modal-body">
-      <!-- Distribution Info -->
-      <div class="detail-info-row">
-        <div class="detail-info-item">
-          <div class="detail-info-label">총 배분액</div>
-          <div class="detail-info-value">3,000 USDT</div>
+      <!-- INFO GRID -->
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">Reward ID</div>
+          <div class="detail-value">RW-1006</div>
         </div>
-        <div class="detail-info-item">
-          <div class="detail-info-label">수혜자 수</div>
-          <div class="detail-info-value">30명</div>
+        <div class="detail-item">
+          <div class="detail-label">챌린지명</div>
+          <div class="detail-value">Neon Night Beat</div>
         </div>
-        <div class="detail-info-item">
-          <div class="detail-info-label">NFT 유형</div>
-          <div class="detail-info-value" style="font-size: 14px;">Reward NFT</div>
+        <div class="detail-item">
+          <div class="detail-label">지급 대상</div>
+          <div class="detail-value">KJ Beat</div>
         </div>
-        <div class="detail-info-item">
-          <div class="detail-info-label">예정일</div>
-          <div class="detail-info-value" style="font-size: 14px;">2026-04-20</div>
+        <div class="detail-item">
+          <div class="detail-label">순위 / 기준</div>
+          <div class="detail-value">3위</div>
         </div>
-      </div>
-
-      <!-- Alert for review -->
-      <div class="alert-banner info">
-        <span>ℹ️</span>
-        <span>투표 마감 후 24시간 이내 최종 확정 필요. 확정 전 미리보기로 배분 내역을 검토하세요.</span>
-      </div>
-
-      <!-- Rank-based Distribution Table -->
-      <div class="section-title">📊 순위별 배분 내역</div>
-      <div class="table-wrapper" style="margin-bottom: 24px;">
-        <table class="rank-table">
-          <thead>
-            <tr>
-              <th>순위</th>
-              <th>User ID</th>
-              <th>지갑 주소</th>
-              <th>투표 수</th>
-              <th>USDT 배분액</th>
-              <th>NFT</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="rank-badge gold">1</span></td>
-              <td style="font-weight: 600; color: var(--dark);">@luna_music</td>
-              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x7aB2...91Fd</td>
-              <td>2,140</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">500 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge silver">2</span></td>
-              <td style="font-weight: 600; color: var(--dark);">@beat_master</td>
-              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x4fC8...2Ae1</td>
-              <td>1,870</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">350 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge bronze">3</span></td>
-              <td style="font-weight: 600; color: var(--dark);">@neon_vibe</td>
-              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x3Dc1...8bF4</td>
-              <td>1,560</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">250 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge normal">4</span></td>
-              <td style="font-weight: 600; color: var(--dark);">@sky_walker</td>
-              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x9eA5...4cD7</td>
-              <td>1,240</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">200 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge normal">5</span></td>
-              <td style="font-weight: 600; color: var(--dark);">@melody_rain</td>
-              <td style="font-family: monospace; font-size: 12px; color: var(--gray-500);">0x2bF6...7eC3</td>
-              <td>1,080</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">150 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge normal">6~10</span></td>
-              <td style="color: var(--gray-500);">5명</td>
-              <td style="font-size: 12px; color: var(--gray-400);">-</td>
-              <td>-</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">각 100 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge normal">11~30</span></td>
-              <td style="color: var(--gray-500);">20명</td>
-              <td style="font-size: 12px; color: var(--gray-400);">-</td>
-              <td>-</td>
-              <td style="font-weight: 700; color: var(--mint-dark);">각 50 USDT</td>
-              <td><span class="nft-badge">🎨 Reward</span></td>
-              <td><span class="tx-status pending">대기</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Distribution Summary -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-        <div style="padding: 16px; background: var(--mint-light); border-radius: 10px;">
-          <div style="font-size: 12px; color: var(--mint-dark); font-weight: 600; margin-bottom: 4px;">USDT 총 배분</div>
-          <div style="font-size: 20px; font-weight: 800; color: var(--mint-dark);">3,000 USDT</div>
-          <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">1위 500 + 2위 350 + 3위 250 + 4위 200 + 5위 150 + 6~10위 500 + 11~30위 1,000</div>
+        <div class="detail-item">
+          <div class="detail-label">리워드 유형</div>
+          <div class="detail-value"><span class="rw-type rw-mixed">VAYLA + NFT</span></div>
         </div>
-        <div style="padding: 16px; background: var(--purple-light); border-radius: 10px;">
-          <div style="font-size: 12px; color: var(--purple); font-weight: 600; margin-bottom: 4px;">NFT 총 발행</div>
-          <div style="font-size: 20px; font-weight: 800; color: var(--purple);">30개</div>
-          <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">Reward NFT × 30 (Transferable)</div>
+        <div class="detail-item">
+          <div class="detail-label">금액 / 수량</div>
+          <div class="detail-value" style="color:var(--mint);">600 VAYLA + NFT 1개</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">지갑 주소</div>
+          <div class="detail-value" style="font-family:monospace; font-size:12px; color:var(--mint-dark);">0x91cd…44af</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">지급 상태</div>
+          <div class="detail-value"><span class="status status-reviewing"><span class="status-dot"></span>검토중</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">NFT 상태</div>
+          <div class="detail-value"><span class="nft-status nft-pending"><span class="status-dot"></span>대기</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">지급일</div>
+          <div class="detail-value">2026.04.19 10:55</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">TX Hash</div>
+          <div class="detail-value" style="color:var(--gray-400);">—</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">실패 사유</div>
+          <div class="detail-value" style="color:var(--gray-400);">없음</div>
         </div>
       </div>
 
-      <!-- Failure Handling Section (shown for failed distributions) -->
-      <div class="alert-banner danger" style="display: none;" id="failureAlert">
-        <span>❌</span>
-        <div>
-          <strong>TX 실패 3건 감지</strong><br>
-          <span style="font-size: 12px;">Gas 부족으로 0x9eA5...4cD7, 0x2bF6...7eC3, 0x1aD8...5fB2 전송 실패. 재처리가 필요합니다.</span>
-        </div>
+      <!-- OPERATOR MEMO -->
+      <div class="section-title">📝 운영 메모</div>
+      <div style="background:var(--yellow-light); border-radius:8px; padding:14px; margin-bottom:20px;">
+        <textarea class="memo-area" rows="2" style="background:transparent; border:none;">VAYLA 배분은 가능하나 NFT 발행 확인 후 함께 완료 처리 예정</textarea>
       </div>
 
-      <!-- Operator Notes -->
-      <div class="form-group">
-        <div class="memo-label">운영자 메모</div>
-        <textarea class="form-textarea" rows="3" placeholder="배분 관련 메모를 입력하세요..."></textarea>
+      <!-- STATUS CHANGE HISTORY -->
+      <div class="section-title">🕐 상태 변경 이력</div>
+      <table class="history-table" style="margin-bottom:0;">
+        <thead>
+          <tr>
+            <th>변경 시간</th>
+            <th>처리자</th>
+            <th>변경 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2026.04.19 10:30</td>
+            <td>System</td>
+            <td style="font-size:12px; color:var(--gray-500);">배분 대상 생성</td>
+          </tr>
+          <tr>
+            <td>2026.04.19 10:55</td>
+            <td>Kai</td>
+            <td style="font-size:12px; color:var(--gray-500);">검토중 변경 — NFT 발행 확인 대기</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-green btn-sm" onclick="closeDetail();openAction('complete','RW-1006');">완료 처리</button>
+      <button class="btn btn-orange btn-sm" onclick="closeDetail();openAction('hold','RW-1006');">보류</button>
+      <button class="btn btn-danger btn-sm" onclick="closeDetail();openAction('retry','RW-1006');">재처리</button>
+      <button class="btn btn-outline btn-sm" onclick="closeDetail()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MANUAL REWARD MODAL ===== -->
+<div class="modal-overlay" id="manualModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div>
+        <h3 style="font-size:18px; font-weight:700; color:var(--dark);">+ 수동 배분 생성</h3>
+        <p style="font-size:13px; color:var(--gray-500); margin-top:4px;">수동으로 리워드 배분 건을 생성합니다</p>
+      </div>
+      <button class="modal-close" onclick="closeManual()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">챌린지 선택</label>
+          <select class="form-select">
+            <option>Neon Night Beat</option>
+            <option>Urban Flow Session</option>
+            <option>Spring Vocal Pick</option>
+            <option>Lo-Fi Summer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">지급 대상 (닉네임 또는 ID)</label>
+          <input type="text" class="form-input" placeholder="닉네임 또는 유저 ID 입력">
+        </div>
+        <div class="form-group">
+          <label class="form-label">순위 또는 기준</label>
+          <select class="form-select">
+            <option>1위</option>
+            <option>2위</option>
+            <option>3위</option>
+            <option>Top 10</option>
+            <option>Participation</option>
+            <option>Vote Milestone</option>
+            <option>Bonus</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">리워드 유형</label>
+          <select class="form-select" id="manualType">
+            <option value="vayla">VAYLA</option>
+            <option value="nft">NFT</option>
+            <option value="mixed">VAYLA + NFT</option>
+            <option value="badge">Badge</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">금액 (VAYLA)</label>
+          <input type="number" class="form-input" placeholder="예: 500" value="500">
+        </div>
+        <div class="form-group">
+          <label class="form-label">NFT 수량</label>
+          <input type="number" class="form-input" placeholder="예: 1" value="0">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">운영 메모</label>
+          <textarea class="memo-area" rows="2" placeholder="배분 사유 또는 참고 사항 입력..."></textarea>
+        </div>
       </div>
     </div>
-
-    <!-- Modal Footer with Action Buttons -->
     <div class="modal-footer">
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-blue" onclick="alert('배분 미리보기를 로드합니다.')">👁️ 배분 미리보기</button>
-        <button class="btn btn-purple" onclick="alert('최종 확정을 진행합니다.')">✅ 최종 확정</button>
-        <button class="btn btn-mint" onclick="alert('배분 실행을 시작합니다.')">🚀 배분 실행</button>
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn btn-danger" onclick="alert('실패 건 재처리를 시작합니다.')">🔄 실패 건 재처리</button>
-        <button class="btn btn-outline" onclick="alert('메모가 저장되었습니다.')">💾 메모 저장</button>
-        <button class="btn btn-outline">📥 결과 다운로드</button>
+      <button class="btn btn-outline" onclick="closeManual()">취소</button>
+      <button class="btn btn-mint" onclick="submitManual()">배분 생성</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MANUAL DONE MODAL ===== -->
+<div class="modal-overlay" id="manualDoneModal">
+  <div class="modal" style="width:440px; text-align:center;">
+    <div class="modal-body" style="padding:40px 24px;">
+      <div style="font-size:48px; margin-bottom:16px;">🎁</div>
+      <h3 style="font-size:18px; font-weight:700; color:var(--dark); margin-bottom:8px;">수동 배분이 생성되었습니다</h3>
+      <p style="font-size:13px; color:var(--gray-500); margin-bottom:24px;">배분 목록에 추가되었습니다. 지급 상태: 대기</p>
+      <div style="display:flex; gap:8px; justify-content:center;">
+        <button class="btn btn-outline" onclick="closeManualDone();openManual();">+ 추가 생성</button>
+        <button class="btn btn-mint" onclick="closeManualDone()">확인</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function openDetailModal(type) {
-  document.getElementById('detailModal').classList.add('show');
-  // Show failure alert for spotlight
-  if(type === 'spotlight') {
-    document.getElementById('failureAlert').style.display = 'flex';
-  } else {
-    document.getElementById('failureAlert').style.display = 'none';
+  // ===== ACTION MODAL CONFIG =====
+  const actionConfig = {
+    complete: { icon: '✅', title: '완료 처리', desc: '이 리워드 건을 완료 처리하시겠습니까?', btn: '완료 처리', cls: 'btn-green' },
+    hold:    { icon: '⏸️', title: '보류', desc: '이 리워드 건의 상태를 보류로 변경하시겠습니까?', btn: '보류 처리', cls: 'btn-orange' },
+    retry:   { icon: '🔄', title: '재처리', desc: '이 리워드 건을 재처리하시겠습니까?', btn: '재처리', cls: 'btn-danger' }
+  };
+
+  let currentRwId = '';
+
+  function openAction(type, rwId) {
+    const cfg = actionConfig[type];
+    if (!cfg) return;
+    currentRwId = rwId || '';
+    document.getElementById('actionIcon').textContent = cfg.icon;
+    document.getElementById('actionTitle').textContent = cfg.title + (rwId ? ' — ' + rwId : '');
+    document.getElementById('actionDesc').textContent = cfg.desc;
+    const btn = document.getElementById('actionBtn');
+    btn.textContent = cfg.btn;
+    btn.className = 'btn ' + cfg.cls;
+    document.getElementById('actionMemo').value = '';
+    document.getElementById('actionModal').classList.add('show');
   }
-}
 
-function closeDetailModal() {
-  document.getElementById('detailModal').classList.remove('show');
-}
+  function closeAction() {
+    document.getElementById('actionModal').classList.remove('show');
+  }
 
-// Close on overlay click
-document.getElementById('detailModal').addEventListener('click', function(e) {
-  if(e.target === this) closeDetailModal();
-});
+  function submitAction() {
+    closeAction();
+    document.getElementById('actionDoneModal').classList.add('show');
+  }
+
+  function closeDone() {
+    document.getElementById('actionDoneModal').classList.remove('show');
+  }
+
+  // ===== DETAIL MODAL =====
+  function openDetail(id) {
+    document.getElementById('detailModal').classList.add('show');
+  }
+
+  function closeDetail() {
+    document.getElementById('detailModal').classList.remove('show');
+  }
+
+  // ===== MANUAL REWARD MODAL =====
+  function openManual() {
+    document.getElementById('manualModal').classList.add('show');
+  }
+
+  function closeManual() {
+    document.getElementById('manualModal').classList.remove('show');
+  }
+
+  function submitManual() {
+    closeManual();
+    document.getElementById('manualDoneModal').classList.add('show');
+  }
+
+  function closeManualDone() {
+    document.getElementById('manualDoneModal').classList.remove('show');
+  }
+
+  // ===== STATUS FILTER =====
+  document.querySelectorAll('.status-filter button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
 </script>
-
 </body>
 </html>
